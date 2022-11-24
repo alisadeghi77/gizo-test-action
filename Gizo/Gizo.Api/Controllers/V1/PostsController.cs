@@ -1,4 +1,4 @@
-﻿using PostInteraction = Gizo.Api.Contracts.Posts.Responses.PostInteraction;
+﻿using PostInteractionResponse = Gizo.Api.Contracts.Posts.Responses.PostInteractionResponse;
 
 namespace Gizo.Api.Controllers.V1;
 
@@ -29,7 +29,7 @@ public class PostsController : BaseController
 
     [HttpPost]
     [ValidateModel]
-    public async Task<IActionResult> CreatePost([FromBody] PostCreate newPost, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreatePost([FromBody] PostCreateRequest newPost, CancellationToken cancellationToken)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
@@ -50,7 +50,7 @@ public class PostsController : BaseController
     [Route(ApiRoutes.Posts.IdRoute)]
     [ValidateGuid("id")]
     [ValidateModel]
-    public async Task<IActionResult> UpdatePostText([FromBody] PostUpdate updatedPost, string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdatePostText([FromBody] PostUpdateRequest updatedPost, string id, CancellationToken cancellationToken)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
@@ -95,7 +95,7 @@ public class PostsController : BaseController
     [Route(ApiRoutes.Posts.PostComments)]
     [ValidateGuid("postId")]
     [ValidateModel]
-    public async Task<IActionResult> AddCommentToPost(string postId, [FromBody] PostCommentCreate comment,
+    public async Task<IActionResult> AddCommentToPost(string postId, [FromBody] PostCommentCreateRequest comment,
         CancellationToken cancellationToken)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
@@ -134,9 +134,7 @@ public class PostsController : BaseController
 
         var result = await _mediator.Send(command, token);
 
-        if (result.IsError) return HandleErrorResponse(result.Errors);
-
-        return NoContent();
+        return result.IsError ? HandleErrorResponse(result.Errors) : NoContent();
     }
 
     [HttpPut]
@@ -144,7 +142,7 @@ public class PostsController : BaseController
     [ValidateGuid("postId", "commentId")]
     [ValidateModel]
     public async Task<IActionResult> UpdateCommentText(string postId, string commentId,
-        PostCommentUpdate updatedComment, CancellationToken token)
+        PostCommentUpdateRequest updatedComment, CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
         var postGuid = Guid.Parse(postId);
@@ -160,9 +158,7 @@ public class PostsController : BaseController
 
         var result = await _mediator.Send(command, token);
 
-        if (result.IsError) return HandleErrorResponse(result.Errors);
-
-        return NoContent();
+        return result.IsError ? HandleErrorResponse(result.Errors) : NoContent();
     }
 
     [HttpGet]
@@ -176,7 +172,7 @@ public class PostsController : BaseController
 
         if (result.IsError) HandleErrorResponse(result.Errors);
 
-        var mapped = _mapper.Map<List<PostInteraction>>(result.Data);
+        var mapped = _mapper.Map<List<PostInteractionResponse>>(result.Data);
         return Ok(mapped);
     }
 
@@ -184,7 +180,7 @@ public class PostsController : BaseController
     [Route(ApiRoutes.Posts.PostInteractions)]
     [ValidateGuid("postId")]
     [ValidateModel]
-    public async Task<IActionResult> AddPostInteraction(string postId, PostInteractionCreate interaction,
+    public async Task<IActionResult> AddPostInteraction(string postId, PostInteractionCreateRequest interaction,
         CancellationToken token)
     {
         var postGuid = Guid.Parse(postId);
@@ -200,7 +196,7 @@ public class PostsController : BaseController
 
         if (result.IsError) HandleErrorResponse(result.Errors);
 
-        var mapped = _mapper.Map<PostInteraction>(result.Data);
+        var mapped = _mapper.Map<PostInteractionResponse>(result.Data);
 
         return Ok(mapped);
     }
@@ -224,7 +220,7 @@ public class PostsController : BaseController
         var result = await _mediator.Send(command, token);
         if (result.IsError) return HandleErrorResponse(result.Errors);
 
-        var mapped = _mapper.Map<PostInteraction>(result.Data);
+        var mapped = _mapper.Map<PostInteractionResponse>(result.Data);
 
         return Ok(mapped);
     }

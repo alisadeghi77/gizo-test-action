@@ -1,5 +1,5 @@
 ﻿namespace Gizo.Api.Contracts.UserProfile.Requests;
-public record UserProfileCreateUpdate
+public record UserProfileCreateUpdateRequest
 {
     [Required]
     [MinLength(3)]

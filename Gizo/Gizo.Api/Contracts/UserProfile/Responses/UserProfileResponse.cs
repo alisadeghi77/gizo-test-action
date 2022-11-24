@@ -1,4 +1,5 @@
 ﻿namespace Gizo.Api.Contracts.UserProfile.Responses;
+
 public record UserProfileResponse
 {
     public Guid UserProfileId { get; set; }

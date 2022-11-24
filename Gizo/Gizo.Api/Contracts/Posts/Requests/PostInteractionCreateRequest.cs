@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Api.Contracts.Posts.Requests;
 
-public class PostInteractionCreate
+public class PostInteractionCreateRequest
 {
     [Required]
     public InteractionType Type { get; set; }

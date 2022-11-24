@@ -8,7 +8,7 @@ public class PostMappings : Profile
     {
         CreateMap<Post, PostResponse>();
         CreateMap<PostComment, PostCommentResponse>();
-        CreateMap<PostInteraction, Gizo.Api.Contracts.Posts.Responses.PostInteraction>()
+        CreateMap<PostInteraction, Gizo.Api.Contracts.Posts.Responses.PostInteractionResponse>()
             .ForMember(dest 
                 => dest.Type, opt 
                 => opt.MapFrom(src 

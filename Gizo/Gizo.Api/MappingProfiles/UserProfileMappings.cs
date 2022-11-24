@@ -4,7 +4,7 @@ public class UserProfileMappings : Profile
 {
     public UserProfileMappings()
     {
-        CreateMap<UserProfileCreateUpdate, UpdateUserProfileBasicInfo>();
+        CreateMap<UserProfileCreateUpdateRequest, UpdateUserProfileBasicInfo>();
         CreateMap<UserProfile, UserProfileResponse>();
         CreateMap<BasicInfo, BasicInformation>();
         CreateMap<UserProfile, InteractionUser>()

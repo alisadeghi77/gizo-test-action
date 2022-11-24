@@ -7,7 +7,7 @@ public class IdentityController : BaseController
     [HttpPost]
     [Route(ApiRoutes.Identity.Registration)]
     [ValidateModel]
-    public async Task<IActionResult> Register(UserRegistration registration, CancellationToken cancellationToken)
+    public async Task<IActionResult> Register(UserRegistrationRequest registration, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<RegisterIdentity>(registration);
         var result = await _mediator.Send(command, cancellationToken);
@@ -20,7 +20,7 @@ public class IdentityController : BaseController
     [HttpPost]
     [Route(ApiRoutes.Identity.Login)]
     [ValidateModel]
-    public async Task<IActionResult> Login(Login login, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login(LoginRequest login, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<LoginCommand>(login);
         var result = await _mediator.Send(command, cancellationToken);

@@ -1,7 +1,7 @@
 ﻿
 namespace Gizo.Api.Contracts.Posts.Requests;
 
-public class PostCommentCreate
+public class PostCommentCreateRequest
 {
     [Required]
     public string Text { get;  set; }

@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Api.Contracts.Posts.Responses;
 
-public class PostInteraction
+public class PostInteractionResponse
 {
     public Guid InteractionId { get; set; }
     public string Type { get; set; }

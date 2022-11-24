@@ -1,7 +1,7 @@
 ﻿
 namespace Gizo.Api.Contracts.Identity;
 
-public class Login
+public class LoginRequest
 {
     [EmailAddress]
     [Required]

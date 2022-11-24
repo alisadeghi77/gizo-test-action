@@ -1,7 +1,7 @@
 ﻿
 namespace Gizo.Api.Contracts.Identity;
 
-public class UserRegistration
+public class UserRegistrationRequest
 {
 
     [Required]
