@@ -35,7 +35,7 @@ public class GetPostInteractionsHandler : IRequestHandler<GetPostInteractions, O
                 return result;
             }
             
-            result.Payload = post.Interactions.ToList();
+            result.Data = post.Interactions.ToList();
 
         }
         catch (Exception e)

@@ -9,7 +9,7 @@ public class PostsController : BaseController
     public async Task<IActionResult> GetAllPosts(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetAllPosts(), cancellationToken);
-        var mapped = _mapper.Map<List<PostResponse>>(result.Payload);
+        var mapped = _mapper.Map<List<PostResponse>>(result.Data);
         return result.IsError ? HandleErrorResponse(result.Errors) : Ok(mapped);
 
     }
@@ -22,7 +22,7 @@ public class PostsController : BaseController
         var postId = Guid.Parse(id);
         var query = new GetPostById() { PostId = postId };
         var result = await _mediator.Send(query, cancellationToken);
-        var mapped = _mapper.Map<PostResponse>(result.Payload);
+        var mapped = _mapper.Map<PostResponse>(result.Data);
 
         return result.IsError ? HandleErrorResponse(result.Errors) : Ok(mapped);
     }
@@ -40,10 +40,10 @@ public class PostsController : BaseController
         };
 
         var result = await _mediator.Send(command, cancellationToken);
-        var mapped = _mapper.Map<PostResponse>(result.Payload);
+        var mapped = _mapper.Map<PostResponse>(result.Data);
 
         return result.IsError ? HandleErrorResponse(result.Errors)
-            : CreatedAtAction(nameof(GetById), new { id = result.Payload.UserProfileId }, mapped);
+            : CreatedAtAction(nameof(GetById), new { id = result.Data.UserProfileId }, mapped);
     }
 
     [HttpPatch]
@@ -87,7 +87,7 @@ public class PostsController : BaseController
 
         if (result.IsError) HandleErrorResponse(result.Errors);
 
-        var comments = _mapper.Map<List<PostCommentResponse>>(result.Payload);
+        var comments = _mapper.Map<List<PostCommentResponse>>(result.Data);
         return Ok(comments);
     }
 
@@ -111,7 +111,7 @@ public class PostsController : BaseController
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
 
-        var newComment = _mapper.Map<PostCommentResponse>(result.Payload);
+        var newComment = _mapper.Map<PostCommentResponse>(result.Data);
 
         return Ok(newComment);
     }
@@ -176,7 +176,7 @@ public class PostsController : BaseController
 
         if (result.IsError) HandleErrorResponse(result.Errors);
 
-        var mapped = _mapper.Map<List<PostInteraction>>(result.Payload);
+        var mapped = _mapper.Map<List<PostInteraction>>(result.Data);
         return Ok(mapped);
     }
 
@@ -200,7 +200,7 @@ public class PostsController : BaseController
 
         if (result.IsError) HandleErrorResponse(result.Errors);
 
-        var mapped = _mapper.Map<PostInteraction>(result.Payload);
+        var mapped = _mapper.Map<PostInteraction>(result.Data);
 
         return Ok(mapped);
     }
@@ -224,7 +224,7 @@ public class PostsController : BaseController
         var result = await _mediator.Send(command, token);
         if (result.IsError) return HandleErrorResponse(result.Errors);
 
-        var mapped = _mapper.Map<PostInteraction>(result.Payload);
+        var mapped = _mapper.Map<PostInteraction>(result.Data);
 
         return Ok(mapped);
     }

@@ -28,7 +28,7 @@ public class GetPostByIdHandler : IRequestHandler<GetPostById, OperationResult<P
             return result;
         }
 
-        result.Payload = post;
+        result.Data = post;
         return result;
     }
 }

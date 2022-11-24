@@ -32,7 +32,7 @@ internal class GetUserProfileByIdHandler
             return result;
         }
 
-        result.Payload = profile;
+        result.Data = profile;
         return result;
     }
 }

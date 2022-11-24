@@ -21,7 +21,7 @@ public class GetAllPostsHandler : IRequestHandler<GetAllPosts, OperationResult<L
         try
         {
             var posts = await _ctx.Posts.ToListAsync();
-            result.Payload = posts;
+            result.Data = posts;
         }
         catch (Exception e)
         {

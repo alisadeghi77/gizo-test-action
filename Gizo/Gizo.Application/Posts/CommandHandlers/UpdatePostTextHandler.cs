@@ -43,7 +43,7 @@ public class UpdatePostTextHandler : IRequestHandler<UpdatePostText, OperationRe
 
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            result.Payload = post;
+            result.Data = post;
         }
         
         catch (PostNotValidException e)

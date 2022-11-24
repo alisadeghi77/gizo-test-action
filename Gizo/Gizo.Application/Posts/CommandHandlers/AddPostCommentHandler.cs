@@ -39,7 +39,7 @@ public class AddPostCommentHandler : IRequestHandler<AddPostComment, OperationRe
             _ctx.Posts.Update(post);
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            result.Payload = comment;
+            result.Data = comment;
 
         }
 

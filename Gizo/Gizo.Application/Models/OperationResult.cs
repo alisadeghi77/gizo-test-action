@@ -1,11 +1,10 @@
-﻿using System.Reflection.Metadata;
-using Gizo.Application.Enums;
+﻿using Gizo.Application.Enums;
 
 namespace Gizo.Application.Models;
 
 public class OperationResult<T>
 {
-    public T Payload { get; set; }
+    public T Data { get; set; }
     public bool IsError {get; private set;}
     public List<Error> Errors {get; } = new List<Error>();
 
@@ -36,13 +35,9 @@ public class OperationResult<T>
         IsError = false;
     }
 
-    #region Private methods
-
     private void HandleError(ErrorCode code, string message)
     {
         Errors.Add(new Error {Code = code, Message = message});
         IsError = true;
     }
-
-    #endregion
 }

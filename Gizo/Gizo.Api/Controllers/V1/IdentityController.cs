@@ -14,7 +14,7 @@ public class IdentityController : BaseController
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<IdentityUserProfile>(result.Payload));
+        return Ok(_mapper.Map<IdentityUserProfile>(result.Data));
     }
 
     [HttpPost]
@@ -27,7 +27,7 @@ public class IdentityController : BaseController
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<IdentityUserProfile>(result.Payload));
+        return Ok(_mapper.Map<IdentityUserProfile>(result.Data));
     }
 
     [HttpDelete]
@@ -62,6 +62,6 @@ public class IdentityController : BaseController
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
         
-        return Ok(_mapper.Map<IdentityUserProfile>(result.Payload));
+        return Ok(_mapper.Map<IdentityUserProfile>(result.Data));
     }
 }

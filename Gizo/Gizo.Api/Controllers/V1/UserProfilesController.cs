@@ -9,7 +9,7 @@ public class UserProfilesController : BaseController
     {
         var query = new GetAllUserProfiles();
         var response = await _mediator.Send(query, cancellationToken);
-        var profiles = _mapper.Map<List<UserProfileResponse>>(response.Payload);
+        var profiles = _mapper.Map<List<UserProfileResponse>>(response.Data);
         return Ok(profiles);
     }
 
@@ -24,7 +24,7 @@ public class UserProfilesController : BaseController
         if (response.IsError)
             return HandleErrorResponse(response.Errors);
 
-        var userProfile = _mapper.Map<UserProfileResponse>(response.Payload);
+        var userProfile = _mapper.Map<UserProfileResponse>(response.Data);
         return Ok(userProfile);
     }
 

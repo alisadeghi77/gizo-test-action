@@ -20,7 +20,7 @@ internal class GetAllUserProfilesQueryHandler
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<IEnumerable<UserProfile>>();
-        result.Payload = await _ctx.UserProfiles.ToListAsync(cancellationToken: cancellationToken);
+        result.Data = await _ctx.UserProfiles.ToListAsync(cancellationToken: cancellationToken);
         return result;
     }
 }

@@ -26,7 +26,7 @@ public class GetPostCommentsHandler : IRequestHandler<GetPostComments, Operation
                 .Include(p => p.Comments)
                 .FirstOrDefaultAsync(p => p.PostId == request.PostId);
 
-            result.Payload = post.Comments.ToList();
+            result.Data = post.Comments.ToList();
         }
         catch (Exception e)
         {

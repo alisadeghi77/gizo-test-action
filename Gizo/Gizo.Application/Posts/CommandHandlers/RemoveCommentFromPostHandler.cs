@@ -52,7 +52,7 @@ public class RemoveCommentFromPostHandler
         _ctx.Posts.Update(post);
         await _ctx.SaveChangesAsync(cancellationToken);
 
-        _result.Payload = comment;
+        _result.Data = comment;
         return _result;
     }
 }

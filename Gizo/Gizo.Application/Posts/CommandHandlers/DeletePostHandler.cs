@@ -41,7 +41,7 @@ public class DeletePostHandler : IRequestHandler<DeletePost, OperationResult<Pos
             _ctx.Posts.Remove(post);
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            result.Payload = post;
+            result.Data = post;
         }
         catch (Exception e)
         {

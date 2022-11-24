@@ -26,7 +26,7 @@ public class CreatePostHandler : IRequestHandler<CreatePost, OperationResult<Pos
             _ctx.Posts.Add(post);
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            result.Payload = post;
+            result.Data = post;
         }
         catch (PostNotValidException e)
         {

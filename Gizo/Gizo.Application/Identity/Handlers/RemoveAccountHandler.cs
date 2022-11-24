@@ -56,7 +56,7 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccount, OperationResu
             _ctx.Users.Remove(identityUser);
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            result.Payload = true;
+            result.Data = true;
         }
         catch (Exception e)
         {

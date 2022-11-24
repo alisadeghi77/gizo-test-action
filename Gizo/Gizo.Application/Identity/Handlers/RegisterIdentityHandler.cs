@@ -48,9 +48,9 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentity, Operati
             var profile = await CreateUserProfileAsync(request, transaction, identity, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
-            _result.Payload = _mapper.Map<IdentityUserProfileDto>(profile);
-            _result.Payload.UserName = identity.UserName;
-            _result.Payload.Token = GetJwtString(identity, profile);
+            _result.Data = _mapper.Map<IdentityUserProfileDto>(profile);
+            _result.Data.UserName = identity.UserName;
+            _result.Data.Token = GetJwtString(identity, profile);
             return _result;
         }
         

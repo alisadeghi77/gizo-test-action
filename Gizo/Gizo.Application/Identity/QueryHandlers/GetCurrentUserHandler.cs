@@ -33,8 +33,8 @@ public class GetCurrentUserHandler
         var profile = await _ctx.UserProfiles
             .FirstOrDefaultAsync(up => up.UserProfileId == request.UserProfileId, cancellationToken);
 
-        _result.Payload = _mapper.Map<IdentityUserProfileDto>(profile);
-        _result.Payload.UserName = identity.UserName;
+        _result.Data = _mapper.Map<IdentityUserProfileDto>(profile);
+        _result.Data.UserName = identity.UserName;
         return _result;
     }
 }

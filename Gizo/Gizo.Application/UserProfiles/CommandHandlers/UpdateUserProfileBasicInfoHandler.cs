@@ -42,7 +42,7 @@ internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserPro
             _ctx.UserProfiles.Update(userProfile);
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            result.Payload = userProfile;
+            result.Data = userProfile;
             return result;
         }
 

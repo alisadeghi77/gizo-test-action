@@ -43,9 +43,9 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult
                     cancellationToken);
 
 
-            _result.Payload = _mapper.Map<IdentityUserProfileDto>(userProfile);
-            _result.Payload.UserName = identityUser.UserName;
-            _result.Payload.Token = GetJwtString(identityUser, userProfile);
+            _result.Data = _mapper.Map<IdentityUserProfileDto>(userProfile);
+            _result.Data.UserName = identityUser.UserName;
+            _result.Data.Token = GetJwtString(identityUser, userProfile);
             return _result;
 
         }
