@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Api.Filters;
 
-public class GizoExceptionHandler : ExceptionFilterAttribute
+public class ExceptionHandler : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {

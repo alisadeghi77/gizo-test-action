@@ -8,7 +8,7 @@ public class MvcRegistrar : IWebApplicationBuilderRegistrar
     {
         builder.Services.AddControllers(config =>
         {
-            config.Filters.Add(typeof(GizoExceptionHandler));
+            config.Filters.Add(typeof(ExceptionHandler));
         });
 
         builder.Services.AddApiVersioning(config =>
