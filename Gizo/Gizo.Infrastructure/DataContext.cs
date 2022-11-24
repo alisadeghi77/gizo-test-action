@@ -1,11 +1,11 @@
 ﻿using Gizo.Domain.Aggregates.PostAggregate;
 using Gizo.Domain.Aggregates.UserProfileAggregate;
-using Gizo.Dal.Configurations;
-using Gizo.Dal.Extensions;
+using Gizo.Infrastructure.Configurations;
+using Gizo.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gizo.Dal
+namespace Gizo.Infrastructure
 {
     public class DataContext : IdentityDbContext
     {

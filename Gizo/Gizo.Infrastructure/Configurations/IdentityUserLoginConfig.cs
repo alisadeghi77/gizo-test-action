@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gizo.Dal.Configurations;
+namespace Gizo.Infrastructure.Configurations;
 
 internal class IdentityUserLoginConfig : IEntityTypeConfiguration<IdentityUserLogin<string>>
 {

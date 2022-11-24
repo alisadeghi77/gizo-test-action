@@ -7,7 +7,7 @@ using Gizo.Application.Identity.Commands;
 using Gizo.Application.Identity.Dtos;
 using Gizo.Application.Models;
 using Gizo.Application.Services;
-using Gizo.Dal;
+using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

@@ -23,7 +23,7 @@ global using Microsoft.AspNetCore.Mvc.ApiExplorer;
 global using Microsoft.Extensions.Options;
 global using Microsoft.OpenApi.Models;
 global using Swashbuckle.AspNetCore.SwaggerGen;
-global using Gizo.Dal;
+global using Gizo.Infrastructure;
 global using Microsoft.EntityFrameworkCore;
 global using Gizo.Api.Options;
 global using System.Text;

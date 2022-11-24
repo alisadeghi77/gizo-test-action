@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Gizo.Dal.Migrations
+namespace Gizo.Infrastructure.Migrations
 {
     public partial class Initial : Migration
     {

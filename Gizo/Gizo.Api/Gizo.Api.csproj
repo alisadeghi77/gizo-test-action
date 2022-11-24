@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -25,7 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Gizo.Domain\Gizo.Domain.csproj" />
     <ProjectReference Include="..\Gizo.Application\Gizo.Application.csproj" />
-    <ProjectReference Include="..\Gizo.Dal\Gizo.Dal.csproj" />
+    <ProjectReference Include="..\Gizo.Infrastructure\Gizo.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

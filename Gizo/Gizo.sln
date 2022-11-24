@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizo.Domain", "Gizo.Domain\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizo.Application", "Gizo.Application\Gizo.Application.csproj", "{8EC98084-A4B3-4C56-A84C-31B6D13E7DFF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizo.Dal", "Gizo.Dal\Gizo.Dal.csproj", "{E567C2B9-02BE-4EB9-A43B-870A4BFB1DB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizo.Infrastructure", "Gizo.Infrastructure\Gizo.Infrastructure.csproj", "{E567C2B9-02BE-4EB9-A43B-870A4BFB1DB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

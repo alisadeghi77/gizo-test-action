@@ -1,6 +1,6 @@
 ﻿using Gizo.Application.Models;
 using Gizo.Application.UserProfiles.Queries;
-using Gizo.Dal;
+using Gizo.Infrastructure;
 using Gizo.Domain.Aggregates.UserProfileAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

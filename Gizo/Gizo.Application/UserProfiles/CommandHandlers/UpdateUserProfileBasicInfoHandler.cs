@@ -1,7 +1,7 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.UserProfiles.Commands;
-using Gizo.Dal;
+using Gizo.Infrastructure;
 using Gizo.Domain.Aggregates.UserProfileAggregate;
 using Gizo.Domain.Exceptions;
 using MediatR;

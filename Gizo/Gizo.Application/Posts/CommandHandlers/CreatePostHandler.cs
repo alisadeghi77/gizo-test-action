@@ -3,7 +3,7 @@ using Gizo.Domain.Exceptions;
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Commands;
-using Gizo.Dal;
+using Gizo.Infrastructure;
 using MediatR;
 
 namespace Gizo.Application.Posts.CommandHandlers;

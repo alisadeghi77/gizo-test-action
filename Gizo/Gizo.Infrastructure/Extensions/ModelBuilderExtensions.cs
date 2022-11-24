@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gizo.Dal.Extensions;
+namespace Gizo.Infrastructure.Extensions;
 
 internal static class ModelBuilderExtensions
 {

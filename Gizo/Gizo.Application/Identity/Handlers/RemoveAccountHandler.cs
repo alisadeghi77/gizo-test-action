@@ -2,7 +2,7 @@
 using Gizo.Application.Identity.Commands;
 using Gizo.Application.Models;
 using Gizo.Application.UserProfiles;
-using Gizo.Dal;
+using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;

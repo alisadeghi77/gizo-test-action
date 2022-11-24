@@ -2,7 +2,7 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Queries;
-using Gizo.Dal;
+using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gizo.Dal.Configurations;
+namespace Gizo.Infrastructure.Configurations;
 
 internal class IdentityUserRoleConfig : IEntityTypeConfiguration<IdentityUserRole<string>>
 {

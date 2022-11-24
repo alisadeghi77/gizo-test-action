@@ -3,7 +3,7 @@ using Gizo.Application.Enums;
 using Gizo.Application.Identity.Dtos;
 using Gizo.Application.Identity.Queries;
 using Gizo.Application.Models;
-using Gizo.Dal;
+using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
