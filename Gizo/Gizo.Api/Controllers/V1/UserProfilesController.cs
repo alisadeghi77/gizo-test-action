@@ -7,7 +7,7 @@ public class UserProfilesController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetAllProfiles(CancellationToken cancellationToken)
     {
-        var query = new GetAllUserProfiles();
+        var query = new GetAllUserProfilesQuery();
         var response = await _mediator.Send(query, cancellationToken);
         var profiles = _mapper.Map<List<UserProfileResponse>>(response.Data);
         return Ok(profiles);
@@ -18,7 +18,7 @@ public class UserProfilesController : BaseController
     [ValidateGuid("id")]
     public async Task<IActionResult> GetUserProfileById(string id, CancellationToken cancellationToken)
     {
-        var query = new GetUserProfileById { UserProfileId = Guid.Parse(id) };
+        var query = new GetUserProfileByIdQuery { UserProfileId = Guid.Parse(id) };
         var response = await _mediator.Send(query, cancellationToken);
 
         if (response.IsError)
@@ -34,7 +34,7 @@ public class UserProfilesController : BaseController
     [ValidateGuid("id")]
     public async Task<IActionResult> UpdateUserProfile(string id, UserProfileCreateUpdateRequest updatedProfile, CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<UpdateUserProfileBasicInfo>(updatedProfile);
+        var command = _mapper.Map<UpdateUserProfileBasicInfoCommand>(updatedProfile);
         command.UserProfileId = Guid.Parse(id);
         var response = await _mediator.Send(command, cancellationToken);
 

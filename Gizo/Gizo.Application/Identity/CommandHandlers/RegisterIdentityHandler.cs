@@ -13,9 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.JsonWebTokens;
 
-namespace Gizo.Application.Identity.Handlers;
+namespace Gizo.Application.Identity.CommandHandlers;
 
-public class RegisterIdentityHandler : IRequestHandler<RegisterIdentity, OperationResult<IdentityUserProfileDto>>
+public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, OperationResult<IdentityUserProfileDto>>
 {
     private readonly DataContext _ctx;
     private readonly UserManager<IdentityUser> _userManager;
@@ -32,7 +32,7 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentity, Operati
         _mapper = mapper;
     }
     
-    public async Task<OperationResult<IdentityUserProfileDto>> Handle(RegisterIdentity request, 
+    public async Task<OperationResult<IdentityUserProfileDto>> Handle(RegisterIdentityCommand request, 
         CancellationToken cancellationToken)
     {
         try
@@ -67,7 +67,7 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentity, Operati
         return _result;
     }
 
-    private async Task ValidateIdentityDoesNotExist(RegisterIdentity request)
+    private async Task ValidateIdentityDoesNotExist(RegisterIdentityCommand request)
     {
         var existingIdentity = await _userManager.FindByEmailAsync(request.Username);
 
@@ -76,7 +76,7 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentity, Operati
         
     }
 
-    private async Task<IdentityUser> CreateIdentityUserAsync(RegisterIdentity request, 
+    private async Task<IdentityUser> CreateIdentityUserAsync(RegisterIdentityCommand request, 
         IDbContextTransaction transaction, CancellationToken cancellationToken)
     {
         var identity = new IdentityUser {Email = request.Username, UserName = request.Username};
@@ -93,7 +93,7 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentity, Operati
         return identity;
     }
 
-    private async Task<UserProfile> CreateUserProfileAsync(RegisterIdentity request, 
+    private async Task<UserProfile> CreateUserProfileAsync(RegisterIdentityCommand request, 
         IDbContextTransaction transaction, IdentityUser identity,
         CancellationToken cancellationToken)
     {

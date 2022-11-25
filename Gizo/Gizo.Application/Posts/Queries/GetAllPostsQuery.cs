@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Queries;
 
-public class GetPostById : IRequest<OperationResult<Post>>
+public class GetAllPostsQuery : IRequest<OperationResult<List<Post>>>
 {
-    public Guid PostId { get; set; }
+    
 }

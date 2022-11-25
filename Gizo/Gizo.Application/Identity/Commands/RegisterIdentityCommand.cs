@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.Identity.Commands;
 
-public class RegisterIdentity : IRequest<OperationResult<IdentityUserProfileDto>>
+public class RegisterIdentityCommand : IRequest<OperationResult<IdentityUserProfileDto>>
 {
     public string Username { get; set; }
     public string Password { get; set; }

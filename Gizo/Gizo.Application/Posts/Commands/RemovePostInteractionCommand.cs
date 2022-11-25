@@ -4,9 +4,9 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Commands;
 
-public class UpdatePostText : IRequest<OperationResult<Post>>
+public class RemovePostInteractionCommand : IRequest<OperationResult<PostInteraction>>
 {
-    public string NewText { get; set; }
     public Guid PostId { get; set; }
+    public Guid InteractionId { get; set; }
     public Guid UserProfileId { get; set; }
 }

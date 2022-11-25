@@ -5,11 +5,10 @@ using Gizo.Application.UserProfiles;
 using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update;
 
-namespace Gizo.Application.Identity.Handlers;
+namespace Gizo.Application.Identity.CommandHandlers;
 
-public class RemoveAccountHandler : IRequestHandler<RemoveAccount, OperationResult<bool>>
+public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, OperationResult<bool>>
 {
     private readonly DataContext _ctx;
 
@@ -17,7 +16,7 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccount, OperationResu
     {
         _ctx = ctx;
     }
-    public async Task<OperationResult<bool>> Handle(RemoveAccount request, 
+    public async Task<OperationResult<bool>> Handle(RemoveAccountCommand request, 
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();

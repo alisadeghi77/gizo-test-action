@@ -8,7 +8,7 @@ public class PostsController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetAllPosts(CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new GetAllPosts(), cancellationToken);
+        var result = await _mediator.Send(new GetAllPostsQuery(), cancellationToken);
         var mapped = _mapper.Map<List<PostResponse>>(result.Data);
         return result.IsError ? HandleErrorResponse(result.Errors) : Ok(mapped);
 
@@ -20,7 +20,7 @@ public class PostsController : BaseController
     public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
     {
         var postId = Guid.Parse(id);
-        var query = new GetPostById() { PostId = postId };
+        var query = new GetPostByIdQuery() { PostId = postId };
         var result = await _mediator.Send(query, cancellationToken);
         var mapped = _mapper.Map<PostResponse>(result.Data);
 
@@ -33,7 +33,7 @@ public class PostsController : BaseController
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
-        var command = new CreatePost()
+        var command = new CreatePostCommand()
         {
             UserProfileId = userProfileId,
             TextContent = newPost.TextContent
@@ -54,7 +54,7 @@ public class PostsController : BaseController
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
-        var command = new UpdatePostText()
+        var command = new UpdatePostTextCommand()
         {
             NewText = updatedPost.Text,
             PostId = Guid.Parse(id),
@@ -71,7 +71,7 @@ public class PostsController : BaseController
     public async Task<IActionResult> DeletePost(string id, CancellationToken cancellationToken)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
-        var command = new DeletePost() { PostId = Guid.Parse(id), UserProfileId = userProfileId };
+        var command = new DeletePostCommand() { PostId = Guid.Parse(id), UserProfileId = userProfileId };
         var result = await _mediator.Send(command, cancellationToken);
 
         return result.IsError ? HandleErrorResponse(result.Errors) : NoContent();
@@ -82,7 +82,7 @@ public class PostsController : BaseController
     [ValidateGuid("postId")]
     public async Task<IActionResult> GetCommentsByPostId(string postId, CancellationToken cancellationToken)
     {
-        var query = new GetPostComments() { PostId = Guid.Parse(postId) };
+        var query = new GetPostCommentsQuery() { PostId = Guid.Parse(postId) };
         var result = await _mediator.Send(query, cancellationToken);
 
         if (result.IsError) HandleErrorResponse(result.Errors);
@@ -100,7 +100,7 @@ public class PostsController : BaseController
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
-        var command = new AddPostComment()
+        var command = new AddPostCommentCommand()
         {
             PostId = Guid.Parse(postId),
             UserProfileId = userProfileId,
@@ -125,7 +125,7 @@ public class PostsController : BaseController
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
         var postGuid = Guid.Parse(postId);
         var commentGuid = Guid.Parse(commentId);
-        var command = new RemoveCommentFromPost
+        var command = new RemoveCommentFromPostCommand
         {
             UserProfileId = userProfileId,
             CommentId = commentGuid,
@@ -148,7 +148,7 @@ public class PostsController : BaseController
         var postGuid = Guid.Parse(postId);
         var commentGuid = Guid.Parse(commentId);
 
-        var command = new UpdatePostComment
+        var command = new UpdatePostCommentCommand
         {
             UserProfileId = userProfileId,
             PostId = postGuid,
@@ -167,7 +167,7 @@ public class PostsController : BaseController
     public async Task<IActionResult> GetPostInteractions(string postId, CancellationToken token)
     {
         var postGuid = Guid.Parse(postId);
-        var query = new GetPostInteractions { PostId = postGuid };
+        var query = new GetPostInteractionsQuery { PostId = postGuid };
         var result = await _mediator.Send(query, token);
 
         if (result.IsError) HandleErrorResponse(result.Errors);
@@ -185,7 +185,7 @@ public class PostsController : BaseController
     {
         var postGuid = Guid.Parse(postId);
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
-        var command = new AddInteraction
+        var command = new AddInteractionCommand
         {
             PostId = postGuid,
             UserProfileId = userProfileId,
@@ -210,7 +210,7 @@ public class PostsController : BaseController
         var postGuid = Guid.Parse(postId);
         var interactionGuid = Guid.Parse(interactionId);
         var userProfileGuid = HttpContext.GetUserProfileIdClaimValue();
-        var command = new RemovePostInteraction
+        var command = new RemovePostInteractionCommand
         {
             PostId = postGuid,
             InteractionId = interactionGuid,

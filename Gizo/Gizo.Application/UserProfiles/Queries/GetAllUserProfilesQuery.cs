@@ -2,9 +2,8 @@
 using Gizo.Application.Models;
 using MediatR;
 
-
 namespace Gizo.Application.UserProfiles.Queries;
 
-public class GetAllUserProfiles : IRequest<OperationResult<IEnumerable<UserProfile>>>
+public class GetAllUserProfilesQuery : IRequest<OperationResult<IEnumerable<UserProfile>>>
 {
 }

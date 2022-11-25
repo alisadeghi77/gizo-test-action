@@ -11,7 +11,8 @@ using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-namespace Gizo.Application.Identity.Handlers;
+
+namespace Gizo.Application.Identity.CommandHandlers;
 
 public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult<IdentityUserProfileDto>>
 {

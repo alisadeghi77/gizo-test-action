@@ -8,14 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.QueryHandlers;
 
-public class GetAllPostsHandler : IRequestHandler<GetAllPosts, OperationResult<List<Post>>>
+public class GetAllPostsHandler : IRequestHandler<GetAllPostsQuery, OperationResult<List<Post>>>
 {
     private readonly DataContext _ctx;
     public GetAllPostsHandler(DataContext ctx)
     {
         _ctx = ctx;
     }
-    public async Task<OperationResult<List<Post>>> Handle(GetAllPosts request, CancellationToken cancellationToken)
+    public async Task<OperationResult<List<Post>>> Handle(GetAllPostsQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<List<Post>>();
         try

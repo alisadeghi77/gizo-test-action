@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.QueryHandlers;
 
-public class GetPostCommentsHandler : IRequestHandler<GetPostComments, OperationResult<List<PostComment>>>
+public class GetPostCommentsHandler : IRequestHandler<GetPostCommentsQuery, OperationResult<List<PostComment>>>
 {
     private readonly DataContext _ctx;
 
@@ -17,7 +17,7 @@ public class GetPostCommentsHandler : IRequestHandler<GetPostComments, Operation
         _ctx = ctx;
     }
     
-    public async Task<OperationResult<List<PostComment>>> Handle(GetPostComments request, CancellationToken cancellationToken)
+    public async Task<OperationResult<List<PostComment>>> Handle(GetPostCommentsQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<List<PostComment>>();
         try

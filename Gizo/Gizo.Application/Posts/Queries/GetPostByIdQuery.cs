@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Queries;
 
-public class GetPostComments : IRequest<OperationResult<List<PostComment>>>
+public class GetPostByIdQuery : IRequest<OperationResult<Post>>
 {
     public Guid PostId { get; set; }
 }

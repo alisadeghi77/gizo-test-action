@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
-public class CreatePostHandler : IRequestHandler<CreatePost, OperationResult<Post>>
+public class CreatePostHandler : IRequestHandler<CreatePostCommand, OperationResult<Post>>
 {
     private readonly DataContext _ctx;
 
@@ -17,7 +17,7 @@ public class CreatePostHandler : IRequestHandler<CreatePost, OperationResult<Pos
         _ctx = ctx;
     }
     
-    public async Task<OperationResult<Post>> Handle(CreatePost request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Post>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<Post>();
         try

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
-public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteraction, OperationResult<PostInteraction>>
+public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteractionCommand, OperationResult<PostInteraction>>
 {
     private readonly DataContext _ctx;
 
@@ -16,7 +16,7 @@ public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteractio
     {
         _ctx = ctx;
     }
-    public async Task<OperationResult<PostInteraction>> Handle(RemovePostInteraction request, 
+    public async Task<OperationResult<PostInteraction>> Handle(RemovePostInteractionCommand request, 
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<PostInteraction>();

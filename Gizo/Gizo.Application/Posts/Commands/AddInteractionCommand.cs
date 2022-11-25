@@ -4,8 +4,9 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Commands;
 
-public class CreatePost : IRequest<OperationResult<Post>>
+public class AddInteractionCommand : IRequest<OperationResult<PostInteraction>>
 {
+    public Guid PostId { get; set; }
     public Guid UserProfileId { get; set; }
-    public string TextContent { get; set; }
+    public InteractionType Type { get; set; }
 }

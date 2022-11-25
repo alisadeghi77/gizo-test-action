@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.QueryHandlers;
 
-public class GetPostInteractionsHandler : IRequestHandler<GetPostInteractions, OperationResult<List<PostInteraction>>>
+public class GetPostInteractionsHandler : IRequestHandler<GetPostInteractionsQuery, OperationResult<List<PostInteraction>>>
 {
     private readonly DataContext _ctx;
 
@@ -17,7 +17,7 @@ public class GetPostInteractionsHandler : IRequestHandler<GetPostInteractions, O
         _ctx = ctx;
     }
     
-    public async Task<OperationResult<List<PostInteraction>>> Handle(GetPostInteractions request, 
+    public async Task<OperationResult<List<PostInteraction>>> Handle(GetPostInteractionsQuery request, 
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<List<PostInteraction>>();

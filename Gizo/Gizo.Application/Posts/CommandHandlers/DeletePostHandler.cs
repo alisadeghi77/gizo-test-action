@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
-public class DeletePostHandler : IRequestHandler<DeletePost, OperationResult<Post>>
+public class DeletePostHandler : IRequestHandler<DeletePostCommand, OperationResult<Post>>
 {
     private readonly DataContext _ctx;
 
@@ -17,7 +17,7 @@ public class DeletePostHandler : IRequestHandler<DeletePost, OperationResult<Pos
         _ctx = ctx;
     }
     
-    public async Task<OperationResult<Post>> Handle(DeletePost request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Post>> Handle(DeletePostCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<Post>();
         try

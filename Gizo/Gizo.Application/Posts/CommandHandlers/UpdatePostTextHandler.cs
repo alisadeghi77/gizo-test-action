@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
-public class UpdatePostTextHandler : IRequestHandler<UpdatePostText, OperationResult<Post>>
+public class UpdatePostTextHandler : IRequestHandler<UpdatePostTextCommand, OperationResult<Post>>
 {
     private readonly DataContext _ctx;
 
@@ -18,7 +18,7 @@ public class UpdatePostTextHandler : IRequestHandler<UpdatePostText, OperationRe
         _ctx = ctx;
     }
     
-    public async Task<OperationResult<Post>> Handle(UpdatePostText request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Post>> Handle(UpdatePostTextCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<Post>();
 

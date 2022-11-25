@@ -6,7 +6,7 @@ public class IdentitMappings : Profile
 {
     public IdentitMappings()
     {
-        CreateMap<UserRegistrationRequest, RegisterIdentity>();
+        CreateMap<UserRegistrationRequest, RegisterIdentityCommand>();
         CreateMap<LoginRequest, LoginCommand>();
         CreateMap<IdentityUserProfileDto, IdentityUserProfile>();
     }

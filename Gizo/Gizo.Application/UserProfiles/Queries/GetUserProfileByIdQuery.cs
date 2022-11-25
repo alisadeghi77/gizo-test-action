@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.UserProfiles.Queries;
 
-public class GetUserProfileById : IRequest<OperationResult<UserProfile>>
+public class GetUserProfileByIdQuery : IRequest<OperationResult<UserProfile>>
 {
     public Guid UserProfileId { get; set; }
 }

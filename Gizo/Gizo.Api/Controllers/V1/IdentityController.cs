@@ -9,7 +9,7 @@ public class IdentityController : BaseController
     [ValidateModel]
     public async Task<IActionResult> Register(UserRegistrationRequest registration, CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<RegisterIdentity>(registration);
+        var command = _mapper.Map<RegisterIdentityCommand>(registration);
         var result = await _mediator.Send(command, cancellationToken);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
@@ -38,7 +38,7 @@ public class IdentityController : BaseController
     {
         var identityUserGuid = Guid.Parse(identityUserId);
         var requestorGuid = HttpContext.GetIdentityIdClaimValue();
-        var command = new RemoveAccount
+        var command = new RemoveAccountCommand
         {
             IdentityUserId = identityUserGuid,
             RequestorGuid = requestorGuid
@@ -57,7 +57,7 @@ public class IdentityController : BaseController
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
-        var query = new GetCurrentUser { UserProfileId = userProfileId, ClaimsPrincipal = HttpContext.User};
+        var query = new GetCurrentUserQuery { UserProfileId = userProfileId, ClaimsPrincipal = HttpContext.User};
         var result = await _mediator.Send(query, token);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);

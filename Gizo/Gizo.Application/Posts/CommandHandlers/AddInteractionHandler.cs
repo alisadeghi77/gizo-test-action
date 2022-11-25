@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
-public class AddInteractionHandler : IRequestHandler<AddInteraction, OperationResult<PostInteraction>>
+public class AddInteractionHandler : IRequestHandler<AddInteractionCommand, OperationResult<PostInteraction>>
 {
     private readonly DataContext _ctx;
 
@@ -17,7 +17,7 @@ public class AddInteractionHandler : IRequestHandler<AddInteraction, OperationRe
         _ctx = ctx;
     }
     
-    public async Task<OperationResult<PostInteraction>> Handle(AddInteraction request, 
+    public async Task<OperationResult<PostInteraction>> Handle(AddInteractionCommand request, 
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<PostInteraction>();

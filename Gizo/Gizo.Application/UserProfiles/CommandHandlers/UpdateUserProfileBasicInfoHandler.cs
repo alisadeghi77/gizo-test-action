@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.UserProfiles.CommandHandlers;
 
-internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserProfileBasicInfo, OperationResult<UserProfile>>
+internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserProfileBasicInfoCommand, OperationResult<UserProfile>>
 {
     private readonly DataContext _ctx;
 
@@ -17,7 +17,7 @@ internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserPro
     {
         _ctx = ctx;
     }
-    public async Task<OperationResult<UserProfile>> Handle(UpdateUserProfileBasicInfo request,
+    public async Task<OperationResult<UserProfile>> Handle(UpdateUserProfileBasicInfoCommand request,
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<UserProfile>();

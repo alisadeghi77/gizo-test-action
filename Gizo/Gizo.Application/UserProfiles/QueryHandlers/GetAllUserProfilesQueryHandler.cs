@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Gizo.Application.UserProfiles.QueryHandlers;
 
 internal class GetAllUserProfilesQueryHandler
-    : IRequestHandler<GetAllUserProfiles, OperationResult<IEnumerable<UserProfile>>>
+    : IRequestHandler<GetAllUserProfilesQuery, OperationResult<IEnumerable<UserProfile>>>
 {
     private readonly DataContext _ctx;
     public GetAllUserProfilesQueryHandler(DataContext ctx)
@@ -16,7 +16,7 @@ internal class GetAllUserProfilesQueryHandler
         _ctx = ctx;
     }
 
-    public async Task<OperationResult<IEnumerable<UserProfile>>> Handle(GetAllUserProfiles request,
+    public async Task<OperationResult<IEnumerable<UserProfile>>> Handle(GetAllUserProfilesQuery request,
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<IEnumerable<UserProfile>>();

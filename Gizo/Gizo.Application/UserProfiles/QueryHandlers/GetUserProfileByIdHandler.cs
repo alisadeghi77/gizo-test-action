@@ -9,7 +9,7 @@ using Gizo.Application.Models;
 namespace Gizo.Application.UserProfiles.QueryHandlers;
 
 internal class GetUserProfileByIdHandler
-    : IRequestHandler<GetUserProfileById, OperationResult<UserProfile>>
+    : IRequestHandler<GetUserProfileByIdQuery, OperationResult<UserProfile>>
 {
     private readonly DataContext _ctx;
 
@@ -18,7 +18,7 @@ internal class GetUserProfileByIdHandler
         _ctx = ctx;
     }
 
-    public async Task<OperationResult<UserProfile>> Handle(GetUserProfileById request, CancellationToken cancellationToken)
+    public async Task<OperationResult<UserProfile>> Handle(GetUserProfileByIdQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<UserProfile>();
 

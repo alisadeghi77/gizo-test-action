@@ -1,5 +1,5 @@
 ﻿using Gizo.Domain.Contracts.Base;
-using Gizo.Domain.Contracts.Enumeration;
+using Gizo.Domain.Contracts.Enums;
 using System.Linq.Expressions;
 
 namespace Gizo.Domain.Contracts.Repository;

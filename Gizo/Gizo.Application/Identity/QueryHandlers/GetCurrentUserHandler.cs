@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Gizo.Application.Identity.QueryHandlers;
 
 public class GetCurrentUserHandler 
-    : IRequestHandler<GetCurrentUser, OperationResult<IdentityUserProfileDto>>
+    : IRequestHandler<GetCurrentUserQuery, OperationResult<IdentityUserProfileDto>>
 {
     private readonly DataContext _ctx;
     private readonly UserManager<IdentityUser> _userManager;
@@ -25,7 +25,7 @@ public class GetCurrentUserHandler
         _mapper = mapper;
     }
 
-    public async Task<OperationResult<IdentityUserProfileDto>> Handle(GetCurrentUser request, 
+    public async Task<OperationResult<IdentityUserProfileDto>> Handle(GetCurrentUserQuery request, 
         CancellationToken cancellationToken)
     {
         var identity = await _userManager.GetUserAsync(request.ClaimsPrincipal);

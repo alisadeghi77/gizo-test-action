@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.UserProfiles.Commands;
 
-public class UpdateUserProfileBasicInfo : IRequest<OperationResult<UserProfile>>
+public class UpdateUserProfileBasicInfoCommand : IRequest<OperationResult<UserProfile>>
 {
     public Guid UserProfileId { get; set; }
     public string FirstName { get; set; }

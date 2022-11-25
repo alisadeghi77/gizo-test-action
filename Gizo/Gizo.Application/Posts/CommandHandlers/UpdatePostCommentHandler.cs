@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Gizo.Application.Posts.CommandHandlers;
 
 public class UpdatePostCommentHandler 
-    : IRequestHandler<UpdatePostComment, OperationResult<PostComment>>
+    : IRequestHandler<UpdatePostCommentCommand, OperationResult<PostComment>>
 {
     private readonly DataContext _ctx;
     private readonly OperationResult<PostComment> _result;
@@ -20,7 +20,7 @@ public class UpdatePostCommentHandler
         _result = new OperationResult<PostComment>();
     }
     
-    public async Task<OperationResult<PostComment>> Handle(UpdatePostComment request, 
+    public async Task<OperationResult<PostComment>> Handle(UpdatePostCommentCommand request, 
         CancellationToken cancellationToken)
     {
         var post = await _ctx.Posts
