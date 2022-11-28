@@ -82,7 +82,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, identityUser.Email),
             new Claim("IdentityId", identityUser.Id),
-            new Claim("UserProfileId", userProfile.UserProfileId.ToString())
+            new Claim("UserProfileId", userProfile.Id.ToString())
         });
 
         var token = _identityService.CreateSecurityToken(claimsIdentity);

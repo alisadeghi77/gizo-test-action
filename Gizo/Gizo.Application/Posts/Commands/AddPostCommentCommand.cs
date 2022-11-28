@@ -6,7 +6,7 @@ namespace Gizo.Application.Posts.Commands;
 
 public class AddPostCommentCommand : IRequest<OperationResult<PostComment>>
 {
-    public Guid PostId { get; set; }
-    public Guid UserProfileId { get; set; }
+    public long PostId { get; set; }
+    public long UserProfileId { get; set; }
     public string CommentText { get; set; }
 }

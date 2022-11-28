@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Gizo.Infrastructure.Repository;
 
-public class GenericRepository<TEntity> : IGenericRepository<TEntity>
+public class Repository<TEntity> : IRepository<TEntity>
     where TEntity : class, IEntity
 {
     private readonly DataContext _context; // TODO
@@ -14,7 +14,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
     private readonly IMapper _mapper;
     private bool _isTrackingEnabled = false;
 
-    public GenericRepository(DataContext context, IMapper mapper)
+    public Repository(DataContext context, IMapper mapper)
     {
         _context = context;
         _dbSet = context.Set<TEntity>();
@@ -35,7 +35,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
         return _dbSet.Find(id);
     }
 
-    public virtual async Task<TEntity> GetByIdAsync(object id)
+    public virtual async Task<TEntity?> GetByIdAsync(object id)
     {
         return await _dbSet.FindAsync(id);
     }
@@ -125,13 +125,13 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
         }
     }
 
-    public IGenericRepository<TEntity> EnableTracking()
+    public IRepository<TEntity> EnableTracking()
     {
         _isTrackingEnabled = true;
         return this;
     }
 
-    public IGenericRepository<TEntity> DisableTracking()
+    public IRepository<TEntity> DisableTracking()
     {
         _isTrackingEnabled = false;
         return this;

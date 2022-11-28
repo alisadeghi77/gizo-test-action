@@ -16,11 +16,9 @@ public class PostsController : BaseController
 
     [HttpGet]
     [Route(ApiRoutes.Posts.IdRoute)]
-    [ValidateGuid("id")]
-    public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
     {
-        var postId = Guid.Parse(id);
-        var query = new GetPostByIdQuery() { PostId = postId };
+        var query = new GetPostByIdQuery() { PostId = id };
         var result = await _mediator.Send(query, cancellationToken);
         var mapped = _mapper.Map<PostResponse>(result.Data);
 
@@ -48,16 +46,15 @@ public class PostsController : BaseController
 
     [HttpPatch]
     [Route(ApiRoutes.Posts.IdRoute)]
-    [ValidateGuid("id")]
     [ValidateModel]
-    public async Task<IActionResult> UpdatePostText([FromBody] PostUpdateRequest updatedPost, string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdatePostText([FromBody] PostUpdateRequest updatedPost, long id, CancellationToken cancellationToken)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
         var command = new UpdatePostTextCommand()
         {
             NewText = updatedPost.Text,
-            PostId = Guid.Parse(id),
+            PostId = id,
             UserProfileId = userProfileId
         };
         var result = await _mediator.Send(command, cancellationToken);
@@ -67,11 +64,10 @@ public class PostsController : BaseController
 
     [HttpDelete]
     [Route(ApiRoutes.Posts.IdRoute)]
-    [ValidateGuid("id")]
-    public async Task<IActionResult> DeletePost(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeletePost(long id, CancellationToken cancellationToken)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
-        var command = new DeletePostCommand() { PostId = Guid.Parse(id), UserProfileId = userProfileId };
+        var command = new DeletePostCommand() { PostId = id, UserProfileId = userProfileId };
         var result = await _mediator.Send(command, cancellationToken);
 
         return result.IsError ? HandleErrorResponse(result.Errors) : NoContent();
@@ -79,10 +75,9 @@ public class PostsController : BaseController
 
     [HttpGet]
     [Route(ApiRoutes.Posts.PostComments)]
-    [ValidateGuid("postId")]
-    public async Task<IActionResult> GetCommentsByPostId(string postId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCommentsByPostId(long postId, CancellationToken cancellationToken)
     {
-        var query = new GetPostCommentsQuery() { PostId = Guid.Parse(postId) };
+        var query = new GetPostCommentsQuery() { PostId = postId };
         var result = await _mediator.Send(query, cancellationToken);
 
         if (result.IsError) HandleErrorResponse(result.Errors);
@@ -93,16 +88,15 @@ public class PostsController : BaseController
 
     [HttpPost]
     [Route(ApiRoutes.Posts.PostComments)]
-    [ValidateGuid("postId")]
     [ValidateModel]
-    public async Task<IActionResult> AddCommentToPost(string postId, [FromBody] PostCommentCreateRequest comment,
+    public async Task<IActionResult> AddCommentToPost(long postId, [FromBody] PostCommentCreateRequest comment,
         CancellationToken cancellationToken)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
         var command = new AddPostCommentCommand()
         {
-            PostId = Guid.Parse(postId),
+            PostId = postId,
             UserProfileId = userProfileId,
             CommentText = comment.Text
         };
@@ -118,18 +112,15 @@ public class PostsController : BaseController
 
     [HttpDelete]
     [Route(ApiRoutes.Posts.CommentById)]
-    [ValidateGuid("postId", "commentId")]
-    public async Task<IActionResult> RemoveCommentFromPost(string postId, string commentId,
+    public async Task<IActionResult> RemoveCommentFromPost(long postId, long commentId,
         CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
-        var postGuid = Guid.Parse(postId);
-        var commentGuid = Guid.Parse(commentId);
         var command = new RemoveCommentFromPostCommand
         {
             UserProfileId = userProfileId,
-            CommentId = commentGuid,
-            PostId = postGuid
+            CommentId = commentId,
+            PostId = postId
         };
 
         var result = await _mediator.Send(command, token);
@@ -139,20 +130,17 @@ public class PostsController : BaseController
 
     [HttpPut]
     [Route(ApiRoutes.Posts.CommentById)]
-    [ValidateGuid("postId", "commentId")]
     [ValidateModel]
-    public async Task<IActionResult> UpdateCommentText(string postId, string commentId,
+    public async Task<IActionResult> UpdateCommentText(long postId, long commentId,
         PostCommentUpdateRequest updatedComment, CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
-        var postGuid = Guid.Parse(postId);
-        var commentGuid = Guid.Parse(commentId);
 
         var command = new UpdatePostCommentCommand
         {
             UserProfileId = userProfileId,
-            PostId = postGuid,
-            CommentId = commentGuid,
+            PostId = postId,
+            CommentId = commentId,
             UpdatedText = updatedComment.Text
         };
 
@@ -163,11 +151,9 @@ public class PostsController : BaseController
 
     [HttpGet]
     [Route(ApiRoutes.Posts.PostInteractions)]
-    [ValidateGuid("postId")]
-    public async Task<IActionResult> GetPostInteractions(string postId, CancellationToken token)
+    public async Task<IActionResult> GetPostInteractions(long postId, CancellationToken token)
     {
-        var postGuid = Guid.Parse(postId);
-        var query = new GetPostInteractionsQuery { PostId = postGuid };
+        var query = new GetPostInteractionsQuery { PostId = postId };
         var result = await _mediator.Send(query, token);
 
         if (result.IsError) HandleErrorResponse(result.Errors);
@@ -178,16 +164,14 @@ public class PostsController : BaseController
 
     [HttpPost]
     [Route(ApiRoutes.Posts.PostInteractions)]
-    [ValidateGuid("postId")]
     [ValidateModel]
-    public async Task<IActionResult> AddPostInteraction(string postId, PostInteractionCreateRequest interaction,
+    public async Task<IActionResult> AddPostInteraction(long postId, PostInteractionCreateRequest interaction,
         CancellationToken token)
     {
-        var postGuid = Guid.Parse(postId);
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
         var command = new AddInteractionCommand
         {
-            PostId = postGuid,
+            PostId = postId,
             UserProfileId = userProfileId,
             Type = interaction.Type
         };
@@ -203,17 +187,14 @@ public class PostsController : BaseController
 
     [HttpDelete]
     [Route(ApiRoutes.Posts.InteractionById)]
-    [ValidateGuid("postId", "interactionId")]
-    public async Task<IActionResult> RemovePostInteraction(string postId, string interactionId,
+    public async Task<IActionResult> RemovePostInteraction(long postId, long interactionId,
         CancellationToken token)
     {
-        var postGuid = Guid.Parse(postId);
-        var interactionGuid = Guid.Parse(interactionId);
         var userProfileGuid = HttpContext.GetUserProfileIdClaimValue();
         var command = new RemovePostInteractionCommand
         {
-            PostId = postGuid,
-            InteractionId = interactionGuid,
+            PostId = postId,
+            InteractionId = interactionId,
             UserProfileId = userProfileGuid
         };
 

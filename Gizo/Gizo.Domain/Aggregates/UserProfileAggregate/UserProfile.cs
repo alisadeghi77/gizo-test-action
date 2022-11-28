@@ -1,11 +1,12 @@
-﻿namespace Gizo.Domain.Aggregates.UserProfileAggregate;
+﻿using Gizo.Domain.Contracts.Base;
 
-public class UserProfile
+namespace Gizo.Domain.Aggregates.UserProfileAggregate;
+
+public class UserProfile: BaseEntity<long>
 {
     private UserProfile()
     {
     }
-    public Guid UserProfileId { get; private set; }
     public string IdentityId { get; private set; }
     public BasicInfo BasicInfo { get; private set; }
     public DateTime DateCreated { get; private set; }

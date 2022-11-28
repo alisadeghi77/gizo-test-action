@@ -25,28 +25,26 @@ public class IdentityController : BaseController
         var command = _mapper.Map<LoginCommand>(login);
         var result = await _mediator.Send(command, cancellationToken);
 
-        if (result.IsError) return HandleErrorResponse(result.Errors);
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
 
         return Ok(_mapper.Map<IdentityUserProfile>(result.Data));
     }
 
     [HttpDelete]
     [Route(ApiRoutes.Identity.IdentityById)]
-    [ValidateGuid("identityUserId")]
     [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> DeleteAccount(string identityUserId, CancellationToken token)
+    public async Task<IActionResult> DeleteAccount(long identityUserId, CancellationToken token)
     {
-        var identityUserGuid = Guid.Parse(identityUserId);
-        var requestorGuid = HttpContext.GetIdentityIdClaimValue();
         var command = new RemoveAccountCommand
         {
-            IdentityUserId = identityUserGuid,
-            RequestorGuid = requestorGuid
+            IdentityUserId = identityUserId,
+            RequestorGuid = HttpContext.GetIdentityIdClaimValue()
         };
         var result = await _mediator.Send(command, token);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
-        
+
         return NoContent();
     }
 
@@ -61,7 +59,7 @@ public class IdentityController : BaseController
         var result = await _mediator.Send(query, token);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
-        
+
         return Ok(_mapper.Map<IdentityUserProfile>(result.Data));
     }
 }

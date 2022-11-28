@@ -9,8 +9,8 @@ public interface IFetchQueryBuilder<TEntity>
     List<TEntity> ToList();
     Task<List<TEntity>> ToListAsync();
 
-    TEntity First();
-    Task<TEntity> FirstAsync();
+    TEntity? First();
+    Task<TEntity?> FirstAsync();
     
     PagingResult<TEntity> ToPaging();
     Task<PagingResult<TEntity>> ToPagingAsync();

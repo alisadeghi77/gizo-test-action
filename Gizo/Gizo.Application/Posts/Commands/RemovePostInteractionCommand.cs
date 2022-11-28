@@ -6,7 +6,7 @@ namespace Gizo.Application.Posts.Commands;
 
 public class RemovePostInteractionCommand : IRequest<OperationResult<PostInteraction>>
 {
-    public Guid PostId { get; set; }
-    public Guid InteractionId { get; set; }
-    public Guid UserProfileId { get; set; }
+    public long PostId { get; set; }
+    public long InteractionId { get; set; }
+    public long UserProfileId { get; set; }
 }

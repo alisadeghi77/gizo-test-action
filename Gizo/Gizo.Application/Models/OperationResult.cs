@@ -6,7 +6,9 @@ public class OperationResult<T>
 {
     public T Data { get; set; }
     public bool IsError {get; private set;}
-    public List<Error> Errors {get; } = new List<Error>();
+
+    private List<Error> _errors = new();
+    public IReadOnlyCollection<Error> Errors => _errors;
 
     /// <summary>
     /// Adds an error to the Error list and sets the IsError flag to true
@@ -37,7 +39,7 @@ public class OperationResult<T>
 
     private void HandleError(ErrorCode code, string message)
     {
-        Errors.Add(new Error {Code = code, Message = message});
+        _errors.Add(new Error {Code = code, Message = message});
         IsError = true;
     }
 }

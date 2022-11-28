@@ -6,7 +6,7 @@ namespace Gizo.Application.UserProfiles.Commands;
 
 public class UpdateUserProfileBasicInfoCommand : IRequest<OperationResult<UserProfile>>
 {
-    public Guid UserProfileId { get; set; }
+    public long UserProfileId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string EmailAddress { get; set; }

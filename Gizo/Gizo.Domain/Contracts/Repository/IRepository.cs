@@ -2,13 +2,13 @@
 
 namespace Gizo.Domain.Contracts.Repository;
 
-public interface IGenericRepository<TEntity> where TEntity : class, IEntity
+public interface IRepository<TEntity> where TEntity : class, IEntity
 {
     IQueryable<TEntity> Query();
 
     IQueryBuilder<TEntity> Get();
     TEntity GetById(object id);
-    Task<TEntity> GetByIdAsync(object id);
+    Task<TEntity?> GetByIdAsync(object id);
 
     void Insert(TEntity entity);
     void Insert(IEnumerable<TEntity> entityList);
@@ -23,6 +23,6 @@ public interface IGenericRepository<TEntity> where TEntity : class, IEntity
     void Delete(TEntity entityToDelete);
     Task DeleteAsync(object id);
 
-    IGenericRepository<TEntity> EnableTracking();
-    IGenericRepository<TEntity> DisableTracking();
+    IRepository<TEntity> EnableTracking();
+    IRepository<TEntity> DisableTracking();
 }

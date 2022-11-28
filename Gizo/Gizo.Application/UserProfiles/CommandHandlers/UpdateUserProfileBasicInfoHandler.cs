@@ -1,21 +1,24 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.UserProfiles.Commands;
-using Gizo.Infrastructure;
 using Gizo.Domain.Aggregates.UserProfileAggregate;
+using Gizo.Domain.Contracts.Repository;
 using Gizo.Domain.Exceptions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.UserProfiles.CommandHandlers;
 
 internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserProfileBasicInfoCommand, OperationResult<UserProfile>>
 {
-    private readonly DataContext _ctx;
+    private readonly IRepository<UserProfile> _userRepository;
+    private readonly IUnitOfWork _uow;
 
-    public UpdateUserProfileBasicInfoHandler(DataContext ctx)
+    public UpdateUserProfileBasicInfoHandler(
+        IRepository<UserProfile> userRepository,
+        IUnitOfWork uow)
     {
-        _ctx = ctx;
+        _userRepository = userRepository;
+        _uow = uow;
     }
     public async Task<OperationResult<UserProfile>> Handle(UpdateUserProfileBasicInfoCommand request,
         CancellationToken cancellationToken)
@@ -24,8 +27,10 @@ internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserPro
 
         try
         {
-            var userProfile = await _ctx.UserProfiles
-                .FirstOrDefaultAsync(up => up.UserProfileId == request.UserProfileId, cancellationToken: cancellationToken);
+            var userProfile = await _userRepository
+                .Get()
+                .Filter(_ => _.Id == request.UserProfileId)
+                .FirstAsync();
 
             if (userProfile is null)
             {
@@ -39,8 +44,8 @@ internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserPro
 
             userProfile.UpdateBasicInfo(basicInfo);
 
-            _ctx.UserProfiles.Update(userProfile);
-            await _ctx.SaveChangesAsync(cancellationToken);
+             _userRepository.Update(userProfile);
+            await _uow.SaveChangesAsync(cancellationToken);
 
             result.Data = userProfile;
             return result;

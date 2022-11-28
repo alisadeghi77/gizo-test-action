@@ -2,57 +2,69 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Commands;
-using Gizo.Infrastructure;
+using Gizo.Domain.Contracts.Repository;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
 public class RemoveCommentFromPostHandler 
     : IRequestHandler<RemoveCommentFromPostCommand, OperationResult<PostComment>>
 {
-    private readonly DataContext _ctx;
-    private readonly OperationResult<PostComment> _result;
+    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<PostComment> _commentRepository;
+    private readonly IUnitOfWork _uow;
 
-    public RemoveCommentFromPostHandler(DataContext ctx)
+    public RemoveCommentFromPostHandler(
+        IRepository<Post> postRepository,
+        IRepository<PostComment> commentRepository,
+        IUnitOfWork uow)
     {
-        _ctx = ctx;
-        _result = new OperationResult<PostComment>();
+        _postRepository = postRepository;
+        _commentRepository = commentRepository;
+        _uow = uow;
     }
-    
+
     public async Task<OperationResult<PostComment>> Handle(RemoveCommentFromPostCommand request, 
         CancellationToken cancellationToken)
     {
-        var post = await _ctx.Posts
-            .Include(p => p.Comments)
-            .FirstOrDefaultAsync(p => p.PostId == request.PostId, cancellationToken);
+        var result = new OperationResult<PostComment>();
 
-        if (post == null)
+        var postExists = await _postRepository
+            .Get()
+            .Filter(_ => _.Id == request.PostId)
+            .AnyAsync();
+
+        if (!postExists)
         {
-            _result.AddError(ErrorCode.NotFound, PostsErrorMessages.PostNotFound);
-            return _result;
+            result.AddError(ErrorCode.NotFound,
+                string.Format(PostsErrorMessages.PostNotFound, request.PostId));
+            return result;
         }
 
-        var comment = post.Comments
-            .FirstOrDefault(c => c.CommentId == request.CommentId);
+        var comment = await _commentRepository
+            .Get()
+            .Filter(_ =>
+                _.Id == request.CommentId
+                && _.PostId == request.PostId)
+            .FirstAsync();
+
         if (comment == null)
         {
-            _result.AddError(ErrorCode.NotFound, PostsErrorMessages.PostCommentNotFound);
-            return _result;
+            result.AddError(ErrorCode.NotFound, PostsErrorMessages.PostCommentNotFound);
+            return result;
         }
 
         if (comment.UserProfileId != request.UserProfileId)
         {
-            _result.AddError(ErrorCode.CommentRemovalNotAuthorized, 
+            result.AddError(ErrorCode.CommentRemovalNotAuthorized, 
                 PostsErrorMessages.CommentRemovalNotAuthorized);
-            return _result;
+            return result;
         }
-        
-        post.RemoveComment(comment);
-        _ctx.Posts.Update(post);
-        await _ctx.SaveChangesAsync(cancellationToken);
 
-        _result.Data = comment;
-        return _result;
+        await _commentRepository.DeleteAsync(request.CommentId);
+        await _uow.SaveChangesAsync(cancellationToken);
+
+        result.Data = comment;
+        return result;
     }
 }

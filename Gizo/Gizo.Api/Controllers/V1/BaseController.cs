@@ -5,12 +5,12 @@
 [ApiController]
 public class BaseController : ControllerBase
 {
-    private IMediator _mediatorInstance;
-    private IMapper _mapperInstance;
-    protected IMediator _mediator => _mediatorInstance ??= HttpContext.RequestServices.GetService<IMediator>();
-    protected IMapper _mapper => _mapperInstance ??= HttpContext.RequestServices.GetService<IMapper>();
+    private IMediator? _mediatorInstance;
+    private IMapper? _mapperInstance;
+    protected IMediator _mediator => _mediatorInstance ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+    protected IMapper _mapper => _mapperInstance ??= HttpContext.RequestServices.GetRequiredService<IMapper>();
 
-    protected IActionResult HandleErrorResponse(List<Error> errors)
+    protected IActionResult HandleErrorResponse(IReadOnlyCollection<Error> errors)
     {
         var apiError = new ErrorResponse();
 
@@ -29,7 +29,7 @@ public class BaseController : ControllerBase
         apiError.StatusCode = 400;
         apiError.StatusPhrase = "Bad request";
         apiError.Timestamp = DateTime.Now;
-        errors.ForEach(e => apiError.Errors.Add(e.Message));
+        errors.ToList().ForEach(e => apiError.Errors.Add(e.Message));
         return StatusCode(400, apiError);
     }
 }

@@ -122,7 +122,7 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, identity.Email),
             new Claim("IdentityId", identity.Id),
-            new Claim("UserProfileId", profile.UserProfileId.ToString())
+            new Claim("UserProfileId", profile.Id.ToString())
         });
 
         var token = _identityService.CreateSecurityToken(claimsIdentity);

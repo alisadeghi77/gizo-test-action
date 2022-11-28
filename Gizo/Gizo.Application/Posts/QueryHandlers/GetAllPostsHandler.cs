@@ -1,27 +1,27 @@
 ﻿using Gizo.Domain.Aggregates.PostAggregate;
-using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Queries;
-using Gizo.Infrastructure;
+using Gizo.Domain.Contracts.Repository;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.QueryHandlers;
 
 public class GetAllPostsHandler : IRequestHandler<GetAllPostsQuery, OperationResult<List<Post>>>
 {
-    private readonly DataContext _ctx;
-    public GetAllPostsHandler(DataContext ctx)
+    private readonly IRepository<Post> _postRepository;
+
+    public GetAllPostsHandler(IRepository<Post> postRepository)
     {
-        _ctx = ctx;
+        _postRepository = postRepository;
     }
     public async Task<OperationResult<List<Post>>> Handle(GetAllPostsQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<List<Post>>();
         try
         {
-            var posts = await _ctx.Posts.ToListAsync();
-            result.Data = posts;
+            result.Data = await _postRepository
+                .Get()
+                .ToListAsync();
         }
         catch (Exception e)
         {

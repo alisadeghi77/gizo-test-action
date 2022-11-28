@@ -7,6 +7,6 @@ namespace Gizo.Application.Identity.Queries;
 
 public class GetCurrentUserQuery : IRequest<OperationResult<IdentityUserProfileDto>>
 {
-    public Guid UserProfileId { get; set; }
+    public long UserProfileId { get; set; }
     public ClaimsPrincipal ClaimsPrincipal { get; set; }
 }

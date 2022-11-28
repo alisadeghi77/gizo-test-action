@@ -2,21 +2,24 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Queries;
-using Gizo.Infrastructure;
+using Gizo.Domain.Contracts.Repository;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.QueryHandlers;
 
 public class GetPostInteractionsHandler : IRequestHandler<GetPostInteractionsQuery, OperationResult<List<PostInteraction>>>
 {
-    private readonly DataContext _ctx;
+    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<PostInteraction> _interactionRepository;
 
-    public GetPostInteractionsHandler(DataContext ctx)
+    public GetPostInteractionsHandler(
+        IRepository<Post> postRepository,
+        IRepository<PostInteraction> interactionRepository)
     {
-        _ctx = ctx;
+        _postRepository = postRepository;
+        _interactionRepository = interactionRepository;
     }
-    
+
     public async Task<OperationResult<List<PostInteraction>>> Handle(GetPostInteractionsQuery request, 
         CancellationToken cancellationToken)
     {
@@ -24,18 +27,21 @@ public class GetPostInteractionsHandler : IRequestHandler<GetPostInteractionsQue
 
         try
         {
-            var post = await _ctx.Posts
-                .Include(p => p.Interactions)
-                .ThenInclude(i => i.UserProfile)
-                .FirstOrDefaultAsync(p => p.PostId == request.PostId, cancellationToken);
+            var postExists = await _postRepository
+                .Get()
+                .Filter(_ => _.Id == request.PostId)
+                .AnyAsync();
 
-            if (post == null)
+            if (!postExists)
             {
-                result.AddError(ErrorCode.NotFound, PostsErrorMessages.PostNotFound);
+                result.AddError(ErrorCode.NotFound, "Post not found");
                 return result;
             }
-            
-            result.Data = post.Interactions.ToList();
+
+            result.Data = await _interactionRepository
+                .Get()
+                .Filter(_ => _.PostId == request.PostId)
+                .ToListAsync();
 
         }
         catch (Exception e)

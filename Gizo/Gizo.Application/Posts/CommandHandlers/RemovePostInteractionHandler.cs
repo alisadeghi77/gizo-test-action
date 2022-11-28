@@ -2,39 +2,50 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Commands;
-using Gizo.Infrastructure;
+using Gizo.Domain.Contracts.Repository;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
 public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteractionCommand, OperationResult<PostInteraction>>
 {
-    private readonly DataContext _ctx;
+    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<PostInteraction> _interactionRepository;
+    private readonly IUnitOfWork _uow;
 
-    public RemovePostInteractionHandler(DataContext ctx)
+    public RemovePostInteractionHandler(
+        IRepository<Post> postRepository,
+        IRepository<PostInteraction> interactionRepository,
+        IUnitOfWork uow)
     {
-        _ctx = ctx;
+        _postRepository = postRepository;
+        _interactionRepository = interactionRepository;
+        _uow = uow;
     }
-    public async Task<OperationResult<PostInteraction>> Handle(RemovePostInteractionCommand request, 
+    public async Task<OperationResult<PostInteraction>> Handle(RemovePostInteractionCommand request,
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<PostInteraction>();
         try
         {
-            var post = await _ctx.Posts
-                .Include(p => p.Interactions)
-                .FirstOrDefaultAsync(p => p.PostId == request.PostId, cancellationToken);
+            var postExists = await _postRepository
+                .Get()
+                .Filter(_ => _.Id == request.PostId)
+                .AnyAsync();
 
-            if (post is null)
+            if (!postExists)
             {
                 result.AddError(ErrorCode.NotFound,
                     string.Format(PostsErrorMessages.PostNotFound, request.PostId));
                 return result;
             }
 
-            var interaction = post.Interactions.FirstOrDefault(i
-                => i.InteractionId == request.InteractionId);
+            var interaction = await _interactionRepository
+                .Get()
+                .Filter(_ =>
+                    _.Id == request.InteractionId
+                    && _.PostId == request.PostId)
+                .FirstAsync();
 
             if (interaction == null)
             {
@@ -48,10 +59,9 @@ public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteractio
                     PostsErrorMessages.InteractionRemovalNotAuthorized);
                 return result;
             }
-            
-            post.RemoveInteraction(interaction);
-            _ctx.Posts.Update(post);
-            await _ctx.SaveChangesAsync(cancellationToken);
+
+            _interactionRepository.Delete(interaction);
+            await _uow.SaveChangesAsync(cancellationToken);
 
             result.Data = interaction;
         }

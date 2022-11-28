@@ -1,26 +1,27 @@
 ﻿using AutoMapper;
-using Gizo.Application.Enums;
 using Gizo.Application.Identity.Dtos;
 using Gizo.Application.Identity.Queries;
 using Gizo.Application.Models;
-using Gizo.Infrastructure;
+using Gizo.Domain.Aggregates.UserProfileAggregate;
+using Gizo.Domain.Contracts.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Identity.QueryHandlers;
 
 public class GetCurrentUserHandler 
     : IRequestHandler<GetCurrentUserQuery, OperationResult<IdentityUserProfileDto>>
 {
-    private readonly DataContext _ctx;
+    private readonly IRepository<UserProfile> _userRepository;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IMapper _mapper;
-    private OperationResult<IdentityUserProfileDto> _result = new();
 
-    public GetCurrentUserHandler(DataContext ctx, UserManager<IdentityUser> userManager, IMapper mapper)
+    public GetCurrentUserHandler(
+        IRepository<UserProfile> userRepository,
+        UserManager<IdentityUser> userManager,
+        IMapper mapper)
     {
-        _ctx = ctx;
+        _userRepository = userRepository;
         _userManager = userManager;
         _mapper = mapper;
     }
@@ -28,13 +29,16 @@ public class GetCurrentUserHandler
     public async Task<OperationResult<IdentityUserProfileDto>> Handle(GetCurrentUserQuery request, 
         CancellationToken cancellationToken)
     {
+        var result = new OperationResult<IdentityUserProfileDto>();
         var identity = await _userManager.GetUserAsync(request.ClaimsPrincipal);
 
-        var profile = await _ctx.UserProfiles
-            .FirstOrDefaultAsync(up => up.UserProfileId == request.UserProfileId, cancellationToken);
+        var profile = await _userRepository
+            .Get()
+            .Filter(_ => _.Id == request.UserProfileId)
+            .FirstAsync();
 
-        _result.Data = _mapper.Map<IdentityUserProfileDto>(profile);
-        _result.Data.UserName = identity.UserName;
-        return _result;
+        result.Data = _mapper.Map<IdentityUserProfileDto>(profile);
+        result.Data.UserName = identity.UserName;
+        return result;
     }
 }

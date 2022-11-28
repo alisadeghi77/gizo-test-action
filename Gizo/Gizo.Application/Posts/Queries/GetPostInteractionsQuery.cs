@@ -6,5 +6,5 @@ namespace Gizo.Application.Posts.Queries;
 
 public class GetPostInteractionsQuery : IRequest<OperationResult<List<PostInteraction>>>
 {
-    public Guid PostId { get; set; }
+    public long PostId { get; set; }
 }

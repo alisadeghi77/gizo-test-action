@@ -35,13 +35,13 @@ public class FetchQueryBuilder<TEntity> : IFetchQueryBuilder<TEntity>
         return await Query.ToListAsync();
     }
 
-    public TEntity First()
+    public TEntity? First()
     {
         HandlePaging();
         return Query.FirstOrDefault();
     }
 
-    public async Task<TEntity> FirstAsync()
+    public async Task<TEntity?> FirstAsync()
     {
         HandlePaging();
         return await Query.FirstOrDefaultAsync();

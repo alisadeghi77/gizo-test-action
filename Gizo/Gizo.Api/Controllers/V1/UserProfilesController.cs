@@ -15,10 +15,9 @@ public class UserProfilesController : BaseController
 
     [Route(ApiRoutes.UserProfiles.IdRoute)]
     [HttpGet]
-    [ValidateGuid("id")]
-    public async Task<IActionResult> GetUserProfileById(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUserProfileById(long id, CancellationToken cancellationToken)
     {
-        var query = new GetUserProfileByIdQuery { UserProfileId = Guid.Parse(id) };
+        var query = new GetUserProfileByIdQuery { UserProfileId = id };
         var response = await _mediator.Send(query, cancellationToken);
 
         if (response.IsError)
@@ -31,11 +30,10 @@ public class UserProfilesController : BaseController
     [HttpPatch]
     [Route(ApiRoutes.UserProfiles.IdRoute)]
     [ValidateModel]
-    [ValidateGuid("id")]
-    public async Task<IActionResult> UpdateUserProfile(string id, UserProfileCreateUpdateRequest updatedProfile, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateUserProfile(long id, UserProfileCreateUpdateRequest updatedProfile, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<UpdateUserProfileBasicInfoCommand>(updatedProfile);
-        command.UserProfileId = Guid.Parse(id);
+        command.UserProfileId = id;
         var response = await _mediator.Send(command, cancellationToken);
 
         return response.IsError ? HandleErrorResponse(response.Errors) : NoContent();

@@ -22,7 +22,7 @@ public class DeletePostHandler : IRequestHandler<DeletePostCommand, OperationRes
         var result = new OperationResult<Post>();
         try
         {
-            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.PostId == request.PostId, cancellationToken: cancellationToken);
+            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken: cancellationToken);
             
             if (post is null)
             {

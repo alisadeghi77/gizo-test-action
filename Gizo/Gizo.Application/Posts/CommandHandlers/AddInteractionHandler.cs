@@ -2,19 +2,25 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Commands;
-using Gizo.Infrastructure;
+using Gizo.Domain.Contracts.Repository;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.CommandHandlers;
 
 public class AddInteractionHandler : IRequestHandler<AddInteractionCommand, OperationResult<PostInteraction>>
 {
-    private readonly DataContext _ctx;
+    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<PostInteraction> _interactionRepository;
+    private readonly IUnitOfWork _uow;
 
-    public AddInteractionHandler(DataContext ctx)
+    public AddInteractionHandler(
+        IRepository<Post> postRepository,
+        IRepository<PostInteraction> interactionRepository,
+        IUnitOfWork uow)
     {
-        _ctx = ctx;
+        _postRepository = postRepository;
+        _interactionRepository = interactionRepository;
+        _uow = uow;
     }
     
     public async Task<OperationResult<PostInteraction>> Handle(AddInteractionCommand request, 
@@ -23,22 +29,24 @@ public class AddInteractionHandler : IRequestHandler<AddInteractionCommand, Oper
         var result = new OperationResult<PostInteraction>();
         try
         {
-            var post = await _ctx.Posts.Include(p => p.Interactions)
-                .FirstOrDefaultAsync(p => p.PostId == request.PostId, cancellationToken);
+            var postExists = await _postRepository
+                .Get()
+                .Filter(_ => _.Id == request.PostId)
+                .AnyAsync();
 
-            if (post == null)
+            if (!postExists)
             {
-                result.AddError(ErrorCode.NotFound, PostsErrorMessages.PostNotFound);
+                result.AddError(ErrorCode.NotFound,
+                    string.Format(PostsErrorMessages.PostNotFound, request.PostId));
                 return result;
             }
-            
+
             var interaction = PostInteraction.CreatePostInteraction(request.PostId, request.UserProfileId,
                 request.Type);
 
-            post.AddInteraction(interaction);
+            await _interactionRepository.InsertAsync(interaction);
 
-            _ctx.Posts.Update(post);
-            await _ctx.SaveChangesAsync(cancellationToken);
+            await _uow.SaveChangesAsync(cancellationToken);
 
             result.Data = interaction;
 

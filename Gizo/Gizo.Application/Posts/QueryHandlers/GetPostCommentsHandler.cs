@@ -2,37 +2,49 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Posts.Queries;
-using Gizo.Infrastructure;
+using Gizo.Domain.Contracts.Repository;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Posts.QueryHandlers;
 
 public class GetPostCommentsHandler : IRequestHandler<GetPostCommentsQuery, OperationResult<List<PostComment>>>
 {
-    private readonly DataContext _ctx;
+    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<PostComment> _commentRepository;
 
-    public GetPostCommentsHandler(DataContext ctx)
+    public GetPostCommentsHandler(
+        IRepository<Post> postRepository, 
+        IRepository<PostComment> commentRepository)
     {
-        _ctx = ctx;
+        _postRepository = postRepository;
+        _commentRepository = commentRepository;
     }
-    
+
     public async Task<OperationResult<List<PostComment>>> Handle(GetPostCommentsQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<List<PostComment>>();
         try
         {
-            var post = await _ctx.Posts
-                .Include(p => p.Comments)
-                .FirstOrDefaultAsync(p => p.PostId == request.PostId);
+            var postExists = await _postRepository
+                .Get()
+                .Filter(_ => _.Id == request.PostId)
+                .AnyAsync();
 
-            result.Data = post.Comments.ToList();
+            if (!postExists)
+            {
+                result.AddError(ErrorCode.NotFound, "Post not found");
+                return result;
+            }
+
+            result.Data = await _commentRepository
+                 .Get()
+                 .Filter(_ => _.Id == request.PostId)
+                 .ToListAsync();
         }
         catch (Exception e)
         {
             result.AddUnknownError(e.Message);
         }
-
         return result;
     }
 }

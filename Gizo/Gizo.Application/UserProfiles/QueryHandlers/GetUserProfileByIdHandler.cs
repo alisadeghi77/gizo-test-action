@@ -1,29 +1,30 @@
 ﻿using Gizo.Domain.Aggregates.UserProfileAggregate;
 using Gizo.Application.UserProfiles.Queries;
-using Gizo.Infrastructure;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
+using Gizo.Domain.Contracts.Repository;
 
 namespace Gizo.Application.UserProfiles.QueryHandlers;
 
 internal class GetUserProfileByIdHandler
     : IRequestHandler<GetUserProfileByIdQuery, OperationResult<UserProfile>>
 {
-    private readonly DataContext _ctx;
+    private readonly IRepository<UserProfile> _userRepository;
 
-    public GetUserProfileByIdHandler(DataContext ctx)
+    public GetUserProfileByIdHandler(IRepository<UserProfile> userRepository)
     {
-        _ctx = ctx;
+        _userRepository = userRepository;
     }
 
     public async Task<OperationResult<UserProfile>> Handle(GetUserProfileByIdQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<UserProfile>();
 
-        var profile = await _ctx.UserProfiles
-            .FirstOrDefaultAsync(up => up.UserProfileId == request.UserProfileId, cancellationToken: cancellationToken);
+        var profile = await _userRepository
+            .Get()
+            .Filter(_ => _.Id == request.UserProfileId)
+            .FirstAsync();
 
         if (profile is null)
         {

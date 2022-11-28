@@ -25,7 +25,7 @@ public class UpdatePostCommentHandler
     {
         var post = await _ctx.Posts
             .Include(p => p.Comments)
-            .FirstOrDefaultAsync(p => p.PostId == request.PostId, cancellationToken);
+            .FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken);
 
         if (post == null)
         {
@@ -34,7 +34,7 @@ public class UpdatePostCommentHandler
         }
 
         var comment = post.Comments
-            .FirstOrDefault(c => c.CommentId == request.CommentId);
+            .FirstOrDefault(c => c.Id == request.CommentId);
         if (comment == null)
         {
             _result.AddError(ErrorCode.NotFound, PostsErrorMessages.PostCommentNotFound);

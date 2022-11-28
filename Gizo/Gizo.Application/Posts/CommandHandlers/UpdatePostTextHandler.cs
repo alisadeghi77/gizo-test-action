@@ -17,15 +17,15 @@ public class UpdatePostTextHandler : IRequestHandler<UpdatePostTextCommand, Oper
     {
         _ctx = ctx;
     }
-    
+
     public async Task<OperationResult<Post>> Handle(UpdatePostTextCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<Post>();
 
         try
         {
-            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.PostId == request.PostId, cancellationToken: cancellationToken);
-            
+            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken: cancellationToken);
+
             if (post is null)
             {
                 result.AddError(ErrorCode.NotFound, 
@@ -38,14 +38,14 @@ public class UpdatePostTextHandler : IRequestHandler<UpdatePostTextCommand, Oper
                 result.AddError(ErrorCode.PostUpdateNotPossible, PostsErrorMessages.PostUpdateNotPossible);
                 return result;
             }
-            
+
             post.UpdatePostText(request.NewText);
 
             await _ctx.SaveChangesAsync(cancellationToken);
 
             result.Data = post;
         }
-        
+
         catch (PostNotValidException e)
         {
             e.ValidationErrors.ForEach(er => result.AddError(ErrorCode.ValidationError, er));

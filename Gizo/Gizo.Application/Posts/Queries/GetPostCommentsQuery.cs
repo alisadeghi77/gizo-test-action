@@ -6,5 +6,5 @@ namespace Gizo.Application.Posts.Queries;
 
 public class GetPostCommentsQuery : IRequest<OperationResult<List<PostComment>>>
 {
-    public Guid PostId { get; set; }
+    public long PostId { get; set; }
 }
