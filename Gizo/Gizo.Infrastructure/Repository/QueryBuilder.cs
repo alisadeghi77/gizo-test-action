@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using DK.Data.EF.Repository;
 using Gizo.Domain.Contracts.Base;
 using Gizo.Domain.Contracts.Enums;
 using Gizo.Domain.Contracts.Repository;

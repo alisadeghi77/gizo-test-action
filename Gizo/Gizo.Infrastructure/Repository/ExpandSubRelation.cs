@@ -1,7 +1,7 @@
-﻿using Gizo.Domain.Contracts.Repository;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using Gizo.Domain.Contracts.Repository;
 
-namespace DK.Data.EF.Repository
+namespace Gizo.Infrastructure.Repository
 {
     public class ExpandSubRelation<TModel, TMember> : ExpandRelation<TModel>, IExpandSubRelation<TModel, TMember>
     {

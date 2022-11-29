@@ -1,9 +1,8 @@
 ﻿using Gizo.Domain.Contracts.Base;
 using Gizo.Domain.Contracts.Repository;
-using Gizo.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace DK.Data.EF.Repository;
+namespace Gizo.Infrastructure.Repository;
 
 public class FetchQueryBuilder<TEntity> : IFetchQueryBuilder<TEntity>
 {
