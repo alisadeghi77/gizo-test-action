@@ -30,7 +30,7 @@ public class Repository<TEntity> : IRepository<TEntity>
         return new QueryBuilder<TEntity>(query, _mapper);
     }
 
-    public TEntity GetById(object id)
+    public TEntity? GetById(object id)
     {
         return _dbSet.Find(id);
     }
@@ -60,23 +60,23 @@ public class Repository<TEntity> : IRepository<TEntity>
         }
     }
 
-    public async Task InsertAsync(TEntity entity)
+    public async Task InsertAsync(TEntity entity, CancellationToken token = default)
     {
-        await _dbSet.AddAsync(entity);
+        await _dbSet.AddAsync(entity, token);
     }
 
-    public async Task InsertAsync(IEnumerable<TEntity> entityList)
+    public async Task InsertAsync(IEnumerable<TEntity> entityList, CancellationToken token = default)
     {
         foreach (var entity in entityList)
         {
-            await InsertAsync(entity);
+            await InsertAsync(entity, token);
         }
     }
 
     public virtual void Delete(object id)
     {
-        TEntity entityToDelete = _dbSet.Find(id);
-        Delete(entityToDelete);
+        var entityToDelete = _dbSet.Find(id);
+        Delete(entityToDelete!);
     }
 
     public virtual void Delete(TEntity entityToDelete)
@@ -90,8 +90,8 @@ public class Repository<TEntity> : IRepository<TEntity>
 
     public async Task DeleteAsync(object id)
     {
-        TEntity entityToDelete = await _dbSet.FindAsync(id);
-        Delete(entityToDelete);
+        var entityToDelete = await _dbSet.FindAsync(id);
+        Delete(entityToDelete!);
     }
 
     public virtual IUpdateQueryBuilder<TEntity> Update(TEntity entityToUpdate)
@@ -189,9 +189,9 @@ public class Repository<TEntity> : IRepository<TEntity>
 
 internal class PropertyNameComparer : IEqualityComparer<PropertyInfo>
 {
-    public bool Equals(PropertyInfo Left, PropertyInfo Right)
+    public bool Equals(PropertyInfo? left, PropertyInfo? right)
     {
-        if (string.Equals(Left.Name, Right.Name, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(left.Name, right.Name, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;

@@ -32,14 +32,14 @@ public interface IQueryBuilder<TEntity> : IFetchQueryBuilder<TEntity>
     int Sum(Func<TEntity, int> selector);
     long Sum(Func<TEntity, long> selector);
     decimal Sum(Func<TEntity, decimal> selector);
-    Task<int> SumAsync(Expression<Func<TEntity, int>> selector);
-    Task<long> SumAsync(Expression<Func<TEntity, long>> selector);
-    Task<decimal> SumAsync(Expression<Func<TEntity, decimal>> selector);
+    Task<int> SumAsync(Expression<Func<TEntity, int>> selector, CancellationToken token = default);
+    Task<long> SumAsync(Expression<Func<TEntity, long>> selector, CancellationToken token = default);
+    Task<decimal> SumAsync(Expression<Func<TEntity, decimal>> selector, CancellationToken token = default);
 
     bool Any();
-    Task<bool> AnyAsync();
+    Task<bool> AnyAsync(CancellationToken token = default);
 
-    Task<int> Count();
+    Task<int> CountAsync(CancellationToken token = default);
 
     IFetchQueryBuilder<TViewModel> ProjectTo<TViewModel>(Action<IExpandRelation<TViewModel>> expand = null);
     IFetchQueryBuilder<TViewModel> ProjectTo<TViewModel>(string[] expand);

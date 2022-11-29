@@ -1,4 +1,5 @@
-﻿using Gizo.Application.Models;
+﻿using AutoMapper;
+using Gizo.Application.Models;
 using Gizo.Domain.Aggregates.UserProfileAggregate;
 using MediatR;
 

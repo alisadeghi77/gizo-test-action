@@ -29,10 +29,10 @@ public class FetchQueryBuilder<TEntity> : IFetchQueryBuilder<TEntity>
         return Query.ToList();
     }
 
-    public async Task<List<TEntity>> ToListAsync()
+    public async Task<List<TEntity>> ToListAsync(CancellationToken token = default)
     {
         HandlePaging();
-        return await Query.ToListAsync();
+        return await Query.ToListAsync(token);
     }
 
     public TEntity? First()
@@ -41,17 +41,17 @@ public class FetchQueryBuilder<TEntity> : IFetchQueryBuilder<TEntity>
         return Query.FirstOrDefault();
     }
 
-    public async Task<TEntity?> FirstAsync()
+    public async Task<TEntity?> FirstAsync(CancellationToken token = default)
     {
         HandlePaging();
-        return await Query.FirstOrDefaultAsync();
+        return await Query.FirstOrDefaultAsync(token);
     }
 
     public PagingResult<TEntity> ToPaging()
     {
-        var result = new PagingResult<TEntity>()
+        var result = new PagingResult<TEntity>
         {
-            Count = Query.Count(),
+            Count = Query.Count()
         };
 
         HandlePaging();
@@ -60,16 +60,16 @@ public class FetchQueryBuilder<TEntity> : IFetchQueryBuilder<TEntity>
         return result;
     }
 
-    public async Task<PagingResult<TEntity>> ToPagingAsync()
+    public async Task<PagingResult<TEntity>> ToPagingAsync(CancellationToken token = default)
     {
-        var result = new PagingResult<TEntity>()
+        var result = new PagingResult<TEntity>
         {
-            Count = await Query.CountAsync(),
+            Count = await Query.CountAsync(token)
         };
 
         HandlePaging();
 
-        result.Data = await Query.ToListAsync();
+        result.Data = await Query.ToListAsync(token);
         return result;
     }
 

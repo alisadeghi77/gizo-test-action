@@ -91,14 +91,17 @@ public class QueryBuilder<TEntity> : FetchQueryBuilder<TEntity>, IQueryBuilder<T
     public int Sum(Func<TEntity, int> selector) => Query.Sum(selector);
     public long Sum(Func<TEntity, long> selector) => Query.Sum(selector);
     public decimal Sum(Func<TEntity, decimal> selector) => Query.Sum(selector);
-    public async Task<int> SumAsync(Expression<Func<TEntity, int>> selector) => await Query.SumAsync(selector);
-    public async Task<long> SumAsync(Expression<Func<TEntity, long>> selector) => await Query.SumAsync(selector);
-    public async Task<decimal> SumAsync(Expression<Func<TEntity, decimal>> selector) => await Query.SumAsync(selector);
+    public async Task<int> SumAsync(Expression<Func<TEntity, int>> selector, CancellationToken token = default)
+        => await Query.SumAsync(selector, token);
+    public async Task<long> SumAsync(Expression<Func<TEntity, long>> selector, CancellationToken token = default)
+        => await Query.SumAsync(selector, token);
+    public async Task<decimal> SumAsync(Expression<Func<TEntity, decimal>> selector, CancellationToken token = default)
+        => await Query.SumAsync(selector, token);
 
     public bool Any() => Query.Any();
-    public async Task<bool> AnyAsync() => await Query.AnyAsync();
+    public async Task<bool> AnyAsync(CancellationToken token = default) => await Query.AnyAsync(token);
 
-    public async Task<int> Count() => await Query.CountAsync();
+    public async Task<int> CountAsync(CancellationToken token = default) => await Query.CountAsync(token);
 
     public IFetchQueryBuilder<TViewModel> ProjectTo<TViewModel>(Action<IExpandRelation<TViewModel>> expand = null)
     {
@@ -123,7 +126,10 @@ public class QueryBuilder<TEntity> : FetchQueryBuilder<TEntity>, IQueryBuilder<T
         return new FetchQueryBuilder<TProjection>(query, PagingConfig);
     }
 
-    protected static Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> CreateOrder(string columnName, SortType sortType, bool isThenBy = false)
+    protected static Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> CreateOrder(
+        string columnName,
+        SortType sortType,
+        bool isThenBy = false)
     {
         var sourceType = typeof(TEntity);
         var parameter = Expression.Parameter(sourceType, "p");

@@ -1,4 +1,5 @@
 ﻿namespace Gizo.Api.Contracts.UserProfile.Requests;
+
 public record UserProfileCreateUpdateRequest
 {
     [Required]

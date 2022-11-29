@@ -22,7 +22,7 @@ public class AddInteractionHandler : IRequestHandler<AddInteractionCommand, Oper
         _interactionRepository = interactionRepository;
         _uow = uow;
     }
-    
+
     public async Task<OperationResult<PostInteraction>> Handle(AddInteractionCommand request, 
         CancellationToken cancellationToken)
     {

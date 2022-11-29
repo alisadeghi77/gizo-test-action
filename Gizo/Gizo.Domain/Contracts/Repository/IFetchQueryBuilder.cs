@@ -7,11 +7,11 @@ public interface IFetchQueryBuilder<TEntity>
     IQueryable<TEntity> AsQueryable();
 
     List<TEntity> ToList();
-    Task<List<TEntity>> ToListAsync();
+    Task<List<TEntity>> ToListAsync(CancellationToken token = default);
 
     TEntity? First();
-    Task<TEntity?> FirstAsync();
-    
+    Task<TEntity?> FirstAsync(CancellationToken token = default);
+
     PagingResult<TEntity> ToPaging();
-    Task<PagingResult<TEntity>> ToPagingAsync();
+    Task<PagingResult<TEntity>> ToPagingAsync(CancellationToken token = default);
 }
