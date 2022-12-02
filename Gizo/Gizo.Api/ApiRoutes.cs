@@ -24,4 +24,10 @@ public static class ApiRoutes
         public const string IdentityById = "{identityUserId}";
         public const string CurrentUser = "currentuser";
     }
+
+    public static class ClientIdentity 
+    {
+        public const string CheckIdentity = "CheckIdentity";
+        public const string Verify = "Verify";
+    }
 }

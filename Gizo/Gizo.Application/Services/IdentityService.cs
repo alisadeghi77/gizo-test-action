@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Gizo.Application.Options;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -30,6 +31,19 @@ public class IdentityService
     public string WriteToken(SecurityToken token)
     {
         return TokenHandler.WriteToken(token);
+    }
+
+    public string GetJwtString(IdentityUser identity)
+    {
+        var claimsIdentity = new ClaimsIdentity(new Claim[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, identity.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("IdentityId", identity.Id),
+        });
+
+        var token = CreateSecurityToken(claimsIdentity);
+        return WriteToken(token);
     }
 
     private SecurityTokenDescriptor GetTokenDescriptor(ClaimsIdentity identity)
