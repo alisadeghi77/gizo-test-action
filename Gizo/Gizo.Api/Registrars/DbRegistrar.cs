@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Gizo.Domain.Contracts.Repository;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Api.Registrars;
 
@@ -12,6 +13,10 @@ public class DbRegistrar : IWebApplicationBuilderRegistrar
             options.UseSqlServer(cs);
         });
 
+        builder.Services.AddScoped<IUnitOfWork>(factory =>
+            factory.GetRequiredService<DataContext>()
+        );
+
         builder.Services.AddIdentityCore<IdentityUser>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -21,6 +26,5 @@ public class DbRegistrar : IWebApplicationBuilderRegistrar
                 options.Password.RequireNonAlphanumeric = false;
             })
             .AddEntityFrameworkStores<DataContext>();
-
     }
 }
