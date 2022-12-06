@@ -26,11 +26,15 @@ public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand,
         try
         {
             var identityUser = await ValidateAndGetIdentityAsync(request);
-            if (_result.IsError) 
+            if (_result.IsError)
                 return _result;
 
-            _result.Data.UserName = identityUser.UserName;
-            _result.Data.Token = _identityService.GetJwtString(identityUser);
+            _result.Data = new ClientIdentityUserDto()
+            {
+                UserName = identityUser.UserName,
+                Token = _identityService.GetJwtString(identityUser)
+            };
+
             return _result;
 
         }
@@ -44,7 +48,7 @@ public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand,
 
     private async Task<IdentityUser> ValidateAndGetIdentityAsync(VerifyClientIdentityCommand request)
     {
-        var identityUser = await _userManager.FindByEmailAsync(request.Username);
+        var identityUser = await _userManager.FindByNameAsync(request.Username);
 
         if (identityUser is null)
             _result.AddError(ErrorCode.IdentityUserDoesNotExist,

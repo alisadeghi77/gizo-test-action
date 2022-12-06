@@ -66,6 +66,8 @@ public class CheckIdentityCommandHandler : IRequestHandler<CheckClientIdentityCo
             }
         }
 
+        await transaction.CommitAsync(cancellationToken);
+
         return identity;
     }
 }

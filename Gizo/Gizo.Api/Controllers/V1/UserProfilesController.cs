@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Api.Controllers.V1;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize]
 public class UserProfilesController : BaseController
 {
 
