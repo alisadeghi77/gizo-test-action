@@ -50,15 +50,15 @@ public class CheckIdentityCommandHandler : IRequestHandler<CheckClientIdentityCo
     }
 
     private async Task<IdentityUser> CreateIdentityUserAsync(CheckClientIdentityCommand request,
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
-        await using var transaction = await _ctx.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await _ctx.Database.BeginTransactionAsync(token);
         var identity = new IdentityUser { PhoneNumber = request.Username, UserName = request.Username };
         var createdIdentity = await _userManager.CreateAsync(identity);
 
         if (!createdIdentity.Succeeded)
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(token);
 
             foreach (var identityError in createdIdentity.Errors)
             {

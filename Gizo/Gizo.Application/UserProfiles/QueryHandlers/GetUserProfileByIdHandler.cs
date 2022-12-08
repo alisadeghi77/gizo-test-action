@@ -17,7 +17,7 @@ internal class GetUserProfileByIdHandler
         _userRepository = userRepository;
     }
 
-    public async Task<OperationResult<UserProfile>> Handle(GetUserProfileByIdQuery request, CancellationToken cancellationToken)
+    public async Task<OperationResult<UserProfile>> Handle(GetUserProfileByIdQuery request, CancellationToken token)
     {
         var result = new OperationResult<UserProfile>();
 

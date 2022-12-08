@@ -14,7 +14,7 @@ public class GetAllPostsHandler : IRequestHandler<GetAllPostsQuery, OperationRes
     {
         _postRepository = postRepository;
     }
-    public async Task<OperationResult<List<Post>>> Handle(GetAllPostsQuery request, CancellationToken cancellationToken)
+    public async Task<OperationResult<List<Post>>> Handle(GetAllPostsQuery request, CancellationToken token)
     {
         var result = new OperationResult<List<Post>>();
         try

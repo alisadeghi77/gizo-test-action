@@ -18,13 +18,13 @@ public class UpdatePostTextHandler : IRequestHandler<UpdatePostTextCommand, Oper
         _ctx = ctx;
     }
 
-    public async Task<OperationResult<Post>> Handle(UpdatePostTextCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Post>> Handle(UpdatePostTextCommand request, CancellationToken token)
     {
         var result = new OperationResult<Post>();
 
         try
         {
-            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken: cancellationToken);
+            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken: token);
 
             if (post is null)
             {
@@ -41,7 +41,7 @@ public class UpdatePostTextHandler : IRequestHandler<UpdatePostTextCommand, Oper
 
             post.UpdatePostText(request.NewText);
 
-            await _ctx.SaveChangesAsync(cancellationToken);
+            await _ctx.SaveChangesAsync(token);
 
             result.Data = post;
         }

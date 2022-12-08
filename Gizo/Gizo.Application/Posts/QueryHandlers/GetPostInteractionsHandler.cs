@@ -21,7 +21,7 @@ public class GetPostInteractionsHandler : IRequestHandler<GetPostInteractionsQue
     }
 
     public async Task<OperationResult<List<PostInteraction>>> Handle(GetPostInteractionsQuery request, 
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<List<PostInteraction>>();
 

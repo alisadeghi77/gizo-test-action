@@ -25,7 +25,7 @@ public class RemoveCommentFromPostHandler
     }
 
     public async Task<OperationResult<PostComment>> Handle(RemoveCommentFromPostCommand request, 
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<PostComment>();
 
@@ -62,7 +62,7 @@ public class RemoveCommentFromPostHandler
         }
 
         await _commentRepository.DeleteAsync(request.CommentId);
-        await _uow.SaveChangesAsync(cancellationToken);
+        await _uow.SaveChangesAsync(token);
 
         result.Data = comment;
         return result;

@@ -20,7 +20,7 @@ public class GetPostCommentsHandler : IRequestHandler<GetPostCommentsQuery, Oper
         _commentRepository = commentRepository;
     }
 
-    public async Task<OperationResult<List<PostComment>>> Handle(GetPostCommentsQuery request, CancellationToken cancellationToken)
+    public async Task<OperationResult<List<PostComment>>> Handle(GetPostCommentsQuery request, CancellationToken token)
     {
         var result = new OperationResult<List<PostComment>>();
         try

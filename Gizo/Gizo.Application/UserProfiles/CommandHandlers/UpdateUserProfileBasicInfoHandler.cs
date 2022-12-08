@@ -21,7 +21,7 @@ internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserPro
         _uow = uow;
     }
     public async Task<OperationResult<UserProfile>> Handle(UpdateUserProfileBasicInfoCommand request,
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<UserProfile>();
 
@@ -45,7 +45,7 @@ internal class UpdateUserProfileBasicInfoHandler : IRequestHandler<UpdateUserPro
             userProfile.UpdateBasicInfo(basicInfo);
 
              _userRepository.Update(userProfile);
-            await _uow.SaveChangesAsync(cancellationToken);
+            await _uow.SaveChangesAsync(token);
 
             result.Data = userProfile;
             return result;

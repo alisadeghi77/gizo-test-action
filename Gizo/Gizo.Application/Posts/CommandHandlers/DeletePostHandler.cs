@@ -16,19 +16,20 @@ public class DeletePostHandler : IRequestHandler<DeletePostCommand, OperationRes
     {
         _ctx = ctx;
     }
-    
-    public async Task<OperationResult<Post>> Handle(DeletePostCommand request, CancellationToken cancellationToken)
+
+    public async Task<OperationResult<Post>> Handle(DeletePostCommand request, CancellationToken token)
     {
         var result = new OperationResult<Post>();
         try
         {
-            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken: cancellationToken);
-            
+            var post = await _ctx.Posts.FirstOrDefaultAsync(p => p.Id == request.PostId,
+                cancellationToken: token);
+
             if (post is null)
             {
-                result.AddError(ErrorCode.NotFound, 
+                result.AddError(ErrorCode.NotFound,
                     string.Format(PostsErrorMessages.PostNotFound, request.PostId));
-                
+
                 return result;
             }
 
@@ -39,7 +40,7 @@ public class DeletePostHandler : IRequestHandler<DeletePostCommand, OperationRes
             }
 
             _ctx.Posts.Remove(post);
-            await _ctx.SaveChangesAsync(cancellationToken);
+            await _ctx.SaveChangesAsync(token);
 
             result.Data = post;
         }

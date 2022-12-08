@@ -32,7 +32,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult
     }
 
     public async Task<OperationResult<IdentityUserProfileDto>> Handle(LoginCommand request, 
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         try
         {
@@ -40,9 +40,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult
             if (_result.IsError) return _result;
 
             var userProfile = await _ctx.UserProfiles
-                .FirstOrDefaultAsync(up => up.IdentityId == identityUser.Id, cancellationToken:
-                    cancellationToken);
-
+                .FirstOrDefaultAsync(up => up.IdentityId == identityUser.Id, cancellationToken: token);
 
             _result.Data = _mapper.Map<IdentityUserProfileDto>(userProfile);
             _result.Data.UserName = identityUser.UserName;

@@ -23,7 +23,7 @@ public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteractio
         _uow = uow;
     }
     public async Task<OperationResult<PostInteraction>> Handle(RemovePostInteractionCommand request,
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<PostInteraction>();
         try
@@ -61,7 +61,7 @@ public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteractio
             }
 
             _interactionRepository.Delete(interaction);
-            await _uow.SaveChangesAsync(cancellationToken);
+            await _uow.SaveChangesAsync(token);
 
             result.Data = interaction;
         }

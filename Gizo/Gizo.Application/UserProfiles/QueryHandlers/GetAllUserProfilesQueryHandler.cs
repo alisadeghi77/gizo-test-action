@@ -17,7 +17,7 @@ internal class GetAllUserProfilesQueryHandler
     }
 
     public async Task<OperationResult<IEnumerable<UserProfile>>> Handle(GetAllUserProfilesQuery request,
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<IEnumerable<UserProfile>>
         {

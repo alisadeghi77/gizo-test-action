@@ -6,9 +6,9 @@ namespace Gizo.Api.Controllers.V1;
 public class PostsController : BaseController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllPosts(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllPosts(CancellationToken token)
     {
-        var result = await _mediator.Send(new GetAllPostsQuery(), cancellationToken);
+        var result = await _mediator.Send(new GetAllPostsQuery(), token);
         var mapped = _mapper.Map<List<PostResponse>>(result.Data);
         return result.IsError ? HandleErrorResponse(result.Errors) : Ok(mapped);
 
@@ -16,10 +16,10 @@ public class PostsController : BaseController
 
     [HttpGet]
     [Route(ApiRoutes.Posts.IdRoute)]
-    public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(long id, CancellationToken token)
     {
         var query = new GetPostByIdQuery() { PostId = id };
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = await _mediator.Send(query, token);
         var mapped = _mapper.Map<PostResponse>(result.Data);
 
         return result.IsError ? HandleErrorResponse(result.Errors) : Ok(mapped);
@@ -27,7 +27,7 @@ public class PostsController : BaseController
 
     [HttpPost]
     [ValidateModel]
-    public async Task<IActionResult> CreatePost([FromBody] PostCreateRequest newPost, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreatePost([FromBody] PostCreateRequest newPost, CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
@@ -37,7 +37,7 @@ public class PostsController : BaseController
             TextContent = newPost.TextContent
         };
 
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, token);
         var mapped = _mapper.Map<PostResponse>(result.Data);
 
         return result.IsError ? HandleErrorResponse(result.Errors)
@@ -47,7 +47,7 @@ public class PostsController : BaseController
     [HttpPatch]
     [Route(ApiRoutes.Posts.IdRoute)]
     [ValidateModel]
-    public async Task<IActionResult> UpdatePostText([FromBody] PostUpdateRequest updatedPost, long id, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdatePostText([FromBody] PostUpdateRequest updatedPost, long id, CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
@@ -57,28 +57,28 @@ public class PostsController : BaseController
             PostId = id,
             UserProfileId = userProfileId
         };
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, token);
 
         return result.IsError ? HandleErrorResponse(result.Errors) : NoContent();
     }
 
     [HttpDelete]
     [Route(ApiRoutes.Posts.IdRoute)]
-    public async Task<IActionResult> DeletePost(long id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeletePost(long id, CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
         var command = new DeletePostCommand() { PostId = id, UserProfileId = userProfileId };
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, token);
 
         return result.IsError ? HandleErrorResponse(result.Errors) : NoContent();
     }
 
     [HttpGet]
     [Route(ApiRoutes.Posts.PostComments)]
-    public async Task<IActionResult> GetCommentsByPostId(long postId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCommentsByPostId(long postId, CancellationToken token)
     {
         var query = new GetPostCommentsQuery() { PostId = postId };
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = await _mediator.Send(query, token);
 
         if (result.IsError) HandleErrorResponse(result.Errors);
 
@@ -90,7 +90,7 @@ public class PostsController : BaseController
     [Route(ApiRoutes.Posts.PostComments)]
     [ValidateModel]
     public async Task<IActionResult> AddCommentToPost(long postId, [FromBody] PostCommentCreateRequest comment,
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
@@ -101,7 +101,7 @@ public class PostsController : BaseController
             CommentText = comment.Text
         };
 
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, token);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
 

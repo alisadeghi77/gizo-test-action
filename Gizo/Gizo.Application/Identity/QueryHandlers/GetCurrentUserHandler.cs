@@ -27,7 +27,7 @@ public class GetCurrentUserHandler
     }
 
     public async Task<OperationResult<IdentityUserProfileDto>> Handle(GetCurrentUserQuery request, 
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<IdentityUserProfileDto>();
         var identity = await _userManager.GetUserAsync(request.ClaimsPrincipal);

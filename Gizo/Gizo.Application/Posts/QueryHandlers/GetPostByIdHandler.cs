@@ -17,7 +17,7 @@ public class GetPostByIdHandler : IRequestHandler<GetPostByIdQuery, OperationRes
     {
         _postRepository = postRepository;
     }
-    public async Task<OperationResult<Post>> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Post>> Handle(GetPostByIdQuery request, CancellationToken token)
     {
         var result = new OperationResult<Post>();
         var post = await _postRepository

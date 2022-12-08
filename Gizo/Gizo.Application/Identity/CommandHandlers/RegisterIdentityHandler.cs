@@ -33,20 +33,20 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
     }
     
     public async Task<OperationResult<IdentityUserProfileDto>> Handle(RegisterIdentityCommand request, 
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         try
         {
             await ValidateIdentityDoesNotExist(request);
             if (_result.IsError) return _result;
             
-            await using var transaction = await _ctx.Database.BeginTransactionAsync(cancellationToken);
+            await using var transaction = await _ctx.Database.BeginTransactionAsync(token);
             
-            var identity = await CreateIdentityUserAsync(request, transaction, cancellationToken);
+            var identity = await CreateIdentityUserAsync(request, transaction, token);
             if (_result.IsError) return _result;
 
-            var profile = await CreateUserProfileAsync(request, transaction, identity, cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            var profile = await CreateUserProfileAsync(request, transaction, identity, token);
+            await transaction.CommitAsync(token);
 
             _result.Data = _mapper.Map<IdentityUserProfileDto>(profile);
             _result.Data.UserName = identity.UserName;
@@ -77,13 +77,13 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
     }
 
     private async Task<IdentityUser> CreateIdentityUserAsync(RegisterIdentityCommand request, 
-        IDbContextTransaction transaction, CancellationToken cancellationToken)
+        IDbContextTransaction transaction, CancellationToken token)
     {
         var identity = new IdentityUser {Email = request.Username, UserName = request.Username};
         var createdIdentity = await _userManager.CreateAsync(identity, request.Password);
         if (!createdIdentity.Succeeded)
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(token);
 
             foreach (var identityError in createdIdentity.Errors)
             {
@@ -95,7 +95,7 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
 
     private async Task<UserProfile> CreateUserProfileAsync(RegisterIdentityCommand request, 
         IDbContextTransaction transaction, IdentityUser identity,
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         try
         {
@@ -104,12 +104,12 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
 
             var profile = UserProfile.CreateUserProfile(identity.Id, profileInfo);
             _ctx.UserProfiles.Add(profile);
-            await _ctx.SaveChangesAsync(cancellationToken);
+            await _ctx.SaveChangesAsync(token);
             return profile;
         }
         catch (Exception e)
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(token);
             throw;
         }
     }

@@ -17,14 +17,14 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, Operat
         _ctx = ctx;
     }
     public async Task<OperationResult<bool>> Handle(RemoveAccountCommand request, 
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<bool>();
 
         try
         {
             var identityUser = await _ctx.Users.FirstOrDefaultAsync(iu 
-                => iu.Id == request.IdentityUserId.ToString(), cancellationToken);
+                => iu.Id == request.IdentityUserId.ToString(), token);
 
             if (identityUser == null)
             {
@@ -35,7 +35,7 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, Operat
 
             var userProfile = await _ctx.UserProfiles
                 .FirstOrDefaultAsync(up
-                    => up.IdentityId == request.IdentityUserId.ToString(), cancellationToken);
+                    => up.IdentityId == request.IdentityUserId.ToString(), token);
 
             if (userProfile == null)
             {
@@ -53,7 +53,7 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, Operat
 
             _ctx.UserProfiles.Remove(userProfile);
             _ctx.Users.Remove(identityUser);
-            await _ctx.SaveChangesAsync(cancellationToken);
+            await _ctx.SaveChangesAsync(token);
 
             result.Data = true;
         }

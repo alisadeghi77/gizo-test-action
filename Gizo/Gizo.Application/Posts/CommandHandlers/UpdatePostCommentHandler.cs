@@ -20,12 +20,11 @@ public class UpdatePostCommentHandler
         _result = new OperationResult<PostComment>();
     }
     
-    public async Task<OperationResult<PostComment>> Handle(UpdatePostCommentCommand request, 
-        CancellationToken cancellationToken)
+    public async Task<OperationResult<PostComment>> Handle(UpdatePostCommentCommand request, CancellationToken token)
     {
         var post = await _ctx.Posts
             .Include(p => p.Comments)
-            .FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken);
+            .FirstOrDefaultAsync(p => p.Id == request.PostId, token);
 
         if (post == null)
         {
@@ -50,7 +49,7 @@ public class UpdatePostCommentHandler
         
         comment.UpdateCommentText(request.UpdatedText);
         _ctx.Posts.Update(post);
-        await _ctx.SaveChangesAsync(cancellationToken);
+        await _ctx.SaveChangesAsync(token);
         
         return _result;
     }

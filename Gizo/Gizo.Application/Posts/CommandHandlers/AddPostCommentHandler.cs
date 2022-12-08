@@ -23,7 +23,7 @@ public class AddPostCommentHandler : IRequestHandler<AddPostCommentCommand, Oper
         _commentRepository = commentRepository;
         _uow = uow;
     }
-    public async Task<OperationResult<PostComment>> Handle(AddPostCommentCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<PostComment>> Handle(AddPostCommentCommand request, CancellationToken token)
     {
         var result = new OperationResult<PostComment>();
 
@@ -45,7 +45,7 @@ public class AddPostCommentHandler : IRequestHandler<AddPostCommentCommand, Oper
 
             await _commentRepository.InsertAsync(comment);
 
-            await _uow.SaveChangesAsync(cancellationToken);
+            await _uow.SaveChangesAsync(token);
 
             result.Data = comment;
         }

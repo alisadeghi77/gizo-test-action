@@ -24,7 +24,7 @@ public class AddInteractionHandler : IRequestHandler<AddInteractionCommand, Oper
     }
 
     public async Task<OperationResult<PostInteraction>> Handle(AddInteractionCommand request, 
-        CancellationToken cancellationToken)
+        CancellationToken token)
     {
         var result = new OperationResult<PostInteraction>();
         try
@@ -46,7 +46,7 @@ public class AddInteractionHandler : IRequestHandler<AddInteractionCommand, Oper
 
             await _interactionRepository.InsertAsync(interaction);
 
-            await _uow.SaveChangesAsync(cancellationToken);
+            await _uow.SaveChangesAsync(token);
 
             result.Data = interaction;
 

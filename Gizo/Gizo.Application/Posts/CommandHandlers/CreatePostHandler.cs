@@ -19,14 +19,14 @@ public class CreatePostHandler : IRequestHandler<CreatePostCommand, OperationRes
         _uow = uow;
     }
 
-    public async Task<OperationResult<Post>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Post>> Handle(CreatePostCommand request, CancellationToken token)
     {
         var result = new OperationResult<Post>();
         try
         {
             var post = Post.CreatePost(request.UserProfileId, request.TextContent);
             await _postRepository.InsertAsync(post);
-            await _uow.SaveChangesAsync(cancellationToken);
+            await _uow.SaveChangesAsync(token);
 
             result.Data = post;
         }
