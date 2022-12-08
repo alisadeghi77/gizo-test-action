@@ -16,7 +16,7 @@ public class ClientIdentityController : BaseController
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<IdentityUserProfile>(result.Data));
+        return Ok(result.Data);
     }
 
     [HttpPost]
@@ -30,6 +30,6 @@ public class ClientIdentityController : BaseController
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<IdentityUserProfile>(result.Data));
+        return Ok(_mapper.Map<VerifyClientIdentityResult>(result.Data));
     }
 }

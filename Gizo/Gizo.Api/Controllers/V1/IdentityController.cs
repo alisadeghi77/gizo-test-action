@@ -33,7 +33,7 @@ public class IdentityController : BaseController
 
     [HttpDelete]
     [Route(ApiRoutes.Identity.IdentityById)]
-    [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> DeleteAccount(long identityUserId, CancellationToken token)
     {
         var command = new RemoveAccountCommand
@@ -50,7 +50,7 @@ public class IdentityController : BaseController
 
     [HttpGet]
     [Route(ApiRoutes.Identity.CurrentUser)]
-    [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> CurrentUser(CancellationToken token)
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
