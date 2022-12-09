@@ -1,4 +1,5 @@
 ﻿using Gizo.Api.Contracts.ClientIdentity;
+using Gizo.Api.Contracts.UserProfile.Requests;
 using Gizo.Application.ClientIdentity.Commands;
 
 namespace Gizo.Api.Controllers.V1;
@@ -31,5 +32,19 @@ public class ClientIdentityController : BaseController
             return HandleErrorResponse(result.Errors);
 
         return Ok(_mapper.Map<VerifyClientIdentityResult>(result.Data));
+    }
+
+    [HttpPatch]
+    [Route(ApiRoutes.ClientIdentity.UpdateUserProfile)]
+    [ValidateModel]
+    [Authorize]
+    public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateRequest updatedProfile, CancellationToken cancellationToken)
+    {
+        var command = _mapper.Map<UpdateUserProfileBasicInfoCommand>(updatedProfile);
+        command.Id = HttpContext.GetIdentityIdClaimValue();
+
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return response.IsError ? HandleErrorResponse(response.Errors) : NoContent();
     }
 }

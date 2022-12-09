@@ -1,9 +1,5 @@
 ﻿global using Gizo.Api.Extensions;
 global using AutoMapper;
-global using Gizo.Domain.Aggregates.UserProfileAggregate;
-global using Gizo.Api.Contracts.UserProfile.Requests;
-global using Gizo.Api.Contracts.UserProfile.Responses;
-global using Gizo.Application.UserProfiles.Commands;
 global using System.ComponentModel.DataAnnotations;
 global using Gizo.Api.Contracts.Common;
 global using Gizo.Application.Enums;
@@ -15,7 +11,6 @@ global using Gizo.Api.Filters;
 global using Gizo.Application.Posts.Commands;
 global using Gizo.Application.Posts.Queries;
 global using MediatR;
-global using Gizo.Application.UserProfiles.Queries;
 global using Gizo.Api.Registrars;
 global using Microsoft.AspNetCore.Mvc.Filters;
 global using Gizo.Domain.Aggregates.PostAggregate;

@@ -1,5 +1,4 @@
-﻿using Gizo.Domain.Aggregates.UserProfileAggregate;
-using Gizo.Domain.Contracts.Base;
+﻿using Gizo.Domain.Contracts.Base;
 using Gizo.Domain.Exceptions;
 using Gizo.Domain.Validators.PostValidators;
 
@@ -12,8 +11,6 @@ public class Post: BaseEntity<long>
     private Post()
     {
     }
-    public long UserProfileId { get; private set; }
-    public UserProfile UserProfile { get; private set; }
     public string TextContent { get; private set; }
     public DateTime CreatedDate { get; private set; }
     public DateTime LastModified { get; private set; }
@@ -33,7 +30,6 @@ public class Post: BaseEntity<long>
         var validator = new PostValidator();
         var objectToValidate = new Post
         {
-            UserProfileId = userProfileId,
             TextContent = textContent,
             CreatedDate = DateTime.UtcNow,
             LastModified = DateTime.UtcNow,

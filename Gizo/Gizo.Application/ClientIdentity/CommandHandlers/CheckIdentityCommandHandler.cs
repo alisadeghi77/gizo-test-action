@@ -1,6 +1,8 @@
 ﻿using Gizo.Application.ClientIdentity.Commands;
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
+using Gizo.Application.Services;
+using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -10,10 +12,12 @@ namespace Gizo.Application.ClientIdentity.CommandHandlers;
 public class CheckIdentityCommandHandler : IRequestHandler<CheckClientIdentityCommand, OperationResult<bool>>
 {
     private readonly DataContext _ctx;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
+    private readonly IdentityService _identityService;
     private OperationResult<bool> _result = new();
 
-    public CheckIdentityCommandHandler(DataContext ctx, UserManager<IdentityUser> userManager)
+    public CheckIdentityCommandHandler(DataContext ctx, UserManager<User> userManager,
+        IdentityService _identityService)
     {
         _ctx = ctx;
         _userManager = userManager;
@@ -23,7 +27,7 @@ public class CheckIdentityCommandHandler : IRequestHandler<CheckClientIdentityCo
     {
         try
         {
-            var identityUser = await ValidateAndGetIdentityAsync(request, token);
+            var user = await ValidateAndGetIdentityAsync(request, token);
 
             if (_result.IsError) 
                 return _result;
@@ -39,21 +43,22 @@ public class CheckIdentityCommandHandler : IRequestHandler<CheckClientIdentityCo
         return _result;
     }
 
-    private async Task<IdentityUser> ValidateAndGetIdentityAsync(CheckClientIdentityCommand request, CancellationToken token)
+    private async Task<User> ValidateAndGetIdentityAsync(CheckClientIdentityCommand request, CancellationToken token)
     {
-        var identityUser = await _userManager.FindByNameAsync(request.Username);
+        var user = await _userManager.FindByNameAsync(request.Username);
 
-        if (identityUser == null)
-            identityUser = await CreateIdentityUserAsync(request, token);
+        if (user == null)
+            user = await CreateIdentityUserAsync(request, token);
 
-        return identityUser;
+        return user;
     }
 
-    private async Task<IdentityUser> CreateIdentityUserAsync(CheckClientIdentityCommand request,
+    private async Task<User> CreateIdentityUserAsync(CheckClientIdentityCommand request,
         CancellationToken token)
     {
         await using var transaction = await _ctx.Database.BeginTransactionAsync(token);
-        var identity = new IdentityUser { PhoneNumber = request.Username, UserName = request.Username };
+        var identity = new User { PhoneNumber = request.Username, UserName = request.Username };
+
         var createdIdentity = await _userManager.CreateAsync(identity);
 
         if (!createdIdentity.Succeeded)

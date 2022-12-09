@@ -53,13 +53,6 @@ public class RemovePostInteractionHandler : IRequestHandler<RemovePostInteractio
                 return result;
             }
 
-            if (interaction.UserProfileId != request.UserProfileId)
-            {
-                result.AddError(ErrorCode.InteractionRemovalNotAuthorized,
-                    PostsErrorMessages.InteractionRemovalNotAuthorized);
-                return result;
-            }
-
             _interactionRepository.Delete(interaction);
             await _uow.SaveChangesAsync(token);
 

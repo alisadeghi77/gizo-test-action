@@ -41,7 +41,7 @@ public class PostsController : BaseController
         var mapped = _mapper.Map<PostResponse>(result.Data);
 
         return result.IsError ? HandleErrorResponse(result.Errors)
-            : CreatedAtAction(nameof(GetById), new { id = result.Data.UserProfileId }, mapped);
+            : CreatedAtAction(nameof(GetById), new { id = 0 }, mapped);
     }
 
     [HttpPatch]

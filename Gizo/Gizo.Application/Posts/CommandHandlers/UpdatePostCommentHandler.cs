@@ -39,13 +39,6 @@ public class UpdatePostCommentHandler
             _result.AddError(ErrorCode.NotFound, PostsErrorMessages.PostCommentNotFound);
             return _result;
         }
-
-        if (comment.UserProfileId != request.UserProfileId)
-        {
-            _result.AddError(ErrorCode.CommentRemovalNotAuthorized, 
-                PostsErrorMessages.CommentRemovalNotAuthorized);
-            return _result;
-        }
         
         comment.UpdateCommentText(request.UpdatedText);
         _ctx.Posts.Update(post);

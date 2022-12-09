@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
-using Gizo.Domain.Aggregates.UserProfileAggregate;
 using Gizo.Domain.Exceptions;
 using Gizo.Application.Enums;
 using Gizo.Application.Identity.Commands;
@@ -11,19 +10,19 @@ using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.IdentityModel.JsonWebTokens;
+using Gizo.Domain.Aggregates.UserAggregate;
 
 namespace Gizo.Application.Identity.CommandHandlers;
 
 public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, OperationResult<IdentityUserProfileDto>>
 {
     private readonly DataContext _ctx;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
     private readonly IdentityService _identityService;
     private OperationResult<IdentityUserProfileDto> _result = new();
     private readonly IMapper _mapper;
 
-    public RegisterIdentityHandler(DataContext ctx, UserManager<IdentityUser> userManager,
+    public RegisterIdentityHandler(DataContext ctx, UserManager<User> userManager,
         IdentityService identityService, IMapper mapper)
     {
         _ctx = ctx;
@@ -45,12 +44,10 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
             var identity = await CreateIdentityUserAsync(request, transaction, token);
             if (_result.IsError) return _result;
 
-            var profile = await CreateUserProfileAsync(request, transaction, identity, token);
             await transaction.CommitAsync(token);
 
-            _result.Data = _mapper.Map<IdentityUserProfileDto>(profile);
             _result.Data.UserName = identity.UserName;
-            _result.Data.Token = GetJwtString(identity, profile);
+            _result.Data.Token = _identityService.GetJwtString(identity);
             return _result;
         }
         
@@ -76,10 +73,10 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
         
     }
 
-    private async Task<IdentityUser> CreateIdentityUserAsync(RegisterIdentityCommand request, 
+    private async Task<User> CreateIdentityUserAsync(RegisterIdentityCommand request, 
         IDbContextTransaction transaction, CancellationToken token)
     {
-        var identity = new IdentityUser {Email = request.Username, UserName = request.Username};
+        var identity = new User() {Email = request.Username, UserName = request.Username};
         var createdIdentity = await _userManager.CreateAsync(identity, request.Password);
         if (!createdIdentity.Succeeded)
         {
@@ -91,41 +88,5 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
             }
         }
         return identity;
-    }
-
-    private async Task<UserProfile> CreateUserProfileAsync(RegisterIdentityCommand request, 
-        IDbContextTransaction transaction, IdentityUser identity,
-        CancellationToken token)
-    {
-        try
-        {
-            var profileInfo = BasicInfo.CreateBasicInfo(request.FirstName, request.LastName, request.Username,
-                request.Phone, request.DateOfBirth, request.CurrentCity);
-
-            var profile = UserProfile.CreateUserProfile(identity.Id, profileInfo);
-            _ctx.UserProfiles.Add(profile);
-            await _ctx.SaveChangesAsync(token);
-            return profile;
-        }
-        catch (Exception e)
-        {
-            await transaction.RollbackAsync(token);
-            throw;
-        }
-    }
-
-    private string GetJwtString(IdentityUser identity, UserProfile profile)
-    {
-        var claimsIdentity = new ClaimsIdentity(new Claim[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, identity.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, identity.Email),
-            new Claim("IdentityId", identity.Id),
-            new Claim("UserProfileId", profile.Id.ToString())
-        });
-
-        var token = _identityService.CreateSecurityToken(claimsIdentity);
-        return _identityService.WriteToken(token);
     }
 }

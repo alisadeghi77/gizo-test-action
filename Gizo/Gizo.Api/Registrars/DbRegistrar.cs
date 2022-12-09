@@ -1,4 +1,5 @@
-﻿using Gizo.Domain.Contracts.Repository;
+﻿using Gizo.Domain.Aggregates.UserAggregate;
+using Gizo.Domain.Contracts.Repository;
 using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Api.Registrars;
@@ -17,7 +18,7 @@ public class DbRegistrar : IWebApplicationBuilderRegistrar
             factory.GetRequiredService<DataContext>()
         );
 
-        builder.Services.AddIdentityCore<IdentityUser>(options =>
+        builder.Services.AddIdentityCore<User>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 5;
@@ -25,6 +26,7 @@ public class DbRegistrar : IWebApplicationBuilderRegistrar
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<DataContext>();
+            .AddEntityFrameworkStores<DataContext>()
+            .AddUserManager<UserManager<User>>();
     }
 }

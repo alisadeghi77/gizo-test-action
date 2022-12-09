@@ -12,8 +12,6 @@ public class PostMappings : Profile
             .ForMember(dest 
                 => dest.Type, opt 
                 => opt.MapFrom(src 
-                => src.InteractionType.ToString()))
-            .ForMember(dest => dest.Author, opt 
-            => opt.MapFrom(src => src.UserProfile));
+                => src.InteractionType.ToString()));
     }
 }

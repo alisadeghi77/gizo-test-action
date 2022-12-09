@@ -33,11 +33,6 @@ public class DeletePostHandler : IRequestHandler<DeletePostCommand, OperationRes
                 return result;
             }
 
-            if (post.UserProfileId != request.UserProfileId)
-            {
-                result.AddError(ErrorCode.PostDeleteNotPossible, PostsErrorMessages.PostDeleteNotPossible);
-                return result;
-            }
 
             _ctx.Posts.Remove(post);
             await _ctx.SaveChangesAsync(token);

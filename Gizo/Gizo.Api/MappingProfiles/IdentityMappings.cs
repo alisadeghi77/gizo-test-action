@@ -2,12 +2,11 @@
 
 namespace Gizo.Api.MappingProfiles;
 
-public class IdentitMappings : Profile
+public class IdentityMappings : Profile
 {
-    public IdentitMappings()
+    public IdentityMappings()
     {
         CreateMap<UserRegistrationRequest, RegisterIdentityCommand>();
         CreateMap<LoginRequest, LoginCommand>();
-        CreateMap<IdentityUserProfileDto, IdentityUserProfile>();
     }
 }
