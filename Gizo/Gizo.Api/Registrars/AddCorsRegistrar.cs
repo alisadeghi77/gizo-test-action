@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Api.Registrars;
 
-public class AddCors : IWebApplicationBuilderRegistrar
+public class AddCorsRegistrar : IWebApplicationBuilderRegistrar
 {
     public void RegisterServices(WebApplicationBuilder builder)
     {
