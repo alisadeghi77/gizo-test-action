@@ -3,6 +3,7 @@ using Gizo.Application.Enums;
 using Gizo.Application.Identity;
 using Gizo.Application.Models;
 using Gizo.Application.Services;
+using Gizo.Domain.Aggregates.UserAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -10,11 +11,11 @@ namespace Gizo.Application.ClientIdentity.Commands;
 
 public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand, OperationResult<ClientIdentityUserDto>>
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
     private readonly IdentityService _identityService;
     private OperationResult<ClientIdentityUserDto> _result = new();
 
-    public VerifyCommandHandler(UserManager<IdentityUser> userManager,
+    public VerifyCommandHandler(UserManager<User> userManager,
         IdentityService identityService)
     {
         _userManager = userManager;
@@ -46,7 +47,7 @@ public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand,
         return _result;
     }
 
-    private async Task<IdentityUser> ValidateAndGetIdentityAsync(VerifyClientIdentityCommand request)
+    private async Task<User> ValidateAndGetIdentityAsync(VerifyClientIdentityCommand request)
     {
         var identityUser = await _userManager.FindByNameAsync(request.Username);
 

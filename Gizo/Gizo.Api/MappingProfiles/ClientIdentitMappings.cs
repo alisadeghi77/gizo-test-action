@@ -1,4 +1,5 @@
 ﻿using Gizo.Api.Contracts.ClientIdentity;
+using Gizo.Api.Contracts.UserProfile.Requests;
 using Gizo.Application.ClientIdentity.Commands;
 using Gizo.Application.ClientIdentity.Dtos;
 using Gizo.Application.Identity.Dtos;
@@ -12,5 +13,6 @@ public class ClientIdentitMappings : Profile
         CreateMap<CheckClientIdentityRequest, CheckClientIdentityCommand>().ReverseMap();
         CreateMap<VerifyClientIdentityRequest, VerifyClientIdentityCommand>().ReverseMap();
         CreateMap<VerifyClientIdentityResult, ClientIdentityUserDto>().ReverseMap();
+        CreateMap<UserProfileUpdateRequest, UpdateUserProfileBasicInfoCommand>().ReverseMap();
     }
 }

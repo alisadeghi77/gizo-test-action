@@ -1,7 +1,6 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Identity.Commands;
 using Gizo.Application.Models;
-using Gizo.Application.UserProfiles;
 using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +23,7 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, Operat
         try
         {
             var identityUser = await _ctx.Users.FirstOrDefaultAsync(iu 
-                => iu.Id == request.IdentityUserId.ToString(), token);
+                => iu.Id == request.IdentityUserId, token);
 
             if (identityUser == null)
             {
@@ -33,17 +32,7 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, Operat
                 return result;
             }
 
-            var userProfile = await _ctx.UserProfiles
-                .FirstOrDefaultAsync(up
-                    => up.IdentityId == request.IdentityUserId.ToString(), token);
-
-            if (userProfile == null)
-            {
-                result.AddError(ErrorCode.NotFound, UserProfilesErrorMessages.UserProfileNotFound);
-                return result;
-            }
-
-            if (identityUser.Id != request.RequestorGuid.ToString())
+            if (identityUser.Id != request.RequestorGuid)
             {
                 result.AddError(ErrorCode.UnauthorizedAccountRemoval, 
                     IdentityErrorMessages.UnauthorizedAccountRemoval);
@@ -51,7 +40,6 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, Operat
                 return result;
             }
 
-            _ctx.UserProfiles.Remove(userProfile);
             _ctx.Users.Remove(identityUser);
             await _ctx.SaveChangesAsync(token);
 

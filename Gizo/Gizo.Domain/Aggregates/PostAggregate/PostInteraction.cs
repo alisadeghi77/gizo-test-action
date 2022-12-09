@@ -1,5 +1,4 @@
-﻿using Gizo.Domain.Aggregates.UserProfileAggregate;
-using Gizo.Domain.Contracts.Base;
+﻿using Gizo.Domain.Contracts.Base;
 
 namespace Gizo.Domain.Aggregates.PostAggregate;
 
@@ -10,8 +9,6 @@ public class PostInteraction: BaseEntity<long>
 
     }
     public long PostId { get; private set; }
-    public long? UserProfileId { get; private set; }
-    public UserProfile UserProfile { get; private set; }
     public InteractionType InteractionType { get; private set; }
 
     //Factories
@@ -21,7 +18,6 @@ public class PostInteraction: BaseEntity<long>
         return new PostInteraction
         {
             PostId = postId,
-            UserProfileId = userProfileId,
             InteractionType = type
         };
     }

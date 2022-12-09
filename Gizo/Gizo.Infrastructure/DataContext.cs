@@ -1,5 +1,6 @@
 ﻿using Gizo.Domain.Aggregates.PostAggregate;
-using Gizo.Domain.Aggregates.UserProfileAggregate;
+using Gizo.Domain.Aggregates.RoleAggregate;
+using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Domain.Contracts.Repository;
 using Gizo.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -7,18 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Infrastructure;
 
-public class DataContext : IdentityDbContext, IUnitOfWork
+public class DataContext : IdentityDbContext<User, Role, long>, IUnitOfWork
 {
     public DataContext(DbContextOptions options) : base(options)
     {
     }
 
-    public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<Post> Posts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Ignore<BasicInfo>();
         modelBuilder.ApplyAllConfigurations();
         base.OnModelCreating(modelBuilder);
     }

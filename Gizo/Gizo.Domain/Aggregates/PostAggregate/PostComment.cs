@@ -12,7 +12,6 @@ public class PostComment: BaseEntity<long>
     }
     public long PostId { get; private set; }
     public string Text { get; private set; }
-    public long UserProfileId { get; private set; }
     public DateTime DateCreated { get; private set; }
     public DateTime LastModified { get; private set; }
 
@@ -33,7 +32,6 @@ public class PostComment: BaseEntity<long>
         {
             PostId = postId,
             Text = text,
-            UserProfileId = userProfileId,
             DateCreated = DateTime.UtcNow,
             LastModified = DateTime.UtcNow
         };

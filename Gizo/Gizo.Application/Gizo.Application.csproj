@@ -16,6 +16,7 @@
     <Folder Include="ClientIdentity\MappingProfiles\" />
     <Folder Include="ClientIdentity\QueryHandlers\" />
     <Folder Include="ClientIdentity\Queries\" />
+    <Folder Include="Identity\MappingProfiles\" />
     <Folder Include="MappingProfiles" />
     <Folder Include="Posts\CommandHandlers\" />
     <Folder Include="Posts\QueryHandlers\" />

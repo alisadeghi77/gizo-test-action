@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Gizo.Application.Options;
+using Gizo.Domain.Aggregates.UserAggregate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -33,13 +34,13 @@ public class IdentityService
         return TokenHandler.WriteToken(token);
     }
 
-    public string GetJwtString(IdentityUser identity)
+    public string GetJwtString(User identity)
     {
         var claimsIdentity = new ClaimsIdentity(new Claim[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, identity.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("IdentityId", identity.Id),
+            new Claim("IdentityId", identity.Id.ToString()),
         });
 
         var token = CreateSecurityToken(claimsIdentity);

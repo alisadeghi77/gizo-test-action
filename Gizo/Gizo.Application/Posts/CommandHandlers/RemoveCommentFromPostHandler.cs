@@ -54,12 +54,12 @@ public class RemoveCommentFromPostHandler
             return result;
         }
 
-        if (comment.UserProfileId != request.UserProfileId)
-        {
-            result.AddError(ErrorCode.CommentRemovalNotAuthorized, 
-                PostsErrorMessages.CommentRemovalNotAuthorized);
-            return result;
-        }
+        //if (comment.UserProfileId != request.UserProfileId)
+        //{
+        //    result.AddError(ErrorCode.CommentRemovalNotAuthorized, 
+        //        PostsErrorMessages.CommentRemovalNotAuthorized);
+        //    return result;
+        //}
 
         await _commentRepository.DeleteAsync(request.CommentId);
         await _uow.SaveChangesAsync(token);

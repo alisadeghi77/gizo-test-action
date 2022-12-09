@@ -33,12 +33,6 @@ public class UpdatePostTextHandler : IRequestHandler<UpdatePostTextCommand, Oper
                 return result;
             }
 
-            if (post.UserProfileId != request.UserProfileId)
-            {
-                result.AddError(ErrorCode.PostUpdateNotPossible, PostsErrorMessages.PostUpdateNotPossible);
-                return result;
-            }
-
             post.UpdatePostText(request.NewText);
 
             await _ctx.SaveChangesAsync(token);

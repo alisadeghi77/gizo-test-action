@@ -29,5 +29,6 @@ public static class ApiRoutes
     {
         public const string CheckIdentity = "CheckIdentity";
         public const string Verify = "Verify";
+        public const string UpdateUserProfile = "UpdateUserProfile";
     }
 }
