@@ -5,8 +5,7 @@ using MediatR;
 
 namespace Gizo.Application.Identity.Queries;
 
-public class GetCurrentUserQuery : IRequest<OperationResult<IdentityUserProfileDto>>
-{
-    public long UserProfileId { get; set; }
-    public ClaimsPrincipal ClaimsPrincipal { get; set; }
-}
+public sealed record GetCurrentUserQuery(
+    long UserProfileId,
+    ClaimsPrincipal ClaimsPrincipal) : IRequest<OperationResult<IdentityUserProfileDto>>
+{ }

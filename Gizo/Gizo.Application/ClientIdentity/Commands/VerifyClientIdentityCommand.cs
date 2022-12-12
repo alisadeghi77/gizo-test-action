@@ -4,9 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.ClientIdentity.Commands;
 
-public class VerifyClientIdentityCommand : IRequest<OperationResult<ClientIdentityUserDto>>
-{
-    public string Username { get; set; }
-
-    public string VerifyCode { get; set; }
-}
+public sealed record VerifyClientIdentityCommand(
+    string UserName,
+    string VerifyCode) : IRequest<OperationResult<ClientIdentityUserDto>>
+{ }

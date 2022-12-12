@@ -4,7 +4,5 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Queries;
 
-public class GetAllPostsQuery : IRequest<OperationResult<List<Post>>>
-{
-    
-}
+public sealed record GetAllPostsQuery() : IRequest<OperationResult<List<Post>>>
+{ }

@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace Gizo.Application.ClientIdentity.Commands;
 
-public class UpdateUserProfileBasicInfoCommand : IRequest<OperationResult<bool>>
-{
-    public long Id { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Email { get; set; }
-}
-
+public sealed record UpdateUserProfileBasicInfoCommand(
+    long Id,
+    string FirstName,
+    string LastName,
+    string Email) : IRequest<OperationResult<bool>>
+{ }

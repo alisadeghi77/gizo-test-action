@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Queries;
 
-public class GetPostByIdQuery : IRequest<OperationResult<Post>>
-{
-    public long PostId { get; set; }
-}
+public sealed record GetPostByIdQuery(
+    long PostId
+    ) : IRequest<OperationResult<Post>>
+{ }

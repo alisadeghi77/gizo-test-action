@@ -4,9 +4,9 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Commands;
 
-public class RemovePostInteractionCommand : IRequest<OperationResult<PostInteraction>>
-{
-    public long PostId { get; set; }
-    public long InteractionId { get; set; }
-    public long UserProfileId { get; set; }
-}
+public sealed record RemovePostInteractionCommand(
+    long PostId,
+    long InteractionId,
+    long UserProfileId
+    ) : IRequest<OperationResult<PostInteraction>>
+{ }

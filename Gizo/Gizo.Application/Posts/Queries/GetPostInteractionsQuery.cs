@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Queries;
 
-public class GetPostInteractionsQuery : IRequest<OperationResult<List<PostInteraction>>>
-{
-    public long PostId { get; set; }
-}
+public sealed record GetPostInteractionsQuery (
+    long PostId
+    ): IRequest<OperationResult<List<PostInteraction>>>
+{ }

@@ -3,8 +3,7 @@ using MediatR;
 
 namespace Gizo.Application.Identity.Commands;
 
-public class RemoveAccountCommand : IRequest<OperationResult<bool>>
-{
-    public long IdentityUserId { get; set; }
-    public long RequestorGuid { get; set; }
-}
+public sealed record RemoveAccountCommand(
+    long IdentityUserId,
+    long RequestorGuid) : IRequest<OperationResult<bool>>
+{ }

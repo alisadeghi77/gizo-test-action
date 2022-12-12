@@ -4,9 +4,9 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Commands;
 
-public class AddPostCommentCommand : IRequest<OperationResult<PostComment>>
-{
-    public long PostId { get; set; }
-    public long UserProfileId { get; set; }
-    public string CommentText { get; set; }
-}
+public sealed record AddPostCommentCommand(
+    long PostId,
+    long UserProfileId,
+    string CommentText
+    ) : IRequest<OperationResult<PostComment>>
+{ }

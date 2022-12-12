@@ -4,9 +4,10 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Commands;
 
-public class RemoveCommentFromPostCommand : IRequest<OperationResult<PostComment>>
-{
-    public long UserProfileId { get; set; }
-    public long PostId { get; set; }
-    public long CommentId { get; set; }
-}
+
+public sealed record RemoveCommentFromPostCommand(
+    long UserProfileId,
+    long PostId,
+    long CommentId
+    ) : IRequest<OperationResult<PostComment>>
+{ }

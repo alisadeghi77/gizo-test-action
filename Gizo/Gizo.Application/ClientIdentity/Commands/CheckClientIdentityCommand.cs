@@ -3,7 +3,4 @@ using MediatR;
 
 namespace Gizo.Application.ClientIdentity.Commands;
 
-public class CheckClientIdentityCommand : IRequest<OperationResult<bool>>
-{
-    public string Username { get; set; }
-}
+public sealed record CheckClientIdentityCommand(string UserName): IRequest<OperationResult<bool>> { }

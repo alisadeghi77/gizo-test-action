@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Gizo.Application.Posts.Commands;
 
-public class CreatePostCommand : IRequest<OperationResult<Post>>
-{
-    public long UserProfileId { get; set; }
-    public string TextContent { get; set; }
-}
+public sealed record CreatePostCommand(
+    long UserProfileId,
+    string TextContent
+    ) : IRequest<OperationResult<Post>>
+{ }
