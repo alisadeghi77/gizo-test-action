@@ -10,7 +10,7 @@ public class BaseController : ControllerBase
     protected IMediator _mediator => _mediatorInstance ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
     protected IMapper _mapper => _mapperInstance ??= HttpContext.RequestServices.GetRequiredService<IMapper>();
 
-    protected IActionResult HandleErrorResponse(IReadOnlyCollection<Error> errors)
+    protected ActionResult HandleErrorResponse(IReadOnlyCollection<Error> errors)
     {
         var apiError = new ErrorResponse();
 

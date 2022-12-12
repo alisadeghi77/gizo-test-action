@@ -9,7 +9,8 @@ public class ClientIdentityController : BaseController
     [HttpPost]
     [Route(ApiRoutes.ClientIdentity.CheckIdentity)]
     [ValidateModel]
-    public async Task<IActionResult> CheckIdentity(CheckClientIdentityRequest checkIdentity, CancellationToken token)
+    public async Task<ActionResult<bool>> CheckIdentity(CheckClientIdentityRequest checkIdentity, 
+        CancellationToken token)
     {
         var command = _mapper.Map<CheckClientIdentityCommand>(checkIdentity);
         var result = await _mediator.Send(command, token);
@@ -23,7 +24,8 @@ public class ClientIdentityController : BaseController
     [HttpPost]
     [Route(ApiRoutes.ClientIdentity.Verify)]
     [ValidateModel]
-    public async Task<IActionResult> Verify(VerifyClientIdentityRequest login, CancellationToken token)
+    public async Task<ActionResult<VerifyClientIdentityResult>> Verify(VerifyClientIdentityRequest login, 
+        CancellationToken token)
     {
         var command = _mapper.Map<VerifyClientIdentityCommand>(login);
         var result = await _mediator.Send(command, token);
@@ -38,12 +40,12 @@ public class ClientIdentityController : BaseController
     [Route(ApiRoutes.ClientIdentity.UpdateUserProfile)]
     [ValidateModel]
     [Authorize]
-    public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateRequest updatedProfile, CancellationToken cancellationToken)
+    public async Task<ActionResult> UpdateUserProfile(UserProfileUpdateRequest updatedProfile, CancellationToken token)
     {
         var command = _mapper.Map<UpdateUserProfileBasicInfoCommand>(updatedProfile);
         command.Id = HttpContext.GetIdentityIdClaimValue();
 
-        var response = await _mediator.Send(command, cancellationToken);
+        var response = await _mediator.Send(command, token);
 
         return response.IsError ? HandleErrorResponse(response.Errors) : NoContent();
     }
