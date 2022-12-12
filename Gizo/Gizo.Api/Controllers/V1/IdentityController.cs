@@ -36,11 +36,8 @@ public class IdentityController : BaseController
     [Authorize]
     public async Task<IActionResult> DeleteAccount(long identityUserId, CancellationToken token)
     {
-        var command = new RemoveAccountCommand
-        {
-            IdentityUserId = identityUserId,
-            RequestorGuid = HttpContext.GetIdentityIdClaimValue()
-        };
+        var command = new RemoveAccountCommand(identityUserId, HttpContext.GetIdentityIdClaimValue());
+
         var result = await _mediator.Send(command, token);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
@@ -55,7 +52,7 @@ public class IdentityController : BaseController
     {
         var userProfileId = HttpContext.GetUserProfileIdClaimValue();
 
-        var query = new GetCurrentUserQuery { UserProfileId = userProfileId, ClaimsPrincipal = HttpContext.User};
+        var query = new GetCurrentUserQuery(userProfileId, HttpContext.User);
         var result = await _mediator.Send(query, token);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
