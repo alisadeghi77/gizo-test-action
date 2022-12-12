@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Gizo.Utility\Gizo.Utility.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Configurations\" />
+  </ItemGroup>
+
 </Project>
