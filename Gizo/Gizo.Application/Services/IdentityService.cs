@@ -2,8 +2,6 @@
 using System.Security.Claims;
 using System.Text;
 using Gizo.Application.Options;
-using Gizo.Domain.Aggregates.UserAggregate;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,7 +32,7 @@ public class IdentityService
         return TokenHandler.WriteToken(token);
     }
 
-    public string GetJwtString(User identity)
+    public string GetJwtString(Domain.Aggregates.UserAggregate.User identity)
     {
         var claimsIdentity = new ClaimsIdentity(new Claim[]
         {
@@ -59,5 +57,4 @@ public class IdentityService
                 SecurityAlgorithms.HmacSha256Signature)
         };
     }
-
 }

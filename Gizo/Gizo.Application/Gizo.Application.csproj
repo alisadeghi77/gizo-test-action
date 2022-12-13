@@ -13,14 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientIdentity\MappingProfiles\" />
-    <Folder Include="ClientIdentity\QueryHandlers\" />
-    <Folder Include="ClientIdentity\Queries\" />
-    <Folder Include="Identity\MappingProfiles\" />
-    <Folder Include="MappingProfiles" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Gizo.Domain\Gizo.Domain.csproj" />
     <ProjectReference Include="..\Gizo.Infrastructure\Gizo.Infrastructure.csproj" />
   </ItemGroup>
