@@ -11,5 +11,4 @@ public sealed record RegisterIdentityCommand(
     string LastName,
     DateTime DateOfBirth,
     string Phone,
-    string CurrentCity) : IRequest<OperationResult<IdentityUserProfileDto>>
-{ }
+    string CurrentCity) : IRequest<OperationResult<CurrentUserDto>>;

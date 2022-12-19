@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
-public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand, OperationResult<IdentityUserDto>>
+public class VerifyCommandHandler : IRequestHandler<VerifyCommand, OperationResult<UserDto>>
 {
     private readonly UserManager<Domain.Aggregates.UserAggregate.User> _userManager;
     private readonly IdentityService _identityService;
-    private OperationResult<IdentityUserDto> _result = new();
+    private OperationResult<UserDto> _result = new();
 
     public VerifyCommandHandler(UserManager<Domain.Aggregates.UserAggregate.User> userManager,
         IdentityService identityService)
@@ -22,7 +22,7 @@ public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand,
         _identityService = identityService;
     }
 
-    public async Task<OperationResult<IdentityUserDto>> Handle(VerifyClientIdentityCommand request,
+    public async Task<OperationResult<UserDto>> Handle(VerifyCommand request,
         CancellationToken token)
     {
         try
@@ -31,7 +31,7 @@ public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand,
             if (_result.IsError)
                 return _result;
 
-            _result.Data = new IdentityUserDto()
+            _result.Data = new UserDto()
             {
                 UserName = identityUser.UserName,
                 Token = _identityService.GetJwtString(identityUser)
@@ -47,7 +47,7 @@ public class VerifyCommandHandler : IRequestHandler<VerifyClientIdentityCommand,
         return _result;
     }
 
-    private async Task<User> ValidateAndGetIdentityAsync(VerifyClientIdentityCommand request)
+    private async Task<User> ValidateAndGetIdentityAsync(VerifyCommand request)
     {
         var identityUser = await _userManager.FindByNameAsync(request.Username);
 

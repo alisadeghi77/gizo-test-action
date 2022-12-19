@@ -13,8 +13,9 @@ public class UserMappings : Profile
         CreateMap<UserRegistrationRequest, RegisterIdentityCommand>();
         CreateMap<LoginRequest, LoginCommand>();
         CreateMap<CheckIdentityRequest, CheckClientIdentityCommand>().ReverseMap();
-        CreateMap<VerifyIdentityRequest, VerifyClientIdentityCommand>().ReverseMap();
-        CreateMap<VerifyIdentityResponse, IdentityUserDto>().ReverseMap();
-        CreateMap<UserProfileUpdateRequest, UpdateUserProfileBasicInfoCommand>().ReverseMap();
+        CreateMap<VerifyIdentityRequest, VerifyCommand>().ReverseMap();
+        CreateMap<VerifyIdentityResponse, UserDto>().ReverseMap();
+        CreateMap<UserProfileUpdateRequest, UpdateUserProfileCommand>().ReverseMap();
+        CreateMap<UserProfileResponse, UserProfileDto>().ReverseMap();
     }
 }

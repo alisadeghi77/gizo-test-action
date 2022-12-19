@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Application.Users.Dtos;
 
-public class IdentityUserDto
+public class UserDto
 {
     public string UserName { get; set; }
 

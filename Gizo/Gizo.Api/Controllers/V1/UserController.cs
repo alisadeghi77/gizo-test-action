@@ -29,7 +29,7 @@ public class UserController : BaseController
     public async Task<ActionResult<VerifyIdentityResponse>> Verify(VerifyIdentityRequest login,
         CancellationToken token)
     {
-        var command = _mapper.Map<VerifyClientIdentityCommand>(login);
+        var command = _mapper.Map<VerifyCommand>(login);
         var result = await _mediator.Send(command, token);
 
         if (result.IsError)
@@ -42,14 +42,19 @@ public class UserController : BaseController
     [Route(ApiRoutes.User.Profile)]
     [ValidateModel]
     [Authorize]
-    public async Task<ActionResult> UpdateProfile(UserProfileUpdateRequest updatedProfile, CancellationToken token)
+    public async Task<ActionResult<UserProfileResponse>> UpdateProfile(
+        UserProfileUpdateRequest updatedProfile,
+        CancellationToken token)
     {
-        var command = _mapper.Map<UpdateUserProfileBasicInfoCommand>(updatedProfile);
+        var command = _mapper.Map<UpdateUserProfileCommand>(updatedProfile);
         command.Id = HttpContext.GetIdentityIdClaimValue();
 
         var response = await _mediator.Send(command, token);
 
-        return response.IsError ? HandleErrorResponse(response.Errors) : NoContent();
+        if (response.IsError)
+            return HandleErrorResponse(response.Errors);
+
+        return Ok(_mapper.Map<UserProfileResponse>(response.Data));
     }
 
     [HttpPost]
@@ -60,9 +65,10 @@ public class UserController : BaseController
         var command = _mapper.Map<RegisterIdentityCommand>(registration);
         var result = await _mediator.Send(command, token);
 
-        if (result.IsError) return HandleErrorResponse(result.Errors);
+        if (result.IsError) 
+            return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<IdentityUserProfileResponse>(result.Data));
+        return Ok(_mapper.Map<UserProfileResponse>(result.Data));
     }
 
     [HttpPost]
@@ -76,7 +82,7 @@ public class UserController : BaseController
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<IdentityUserProfileResponse>(result.Data));
+        return Ok(_mapper.Map<UserProfileResponse>(result.Data));
     }
 
     [HttpDelete]
@@ -96,15 +102,16 @@ public class UserController : BaseController
     [HttpGet]
     [Route(ApiRoutes.User.CurrentUser)]
     [Authorize]
-    public async Task<IActionResult> CurrentUser(CancellationToken token)
+    public async Task<ActionResult<UserProfileResponse>> CurrentUser(CancellationToken token)
     {
-        var userProfileId = HttpContext.GetUserProfileIdClaimValue();
+        var userId = HttpContext.GetIdentityIdClaimValue();
 
-        var query = new GetCurrentUserQuery(userProfileId, HttpContext.User);
+        var query = new GetCurrentUserQuery(userId, HttpContext.User);
         var result = await _mediator.Send(query, token);
 
-        if (result.IsError) return HandleErrorResponse(result.Errors);
+        if (result.IsError) 
+            return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<IdentityUserProfileResponse>(result.Data));
+        return Ok(_mapper.Map<UserProfileResponse>(result.Data));
     }
 }

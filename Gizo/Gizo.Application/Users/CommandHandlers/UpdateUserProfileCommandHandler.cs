@@ -1,6 +1,8 @@
-﻿using Gizo.Application.Enums;
+﻿using AutoMapper;
+using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Users.Commands;
+using Gizo.Application.Users.Dtos;
 using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Infrastructure;
 using MediatR;
@@ -8,20 +10,25 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
-public class UpdateUserProfileBasicInfoCommandHandler 
-    : IRequestHandler<UpdateUserProfileBasicInfoCommand, OperationResult<bool>>
+public class UpdateUserProfileCommandHandler 
+    : IRequestHandler<UpdateUserProfileCommand, OperationResult<UserProfileDto>>
 {
     private readonly DataContext _ctx;
     private readonly UserManager<User> _userManager;
-    private OperationResult<bool> _result = new();
+    private readonly IMapper _mapper;
+    private OperationResult<UserProfileDto> _result = new();
 
-    public UpdateUserProfileBasicInfoCommandHandler(DataContext ctx, UserManager<User> userManager)
+    public UpdateUserProfileCommandHandler(
+        DataContext ctx,
+        IMapper mapper,
+        UserManager<User> userManager)
     {
         _ctx = ctx;
+        _mapper = mapper;
         _userManager = userManager;
     }
 
-    public async Task<OperationResult<bool>> Handle(UpdateUserProfileBasicInfoCommand request, CancellationToken token)
+    public async Task<OperationResult<UserProfileDto>> Handle(UpdateUserProfileCommand request, CancellationToken token)
     {
         try
         {
@@ -30,7 +37,7 @@ public class UpdateUserProfileBasicInfoCommandHandler
             if (_result.IsError)
                 return _result;
 
-            _result.Data = true;
+            _result.Data = _mapper.Map<UserProfileDto>(user);
             return _result;
         }
         catch (Exception e)
@@ -41,7 +48,7 @@ public class UpdateUserProfileBasicInfoCommandHandler
         return _result;
     }
 
-    private async Task<User> UpdateUserProfile(UpdateUserProfileBasicInfoCommand request, CancellationToken token)
+    private async Task<User> UpdateUserProfile(UpdateUserProfileCommand request, CancellationToken token)
     {
         var user = await _userManager.FindByIdAsync(request.Id.ToString());
 

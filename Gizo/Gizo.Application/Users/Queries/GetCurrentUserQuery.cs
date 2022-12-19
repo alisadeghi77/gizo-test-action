@@ -6,6 +6,6 @@ using MediatR;
 namespace Gizo.Application.Users.Queries;
 
 public sealed record GetCurrentUserQuery(
-    long UserProfileId,
-    ClaimsPrincipal ClaimsPrincipal) : IRequest<OperationResult<IdentityUserProfileDto>>
+    long userId,
+    ClaimsPrincipal ClaimsPrincipal) : IRequest<OperationResult<UserProfileDto>>
 { }

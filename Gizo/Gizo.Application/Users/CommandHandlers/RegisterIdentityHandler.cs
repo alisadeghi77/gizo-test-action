@@ -12,12 +12,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
-public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, OperationResult<IdentityUserProfileDto>>
+public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, OperationResult<CurrentUserDto>>
 {
     private readonly DataContext _ctx;
     private readonly UserManager<User> _userManager;
     private readonly IdentityService _identityService;
-    private OperationResult<IdentityUserProfileDto> _result = new();
+    private OperationResult<CurrentUserDto> _result = new();
     private readonly IMapper _mapper;
 
     public RegisterIdentityHandler(DataContext ctx, UserManager<User> userManager,
@@ -29,7 +29,7 @@ public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, 
         _mapper = mapper;
     }
     
-    public async Task<OperationResult<IdentityUserProfileDto>> Handle(RegisterIdentityCommand request, 
+    public async Task<OperationResult<CurrentUserDto>> Handle(RegisterIdentityCommand request, 
         CancellationToken token)
     {
         try

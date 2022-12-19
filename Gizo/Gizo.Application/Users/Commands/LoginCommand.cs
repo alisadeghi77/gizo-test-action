@@ -6,5 +6,5 @@ namespace Gizo.Application.Users.Commands;
 
 public sealed record LoginCommand(
      string Username,
-     string Password) : IRequest<OperationResult<IdentityUserProfileDto>>
+     string Password) : IRequest<OperationResult<CurrentUserDto>>
 { }

@@ -11,13 +11,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
-public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult<IdentityUserProfileDto>>
+public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult<CurrentUserDto>>
 {
     private readonly DataContext _ctx;
     private readonly UserManager<User> _userManager;
     private readonly IdentityService _identityService;
     private readonly IMapper _mapper;
-    private OperationResult<IdentityUserProfileDto> _result = new();
+    private OperationResult<CurrentUserDto> _result = new();
 
     public LoginCommandHandler(DataContext ctx, UserManager<User> userManager, 
         IdentityService identityService, IMapper mapper)
@@ -28,7 +28,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult
         _mapper = mapper;
     }
 
-    public async Task<OperationResult<IdentityUserProfileDto>> Handle(LoginCommand request, 
+    public async Task<OperationResult<CurrentUserDto>> Handle(LoginCommand request, 
         CancellationToken token)
     {
         try

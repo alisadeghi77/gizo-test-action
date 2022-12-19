@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Application.Users.QueryHandlers;
 
-public class GetCurrentUserHandler 
-    : IRequestHandler<GetCurrentUserQuery, OperationResult<IdentityUserProfileDto>>
+public class GetCurrentUserHandler
+    : IRequestHandler<GetCurrentUserQuery, OperationResult<UserProfileDto>>
 {
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
@@ -22,13 +22,13 @@ public class GetCurrentUserHandler
         _mapper = mapper;
     }
 
-    public async Task<OperationResult<IdentityUserProfileDto>> Handle(GetCurrentUserQuery request, 
+    public async Task<OperationResult<UserProfileDto>> Handle(GetCurrentUserQuery request,
         CancellationToken token)
     {
-        var result = new OperationResult<IdentityUserProfileDto>();
-        var user = await _userManager.GetUserAsync(request.ClaimsPrincipal);
+        var result = new OperationResult<UserProfileDto>();
+        var user = await _userManager.FindByIdAsync(request.userId.ToString());
 
-        result.Data.UserName = user.UserName;
+        result.Data = _mapper.Map<UserProfileDto>(user);
         return result;
     }
 }
