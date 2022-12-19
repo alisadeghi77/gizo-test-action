@@ -68,7 +68,7 @@ public class UserController : BaseController
         if (result.IsError) 
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<UserProfileResponse>(result.Data));
+        return Ok(_mapper.Map<CurrentUserResponse>(result.Data));
     }
 
     [HttpPost]
@@ -82,7 +82,7 @@ public class UserController : BaseController
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<UserProfileResponse>(result.Data));
+        return Ok(_mapper.Map<CurrentUserResponse>(result.Data));
     }
 
     [HttpDelete]

@@ -17,5 +17,6 @@ public class UserMappings : Profile
         CreateMap<VerifyIdentityResponse, UserDto>().ReverseMap();
         CreateMap<UserProfileUpdateRequest, UpdateUserProfileCommand>().ReverseMap();
         CreateMap<UserProfileResponse, UserProfileDto>().ReverseMap();
+        CreateMap<CurrentUserDto, CurrentUserResponse>().ReverseMap();
     }
 }
