@@ -1,4 +1,5 @@
-﻿using Gizo.Domain.Contracts.Base;
+﻿using Gizo.Domain.Aggregates.TripAggregate;
+using Gizo.Domain.Contracts.Base;
 using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Domain.Aggregates.UserAggregate;
@@ -19,6 +20,8 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
     public DateTime? ModifyDate { get; set; }
 
     public long? ModifierId { get; set; }
+
+    public IReadOnlyCollection<Trip> Trips { get; private set; }
 
     public void UpdateUserProfile(string firstName, string lastName, string email)
     {

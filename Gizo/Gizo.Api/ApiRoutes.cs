@@ -13,4 +13,11 @@ public static class ApiRoutes
         public const string Id = "{id}";
         public const string CurrentUser = "currentUser";
     }
+
+    public static class Trip
+    {
+        public const string TripStart = "TripStart";
+        public const string UploadChunks = "UploadChunks";
+        public const string UploadComplete = "UploadComplete";
+    }
 }

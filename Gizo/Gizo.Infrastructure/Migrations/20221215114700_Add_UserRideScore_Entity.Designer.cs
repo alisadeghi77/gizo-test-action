@@ -4,6 +4,7 @@ using Gizo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizo.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221215114700_Add_UserRideScore_Entity")]
+    partial class Add_UserRideScore_Entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,77 +52,6 @@ namespace Gizo.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.Trip", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<decimal>("ChunkSize")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsGpsUploaded")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsImuUploaded")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsVideoUploaded")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifyDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Score")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("VideoFileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VideoFilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Trips", "Trip");
-                });
-
-            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.TripTempVideo", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("TripId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TripId");
-
-                    b.ToTable("TripTempVideos", "Trip");
                 });
 
             modelBuilder.Entity("Gizo.Domain.Aggregates.UserAggregate.User", b =>
@@ -204,6 +135,77 @@ namespace Gizo.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Gizo.Domain.Aggregates.UserRideScoreAggregate.UserRideScore", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<decimal>("ChunkSize")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsGpsUploaded")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsImuUploaded")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVideoUploaded")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Score")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("VideoFileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRideScores", "RideScore");
+                });
+
+            modelBuilder.Entity("Gizo.Domain.Aggregates.UserRideScoreAggregate.UserRideVideosSplit", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUploaded")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("UserRideScoreId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserRideScoreId");
+
+                    b.ToTable("UserRideVideosSplits", "RideScore");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -309,10 +311,10 @@ namespace Gizo.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.Trip", b =>
+            modelBuilder.Entity("Gizo.Domain.Aggregates.UserRideScoreAggregate.UserRideScore", b =>
                 {
                     b.HasOne("Gizo.Domain.Aggregates.UserAggregate.User", "User")
-                        .WithMany("Trips")
+                        .WithMany("UserRideScores")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -320,15 +322,15 @@ namespace Gizo.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.TripTempVideo", b =>
+            modelBuilder.Entity("Gizo.Domain.Aggregates.UserRideScoreAggregate.UserRideVideosSplit", b =>
                 {
-                    b.HasOne("Gizo.Domain.Aggregates.TripAggregate.Trip", "Trip")
-                        .WithMany("TripTempVideos")
-                        .HasForeignKey("TripId")
+                    b.HasOne("Gizo.Domain.Aggregates.UserRideScoreAggregate.UserRideScore", "UserRideScore")
+                        .WithMany("userRideVideosSplits")
+                        .HasForeignKey("UserRideScoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Trip");
+                    b.Navigation("UserRideScore");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -382,14 +384,14 @@ namespace Gizo.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.Trip", b =>
-                {
-                    b.Navigation("TripTempVideos");
-                });
-
             modelBuilder.Entity("Gizo.Domain.Aggregates.UserAggregate.User", b =>
                 {
-                    b.Navigation("Trips");
+                    b.Navigation("UserRideScores");
+                });
+
+            modelBuilder.Entity("Gizo.Domain.Aggregates.UserRideScoreAggregate.UserRideScore", b =>
+                {
+                    b.Navigation("userRideVideosSplits");
                 });
 #pragma warning restore 612, 618
         }

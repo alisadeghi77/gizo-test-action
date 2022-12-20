@@ -6,3 +6,8 @@ public interface IOptionalModifiedDate<TModifierId>
     DateTime? ModifyDate { get; set; }
     TModifierId? ModifierId { get; set; }
 }
+
+public interface IOptionalModifiedDate
+{
+    DateTime? ModifyDate { get; set; }
+}
