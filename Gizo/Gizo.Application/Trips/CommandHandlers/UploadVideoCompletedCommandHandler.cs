@@ -46,7 +46,7 @@ public class UploadVideoCompletedCommandHandler
             trip,
             videoFileName);
 
-        trip.RemoveAllTempVideo();
+        trip.RemoveAllTempVideos();
 
         _tripRepository.Update(updatedModel)
             .OnlyInclude(_ => _.VideoFileName)
