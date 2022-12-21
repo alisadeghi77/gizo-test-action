@@ -1,5 +1,6 @@
 ﻿using Gizo.Api.Contracts.Trips;
 using Gizo.Application.Trips.Commands;
+using Gizo.Application.Trips.Dtos;
 
 namespace Gizo.Api.Controllers.V1;
 
@@ -15,7 +16,7 @@ public class TripController : BaseController
 
     [HttpPost]
     [Route(ApiRoutes.Trip.TripStart)]
-    public async Task<IActionResult> TripStart(CancellationToken token)
+    public async Task<ActionResult<CreatedTripResponse>> TripStart(CancellationToken token)
     {
         var userId = HttpContext.GetIdentityIdClaimValue();
 
@@ -34,8 +35,7 @@ public class TripController : BaseController
     [HttpPost]
     [ValidateModel]
     [Route(ApiRoutes.Trip.UploadChunks)]
-    public async Task<IActionResult> UploadChunks(
-        [FromForm] UploadChunkRequest fileChunk,
+    public async Task<ActionResult<TripTempVideoCreatedResponse>> UploadChunks([FromForm] UploadChunkRequest fileChunk,
         CancellationToken token)
     {
         try
@@ -62,8 +62,7 @@ public class TripController : BaseController
     [HttpPost]
     [ValidateModel]
     [Route(ApiRoutes.Trip.UploadComplete)]
-    public async Task<IActionResult> UploadComplete(
-        [FromQuery] UploadCompletedRequest uploadCompleted,
+    public async Task<ActionResult<bool>> UploadComplete([FromQuery] UploadCompletedRequest uploadCompleted,
         CancellationToken token)
     {
         try
