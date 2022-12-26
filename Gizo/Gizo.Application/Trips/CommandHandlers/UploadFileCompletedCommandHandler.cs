@@ -4,7 +4,6 @@ using Gizo.Application.Options;
 using Gizo.Application.Services;
 using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Contracts.Enums;
-using Gizo.Domain.Contracts.Repository;
 using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +32,7 @@ public class UploadFileCompletedCommandHandler
         _uploadFileSettings = uploadFileSettings.Value;
     }
 
-    public async Task<OperationResult<bool>> Handle(
-        UploadFileCompletedCommand request,
+    public async Task<OperationResult<bool>> Handle(UploadFileCompletedCommand request,
         CancellationToken token)
     {
         var trip = await _context.Trips
@@ -53,8 +51,7 @@ public class UploadFileCompletedCommandHandler
             return _result;
         }
 
-        var tempPath = _uploadFileService
-                .GetTripTempFilePath(_uploadFileSettings.SaveTempTo,
+        var tempPath = _uploadFileService.GetTripTempFilePath(_uploadFileSettings.SaveTempTo,
                       trip.UserId, trip.Id,
                       request.TripFileType.ToString());
 

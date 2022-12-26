@@ -4,7 +4,7 @@ using Gizo.Domain.Contracts.Enums;
 
 namespace Gizo.Domain.Aggregates.TripAggregate;
 
-public class Trip :  ICreateDate, IOptionalModifiedDate
+public class Trip : ICreateDate, IOptionalModifiedDate
 {
     private readonly List<TripTempFile> _tripTempFiles = new();
 

@@ -72,7 +72,7 @@ public class UploadFileChunkCommandHandler
         return _result;
     }
 
-    private string CreateFileChunkName(string fileName, string fileChunkId, string fileType)
+    private static string CreateFileChunkName(string fileName, string fileChunkId, string fileType)
     {
         return fileName + fileType.ToStandardType() + fileChunkId;
     }

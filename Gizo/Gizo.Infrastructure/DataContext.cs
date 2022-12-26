@@ -15,6 +15,7 @@ public class DataContext : IdentityDbContext<User, Role, long>, IUnitOfWork
     }
 
     public DbSet<Trip> Trips { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyAllConfigurations();

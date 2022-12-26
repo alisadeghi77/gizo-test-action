@@ -9,6 +9,20 @@ namespace Gizo.Api.Controllers.V1;
 public class TripController : BaseController
 {
     [HttpGet]
+    public async Task<ActionResult<List<GetUserTripResponse>>> GetTrips(CancellationToken token)
+    {
+        var userId = HttpContext.GetIdentityIdClaimValue();
+        var query = new GetAllTripsQuery(userId);
+
+        var result = await _mediator.Send(query, token);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
+    }
+
+    [HttpGet]
     [Route(ApiRoutes.Trip.FileChunkStatus)]
     public async Task<ActionResult<FileChunkStatusResponse>> GetFileChunkStatus([FromQuery] FileChunkStatusRequest request,
         CancellationToken token)
