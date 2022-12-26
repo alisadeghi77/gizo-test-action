@@ -1,4 +1,5 @@
 ﻿using Gizo.Domain.Aggregates.RoleAggregate;
+using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Domain.Contracts.Repository;
 using Gizo.Infrastructure.Extensions;
@@ -11,8 +12,9 @@ public class DataContext : IdentityDbContext<User, Role, long>, IUnitOfWork
 {
     public DataContext(DbContextOptions options) : base(options)
     {
-    }    
+    }
 
+    public DbSet<Trip> Trips { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyAllConfigurations();

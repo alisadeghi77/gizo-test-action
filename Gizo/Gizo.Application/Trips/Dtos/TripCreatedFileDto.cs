@@ -2,14 +2,10 @@
 
 public class TripCreatedFileDto
 {
-    public TripCreatedFileDto(
-        string filePath,
-        decimal chunkSize)
+    public TripCreatedFileDto(string filePath)
     {
         FilePath = filePath;
-        ChunkSize = chunkSize;
     }
 
     public string FilePath { get; set; }
-    public decimal ChunkSize { get; set; }
 }

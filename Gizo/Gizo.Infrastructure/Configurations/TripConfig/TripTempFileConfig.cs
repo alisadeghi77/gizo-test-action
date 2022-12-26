@@ -4,20 +4,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizo.Infrastructure.Configurations.TripConfig;
-public class TripTempVideoConfig : IEntityTypeConfiguration<TripTempVideo>
+public class TripTempFileConfig : IEntityTypeConfiguration<TripTempFile>
 {
-    public void Configure(EntityTypeBuilder<TripTempVideo> builder)
+    public void Configure(EntityTypeBuilder<TripTempFile> builder)
     {
         //Fields
         builder.HasKey(x => x.Id);
 
         //Relations
         builder.HasOne(x => x.Trip)
-               .WithMany(x => x.TripTempVideos)
+               .WithMany(x => x.TripTempFiles)
                .HasForeignKey(x => x.TripId)
                .OnDelete(DeleteBehavior.Cascade);
 
         //Table
-        builder.ToTable("TripTempVideos", SchemaConfig.Trip);
+        builder.ToTable("TripTempFiles", SchemaConfig.Trip);
     }
 }

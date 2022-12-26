@@ -1,54 +1,33 @@
-﻿using Gizo.Application.Options;
-using Gizo.Application.Trips.Dtos;
+﻿using Gizo.Application.Trips.Dtos;
 using Gizo.Utility;
-using Microsoft.Extensions.Options;
 
 namespace Gizo.Application.Services;
 
 public class UploadFileService
 {
-    private readonly UploadFileSettings _uploadFileSettings;
-    private readonly int _chunkSize;
-
-    public UploadFileService(IOptions<UploadFileSettings> uploadFileSettings)
+    public TripCreatedFileDto CreateUserFile(string filePath)
     {
-        _uploadFileSettings = uploadFileSettings.Value;
-        _chunkSize = FileHelper.MBToByte(_uploadFileSettings.ChunkSize);
-    }
-
-    public TripCreatedFileDto CreateUserFile(string webRootPath)
-    {
-        var currentDateTime = DateTime.Now.ToStandardDateTime();
-        var currentDate = DateTime.Now.ToStandardDate();
-
-        var filePath = Path.Combine(
-            webRootPath,
-            string.Format(_uploadFileSettings.SaveTo, currentDate, currentDateTime));
-
-        var tempFilePath = Path.Combine(
-            webRootPath,
-            string.Format(_uploadFileSettings.SaveTempTo, currentDate, currentDateTime));
+        var chunkPath = Path.Combine(filePath, "Chunk");
 
         if (!Directory.Exists(filePath))
         {
             Directory.CreateDirectory(filePath);
-            Directory.CreateDirectory(tempFilePath);
+            Directory.CreateDirectory(chunkPath);
         }
 
-        return new TripCreatedFileDto(filePath, _chunkSize);
+        return new TripCreatedFileDto(filePath);
     }
 
-    public async Task UploadChunk(
-        string fileName,
-        string filePath,
-        Stream fileChunk)
+    public async Task UploadChunk(string fileName, string filePath, Stream fileChunk, int chunkSize)
     {
         try
         {
-            string newpath = Path.Combine(filePath + "/Temp", fileName);
+            var filePathResult = CreateUserFile(filePath);
+
+            string newpath = Path.Combine(filePath + "/Chunk", fileName);
 
             using FileStream fs = File.Create(newpath);
-            byte[] bytes = new byte[_chunkSize];
+            byte[] bytes = new byte[chunkSize];
             int bytesRead = 0;
 
             while ((bytesRead = await fileChunk.ReadAsync(bytes, 0, bytes.Length)) > 0)
@@ -62,19 +41,18 @@ public class UploadFileService
         }
     }
 
-    public string UploadCompleted(
-        string filePath,
-        string fileName)
+    public string UploadCompleted(string filePath, string fileName, string type)
     {
         try
         {
-            string tempPath = Path.Combine(filePath, "Temp");
-            string newPath = Path.Combine(tempPath, fileName);
+            var newFileName = fileName + type.ToStandardType();
+            string tempPath = Path.Combine(filePath, "Chunk");
+            string newPath = Path.Combine(tempPath, newFileName);
 
             string[] filePaths = Directory.GetFiles(tempPath)
-                                    .Where(p => p.Contains(fileName))
-                                    .OrderBy(p => Int32.Parse(p.Replace(fileName, "$")
-                                    .Split('$')[1])).ToArray();
+                                    .Where(p => p.Contains(newFileName))
+                                    .OrderBy(p => p.Replace(newFileName, "$")
+                                    .Split('$')[1]).ToArray();
 
             foreach (string fp in filePaths)
             {
@@ -82,8 +60,8 @@ public class UploadFileService
             }
 
             File.Move(
-                Path.Combine(tempPath, fileName),
-                Path.Combine(filePath, fileName));
+                Path.Combine(tempPath, newFileName),
+                Path.Combine(filePath, newFileName));
 
             return fileName;
         }
@@ -117,5 +95,10 @@ public class UploadFileService
             if (chunkFs != null) chunkFs.Close();
             File.Delete(chunkPath);
         }
+    }
+
+    public string GetTripTempFilePath(string tempPath, long userId, long tripId, string tripFileType)
+    {
+        return Path.Combine(tempPath, userId.ToString(), tripId.ToString(), tripFileType);
     }
 }

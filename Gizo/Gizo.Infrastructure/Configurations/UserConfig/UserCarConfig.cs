@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizo.Infrastructure.Configurations.UserConfig;
 
-public class TripTempVideoConfig : IEntityTypeConfiguration<UserCar>
+public class TripTempFileConfig : IEntityTypeConfiguration<UserCar>
 {
     public void Configure(EntityTypeBuilder<UserCar> builder)
     {

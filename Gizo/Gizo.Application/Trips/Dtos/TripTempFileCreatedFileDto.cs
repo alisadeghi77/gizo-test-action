@@ -1,7 +1,7 @@
 ﻿namespace Gizo.Application.Trips.Dtos;
-public class TripTempVideoCreatedFileDto
+public class TripTempFileCreatedFileDto
 {
-    public TripTempVideoCreatedFileDto(string fileName)
+    public TripTempFileCreatedFileDto(string fileName)
     {
         FileName = fileName;
     }

@@ -1,30 +1,32 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
+using Gizo.Application.Options;
 using Gizo.Application.Services;
-using Gizo.Application.Trips.Commands;
 using Gizo.Application.Trips.Dtos;
 using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Contracts.Repository;
 using Gizo.Domain.Validators.TripValidators;
+using Gizo.Infrastructure;
+using Gizo.Utility;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Gizo.Application.Trips.CommandHandlers;
+
+public sealed record CreateTripCommand(long UserId) : IRequest<OperationResult<CreatedTripResponse>>;
 
 public class CreateTripCommandHandler
     : IRequestHandler<CreateTripCommand, OperationResult<CreatedTripResponse>>
 {
-    private readonly IRepository<Trip> _tripRepository;
-    private readonly UploadFileService _uploadFileService;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly DataContext _context;
     private readonly OperationResult<CreatedTripResponse> _result = new();
+    private readonly UploadFileSettings _uploadFileSettings;
 
-    public CreateTripCommandHandler(IRepository<Trip> tripRepository,
-        UploadFileService uploadFileService,
-        IUnitOfWork unitOfWork)
+    public CreateTripCommandHandler(DataContext context,
+        IOptions<UploadFileSettings> uploadFileSettings)
     {
-        _tripRepository = tripRepository;
-        _uploadFileService = uploadFileService;
-        _unitOfWork = unitOfWork;
+        _context = context;
+        _uploadFileSettings = uploadFileSettings.Value;
     }
 
     public async Task<OperationResult<CreatedTripResponse>> Handle(
@@ -32,13 +34,9 @@ public class CreateTripCommandHandler
         CancellationToken token)
     {
         var validator = new TripValidator();
+        var chunkSize = FileHelper.MBToByte(_uploadFileSettings.ChunkSize);
 
-        var createFileResult = _uploadFileService.CreateUserFile(request.WebRootPath);
-
-        var trip = Trip.CreateTrip(
-            request.UserId,
-            createFileResult.ChunkSize,
-            createFileResult.FilePath);
+        var trip = Trip.CreateTrip(request.UserId, chunkSize);
 
         var validationResult = validator.Validate(trip);
         if (!validationResult.IsValid)
@@ -49,10 +47,10 @@ public class CreateTripCommandHandler
             }
         }
 
-        await _tripRepository.InsertAsync(trip, token);
-        await _unitOfWork.SaveChangesAsync(token);
+        await _context.AddAsync(trip, token);
+        await _context.SaveChangesAsync(token);
 
-        _result.Data = new CreatedTripResponse(trip.Id);
+        _result.Data = new CreatedTripResponse(trip.Id, chunkSize);
 
         return _result;
     }

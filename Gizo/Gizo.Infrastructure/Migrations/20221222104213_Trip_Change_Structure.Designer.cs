@@ -4,6 +4,7 @@ using Gizo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizo.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221222104213_Trip_Change_Structure")]
+    partial class Trip_Change_Structure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +117,7 @@ namespace Gizo.Infrastructure.Migrations
                     b.Property<string>("FilesPath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("GpsFileName")
+                    b.Property<string>("GpuFileName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImuFileName")
@@ -136,9 +138,6 @@ namespace Gizo.Infrastructure.Migrations
                     b.Property<decimal>("Score")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("TempFileName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
@@ -152,7 +151,7 @@ namespace Gizo.Infrastructure.Migrations
                     b.ToTable("Trips", "Trip");
                 });
 
-            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.TripTempFile", b =>
+            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.TripTempVideo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -171,13 +170,6 @@ namespace Gizo.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FileType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TripFileType")
-                        .HasColumnType("int");
-
                     b.Property<long>("TripId")
                         .HasColumnType("bigint");
 
@@ -185,7 +177,7 @@ namespace Gizo.Infrastructure.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("TripTempFiles", "Trip");
+                    b.ToTable("TripTempVideos", "Trip");
                 });
 
             modelBuilder.Entity("Gizo.Domain.Aggregates.UserAggregate.User", b =>
@@ -411,10 +403,10 @@ namespace Gizo.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.TripTempFile", b =>
+            modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.TripTempVideo", b =>
                 {
                     b.HasOne("Gizo.Domain.Aggregates.TripAggregate.Trip", "Trip")
-                        .WithMany("TripTempFiles")
+                        .WithMany("TripTempVideos")
                         .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -504,7 +496,7 @@ namespace Gizo.Infrastructure.Migrations
 
             modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.Trip", b =>
                 {
-                    b.Navigation("TripTempFiles");
+                    b.Navigation("TripTempVideos");
                 });
 
             modelBuilder.Entity("Gizo.Domain.Aggregates.UserAggregate.User", b =>

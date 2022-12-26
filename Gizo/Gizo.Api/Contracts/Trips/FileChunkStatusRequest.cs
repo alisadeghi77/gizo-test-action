@@ -2,13 +2,9 @@
 
 namespace Gizo.Api.Contracts.Trips;
 
-public class UploadChunkRequest
+public class FileChunkStatusRequest
 {
     public long TripId { get; set; }
 
-    public string FileChunkId { get; set; }
-
     public TripFileEnum TripFileType { get; set; }
-
-    public IFormFile FileChunk { get; set; }
 }

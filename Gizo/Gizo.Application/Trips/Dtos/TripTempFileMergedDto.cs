@@ -1,8 +1,8 @@
 ﻿namespace Gizo.Application.Trips.Dtos;
 
-public class TripTempVideoMergedDto
+public class TripTempFileMergedDto
 {
-    public TripTempVideoMergedDto(string fileName)
+    public TripTempFileMergedDto(string fileName)
     {
         FileName = fileName;
     }
