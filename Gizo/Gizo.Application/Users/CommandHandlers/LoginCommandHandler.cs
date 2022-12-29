@@ -2,7 +2,6 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Services;
-using Gizo.Application.Users.Commands;
 using Gizo.Application.Users.Dtos;
 using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Infrastructure;
@@ -11,24 +10,24 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
-public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult<CurrentUserDto>>
+public sealed record LoginCommand(
+     string Username,
+     string Password) : IRequest<OperationResult<CurrentUserResponse>>;
+
+public class LoginCommandHandler : IRequestHandler<LoginCommand, OperationResult<CurrentUserResponse>>
 {
-    private readonly DataContext _ctx;
     private readonly UserManager<User> _userManager;
     private readonly IdentityService _identityService;
-    private readonly IMapper _mapper;
-    private OperationResult<CurrentUserDto> _result = new();
+    private OperationResult<CurrentUserResponse> _result = new();
 
-    public LoginCommandHandler(DataContext ctx, UserManager<User> userManager, 
+    public LoginCommandHandler(UserManager<User> userManager, 
         IdentityService identityService, IMapper mapper)
     {
-        _ctx = ctx;
         _userManager = userManager;
         _identityService = identityService;
-        _mapper = mapper;
     }
 
-    public async Task<OperationResult<CurrentUserDto>> Handle(LoginCommand request, 
+    public async Task<OperationResult<CurrentUserResponse>> Handle(LoginCommand request, 
         CancellationToken token)
     {
         try

@@ -1,8 +1,9 @@
+using Gizo.Api.Contracts.UserCarModels.Requests;
 using Gizo.Api.Contracts.UserProfile.Requests;
-using Gizo.Api.Contracts.Users;
 using Gizo.Api.Contracts.Users.Requests;
-using Gizo.Application.Users.Commands;
-using Gizo.Application.Users.Queries;
+using Gizo.Application.Users.CommandHandlers;
+using Gizo.Application.Users.Dtos;
+using Gizo.Application.Users.QueryHandlers;
 
 namespace Gizo.Api.Controllers.V1;
 
@@ -26,7 +27,7 @@ public class UserController : BaseController
     [HttpPost]
     [Route(ApiRoutes.User.Verify)]
     [ValidateModel]
-    public async Task<ActionResult<VerifyIdentityResponse>> Verify(VerifyIdentityRequest login,
+    public async Task<ActionResult<UserVerifyResponse>> Verify(VerifyIdentityRequest login,
         CancellationToken token)
     {
         var command = _mapper.Map<VerifyCommand>(login);
@@ -35,26 +36,27 @@ public class UserController : BaseController
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<VerifyIdentityResponse>(result.Data));
+        return Ok(result.Data);
     }
 
     [HttpPatch]
     [Route(ApiRoutes.User.Profile)]
     [ValidateModel]
     [Authorize]
-    public async Task<ActionResult<UserProfileResponse>> UpdateProfile(
-        UserProfileUpdateRequest updatedProfile,
+    public async Task<ActionResult<UserProfileResponse>> UpdateProfile(UserProfileUpdateRequest request,
         CancellationToken token)
     {
-        var command = _mapper.Map<UpdateUserProfileCommand>(updatedProfile);
-        command.Id = HttpContext.GetIdentityIdClaimValue();
+        var command = new UpdateUserProfileCommand(CurrentUserId,
+            request.FirstName,
+            request.LastName,
+            request.Email);
 
         var response = await _mediator.Send(command, token);
 
         if (response.IsError)
             return HandleErrorResponse(response.Errors);
 
-        return Ok(_mapper.Map<UserProfileResponse>(response.Data));
+        return Ok(response.Data);
     }
 
     [HttpPost]
@@ -65,10 +67,10 @@ public class UserController : BaseController
         var command = _mapper.Map<RegisterIdentityCommand>(registration);
         var result = await _mediator.Send(command, token);
 
-        if (result.IsError) 
+        if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<CurrentUserResponse>(result.Data));
+        return Ok(result.Data);
     }
 
     [HttpPost]
@@ -82,7 +84,7 @@ public class UserController : BaseController
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<CurrentUserResponse>(result.Data));
+        return Ok(result.Data);
     }
 
     [HttpDelete]
@@ -104,14 +106,42 @@ public class UserController : BaseController
     [Authorize]
     public async Task<ActionResult<UserProfileResponse>> CurrentUser(CancellationToken token)
     {
-        var userId = HttpContext.GetIdentityIdClaimValue();
-
-        var query = new GetCurrentUserQuery(userId, HttpContext.User);
+        var query = new GetCurrentUserQuery(CurrentUserId, HttpContext.User);
         var result = await _mediator.Send(query, token);
 
-        if (result.IsError) 
+        if (result.IsError)
             return HandleErrorResponse(result.Errors);
 
-        return Ok(_mapper.Map<UserProfileResponse>(result.Data));
+        return Ok(result.Data);
+    }
+
+    [HttpGet]
+    [Route(ApiRoutes.User.CarModels)]
+    [Authorize]
+    public async Task<ActionResult<List<UserCarResponse>>> GetUserCarModels(CancellationToken token)
+    {
+        var query = new GetUserCarModelsQuery(CurrentUserId);
+
+        var result = await _mediator.Send(query, token);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
+    }
+
+    [HttpPost]
+    [Route(ApiRoutes.User.CarModel)]
+    [Authorize]
+    public async Task<ActionResult<bool>> AddUserCarModel(AddUserCarModelRequest request, CancellationToken token)
+    {
+        var command = new AddUserCarModelCommand(request.CarModelId, CurrentUserId, request.License);
+
+        var result = await _mediator.Send(command, token);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
     }
 }

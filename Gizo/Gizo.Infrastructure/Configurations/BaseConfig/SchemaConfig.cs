@@ -6,5 +6,5 @@ public static class SchemaConfig
 
     public static string Trip { get { return "Trip"; } }
 
-    public static string Car { get { return "Car"; } }
+    public static string CarBrand { get { return "CarBrand"; } }
 }

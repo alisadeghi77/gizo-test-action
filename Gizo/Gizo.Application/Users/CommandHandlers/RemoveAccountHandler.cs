@@ -1,11 +1,13 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
-using Gizo.Application.Users.Commands;
 using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Users.CommandHandlers;
+
+public sealed record RemoveAccountCommand(long IdentityUserId,
+    long RequestorGuid) : IRequest<OperationResult<bool>>;
 
 public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, OperationResult<bool>>
 {

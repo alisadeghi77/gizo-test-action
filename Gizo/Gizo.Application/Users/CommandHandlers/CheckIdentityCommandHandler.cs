@@ -1,7 +1,6 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Services;
-using Gizo.Application.Users.Commands;
 using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Infrastructure;
 using MediatR;
@@ -9,15 +8,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
+public sealed record CheckClientIdentityCommand(string Username) : IRequest<OperationResult<bool>>;
+
 public class CheckIdentityCommandHandler : IRequestHandler<CheckClientIdentityCommand, OperationResult<bool>>
 {
     private readonly DataContext _ctx;
     private readonly UserManager<User> _userManager;
-    private readonly IdentityService _identityService;
     private OperationResult<bool> _result = new();
 
-    public CheckIdentityCommandHandler(DataContext ctx, UserManager<User> userManager,
-        IdentityService _identityService)
+    public CheckIdentityCommandHandler(DataContext ctx, UserManager<User> userManager)
     {
         _ctx = ctx;
         _userManager = userManager;

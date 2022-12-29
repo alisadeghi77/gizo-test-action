@@ -1,7 +1,6 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Services;
-using Gizo.Application.Users.Commands;
 using Gizo.Application.Users.Dtos;
 using Gizo.Domain.Aggregates.UserAggregate;
 using MediatR;
@@ -9,20 +8,23 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
-public class VerifyCommandHandler : IRequestHandler<VerifyCommand, OperationResult<UserDto>>
-{
-    private readonly UserManager<Domain.Aggregates.UserAggregate.User> _userManager;
-    private readonly IdentityService _identityService;
-    private OperationResult<UserDto> _result = new();
+public sealed record VerifyCommand(string Username,
+    string VerifyCode) : IRequest<OperationResult<UserVerifyResponse>>;
 
-    public VerifyCommandHandler(UserManager<Domain.Aggregates.UserAggregate.User> userManager,
+public class VerifyCommandHandler : IRequestHandler<VerifyCommand, OperationResult<UserVerifyResponse>>
+{
+    private readonly UserManager<User> _userManager;
+    private readonly IdentityService _identityService;
+    private OperationResult<UserVerifyResponse> _result = new();
+
+    public VerifyCommandHandler(UserManager<User> userManager,
         IdentityService identityService)
     {
         _userManager = userManager;
         _identityService = identityService;
     }
 
-    public async Task<OperationResult<UserDto>> Handle(VerifyCommand request,
+    public async Task<OperationResult<UserVerifyResponse>> Handle(VerifyCommand request,
         CancellationToken token)
     {
         try
@@ -31,7 +33,7 @@ public class VerifyCommandHandler : IRequestHandler<VerifyCommand, OperationResu
             if (_result.IsError)
                 return _result;
 
-            _result.Data = new UserDto()
+            _result.Data = new UserVerifyResponse()
             {
                 UserName = identityUser.UserName,
                 Token = _identityService.GetJwtString(identityUser)

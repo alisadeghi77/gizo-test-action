@@ -4,6 +4,7 @@ using Gizo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizo.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221227153012_Rename_Cars_To_CarBrands")]
+    partial class Rename_Cars_To_CarBrands
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,17 +55,17 @@ namespace Gizo.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<long>("CarBrandId")
+                    b.Property<long>("CarId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("ModelName")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CarBrandId");
+                    b.HasIndex("CarId");
 
                     b.ToTable("CarModels", "CarBrand");
                 });
@@ -273,12 +275,6 @@ namespace Gizo.Infrastructure.Migrations
 
             modelBuilder.Entity("Gizo.Domain.Aggregates.UserAggregate.UserCarModel", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
                     b.Property<long>("CarModelId")
                         .HasColumnType("bigint");
 
@@ -289,9 +285,7 @@ namespace Gizo.Infrastructure.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarModelId");
+                    b.HasKey("CarModelId");
 
                     b.HasIndex("UserId");
 
@@ -405,7 +399,7 @@ namespace Gizo.Infrastructure.Migrations
                 {
                     b.HasOne("Gizo.Domain.Aggregates.CarBrandAggregate.CarBrand", "CarBrand")
                         .WithMany("CarModels")
-                        .HasForeignKey("CarBrandId")
+                        .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -437,13 +431,13 @@ namespace Gizo.Infrastructure.Migrations
             modelBuilder.Entity("Gizo.Domain.Aggregates.UserAggregate.UserCarModel", b =>
                 {
                     b.HasOne("Gizo.Domain.Aggregates.CarBrandAggregate.CarModel", "CarModel")
-                        .WithMany("UserCarModels")
+                        .WithMany("UserCars")
                         .HasForeignKey("CarModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Gizo.Domain.Aggregates.UserAggregate.User", "User")
-                        .WithMany("UserCarModels")
+                        .WithMany("UserCars")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -511,7 +505,7 @@ namespace Gizo.Infrastructure.Migrations
 
             modelBuilder.Entity("Gizo.Domain.Aggregates.CarBrandAggregate.CarModel", b =>
                 {
-                    b.Navigation("UserCarModels");
+                    b.Navigation("UserCars");
                 });
 
             modelBuilder.Entity("Gizo.Domain.Aggregates.TripAggregate.Trip", b =>
@@ -523,7 +517,7 @@ namespace Gizo.Infrastructure.Migrations
                 {
                     b.Navigation("Trips");
 
-                    b.Navigation("UserCarModels");
+                    b.Navigation("UserCars");
                 });
 #pragma warning restore 612, 618
         }

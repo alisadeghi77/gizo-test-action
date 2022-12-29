@@ -12,6 +12,8 @@ public static class ApiRoutes
         public const string Registration = "registration";
         public const string Id = "{id}";
         public const string CurrentUser = "currentUser";
+        public const string CarModels = "carModels";
+        public const string CarModel = "carModel";
     }
 
     public static class Trip

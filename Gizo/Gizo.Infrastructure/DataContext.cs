@@ -1,4 +1,5 @@
-﻿using Gizo.Domain.Aggregates.RoleAggregate;
+﻿using Gizo.Domain.Aggregates.CarBrandAggregate;
+using Gizo.Domain.Aggregates.RoleAggregate;
 using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Domain.Contracts.Repository;
@@ -15,6 +16,8 @@ public class DataContext : IdentityDbContext<User, Role, long>, IUnitOfWork
     }
 
     public DbSet<Trip> Trips { get; set; }
+
+    public DbSet<CarBrand> Cars { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

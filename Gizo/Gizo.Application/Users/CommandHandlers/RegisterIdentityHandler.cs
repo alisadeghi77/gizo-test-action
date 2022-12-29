@@ -2,7 +2,6 @@
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Services;
-using Gizo.Application.Users.Commands;
 using Gizo.Application.Users.Dtos;
 using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Infrastructure;
@@ -12,24 +11,30 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Gizo.Application.Users.CommandHandlers;
 
-public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, OperationResult<CurrentUserDto>>
+public sealed record RegisterIdentityCommand(string Username,
+    string Password,
+    string FirstName,
+    string LastName,
+    DateTime DateOfBirth,
+    string Phone,
+    string CurrentCity) : IRequest<OperationResult<CurrentUserResponse>>;
+
+public class RegisterIdentityHandler : IRequestHandler<RegisterIdentityCommand, OperationResult<CurrentUserResponse>>
 {
     private readonly DataContext _ctx;
     private readonly UserManager<User> _userManager;
     private readonly IdentityService _identityService;
-    private OperationResult<CurrentUserDto> _result = new();
-    private readonly IMapper _mapper;
+    private OperationResult<CurrentUserResponse> _result = new();
 
     public RegisterIdentityHandler(DataContext ctx, UserManager<User> userManager,
-        IdentityService identityService, IMapper mapper)
+        IdentityService identityService)
     {
         _ctx = ctx;
         _userManager = userManager;
         _identityService = identityService;
-        _mapper = mapper;
     }
     
-    public async Task<OperationResult<CurrentUserDto>> Handle(RegisterIdentityCommand request, 
+    public async Task<OperationResult<CurrentUserResponse>> Handle(RegisterIdentityCommand request, 
         CancellationToken token)
     {
         try
