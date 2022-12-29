@@ -20,6 +20,8 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 
     public long UserId { get; private set; }
 
+    public long? UserCarModelId { get; private set; }
+
     public decimal Score { get; private set; }
 
     public decimal HarshAccelerationScore { get; private set; }
@@ -67,6 +69,8 @@ public class Trip : ICreateDate, IOptionalModifiedDate
     public DateTime? ModifyDate { get; private set; }
 
     public User User { get; private set; }
+
+    public UserCarModel UserCarModel { get; private set; }
 
     public IReadOnlyCollection<TripTempFile> TripTempFiles => _tripTempFiles;
 

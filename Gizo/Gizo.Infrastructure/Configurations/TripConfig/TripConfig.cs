@@ -18,6 +18,12 @@ public class TripConfig : IEntityTypeConfiguration<Trip>
                .HasForeignKey(x => x.UserId)
                .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(x => x.UserCarModel)
+               .WithMany(x => x.Trips)
+               .HasForeignKey(x => x.UserCarModelId)
+               .IsRequired(false)
+               .OnDelete(DeleteBehavior.Restrict);
+
         //Table
         builder.ToTable("Trips", SchemaConfig.Trip);
     }
