@@ -30,6 +30,7 @@ public class GetFileChunkQueryHandler
     {
         var trip = await _context.Trips
             .Include(_ => _.TripTempFiles.Where(x => x.TripFileType == request.TripFileType))
+            .AsNoTracking()
             .FirstOrDefaultAsync(_ => _.UserId == request.UserId && _.Id == request.TripId, token);
 
         if (trip == null)

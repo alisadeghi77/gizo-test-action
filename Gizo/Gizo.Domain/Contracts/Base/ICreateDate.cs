@@ -8,5 +8,5 @@ public interface ICreateDate<TCreatorId>
 
 public interface ICreateDate
 {
-    DateTime CreateDate { get; set; }
+    DateTime CreateDate { get; }
 }

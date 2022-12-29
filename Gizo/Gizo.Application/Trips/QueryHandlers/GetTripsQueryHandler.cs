@@ -7,27 +7,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Application.Trips.QueryHandlers;
 
-public sealed record GetAllTripsQuery(long UserId) : IRequest<OperationResult<List<GetUserTripResponse>>>;
+public sealed record GetTripsQuery(long UserId) : IRequest<OperationResult<List<TripResponse>>>;
 
-public class GetAllTripsQueryHandler : IRequestHandler<GetAllTripsQuery, OperationResult<List<GetUserTripResponse>>>
+public class GetTripsQueryHandler : IRequestHandler<GetTripsQuery, OperationResult<List<TripResponse>>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
 
-    public GetAllTripsQueryHandler(DataContext context,
+    public GetTripsQueryHandler(DataContext context,
         IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
 
-    public async Task<OperationResult<List<GetUserTripResponse>>> Handle(GetAllTripsQuery request, CancellationToken token)
+    public async Task<OperationResult<List<TripResponse>>> Handle(GetTripsQuery request, CancellationToken token)
     {
-        var result = new OperationResult<List<GetUserTripResponse>>();
+        var result = new OperationResult<List<TripResponse>>();
         var trips = await _context.Trips
             .Where(_ => _.UserId == request.UserId)
             .OrderByDescending(_ => _.CreateDate)
-            .Select(_ => _mapper.Map<GetUserTripResponse>(_))
+            .AsNoTracking()
+            .Select(_ => _mapper.Map<TripResponse>(_))
             .ToListAsync(token);
 
         result.Data = trips;

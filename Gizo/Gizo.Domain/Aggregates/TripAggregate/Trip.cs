@@ -48,7 +48,7 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 
     public int ChunkSize { get; private set; }
 
-    public string? TempFileName { get;private set; }
+    public string? TempFileName { get; private set; }
 
     public string? VideoFileName { get; private set; }
 
@@ -61,12 +61,12 @@ public class Trip : ICreateDate, IOptionalModifiedDate
     public DateTime? StartDateTime { get; private set; }
 
     public DateTime? EndDateTime { get; private set; }
+    
+    public DateTime CreateDate { get; private set; }
 
-    public DateTime CreateDate { get; set; }
+    public DateTime? ModifyDate { get; private set; }
 
-    public DateTime? ModifyDate { get; set; }
-
-    public User User { get; set; }
+    public User User { get; private set; }
 
     public IReadOnlyCollection<TripTempFile> TripTempFiles => _tripTempFiles;
 
@@ -78,14 +78,19 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         return trip;
     }
 
-    public static Trip UploadFileCompleted(Trip trip,
-        TripFileEnum tripFile)
+    public Trip UploadFileCompleted(Trip trip, TripFileEnum tripFile, int chunkCount)
     {
-        trip.ModifyDate = DateTime.UtcNow;
+        IsValidChunkCount(chunkCount);
 
+        trip.ModifyDate = DateTime.UtcNow;
         ChangeStatus(trip, tripFile);
 
         return trip;
+    }
+
+    public string GetFileType()
+    {
+        return TripTempFiles.FirstOrDefault()?.FileType;
     }
 
     public TripTempFile AddTempFiles(string fileName, string chunkId, string fileType, TripFileEnum tripFile)
@@ -117,6 +122,14 @@ public class Trip : ICreateDate, IOptionalModifiedDate
                 break;
             default:
                 break;
+        }
+    }
+
+    private void IsValidChunkCount(int chunkCount)
+    {
+        if (TripTempFiles.Count != chunkCount)
+        {
+            throw new Exception("The file has not been fully uploaded yet");
         }
     }
 }

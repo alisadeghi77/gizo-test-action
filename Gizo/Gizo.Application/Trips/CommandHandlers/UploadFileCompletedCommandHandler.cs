@@ -13,7 +13,7 @@ namespace Gizo.Application.Trips.CommandHandlers;
 
 public sealed record UploadFileCompletedCommand(long Id,
     TripFileEnum TripFileType,
-    int ChunkLength) : IRequest<OperationResult<bool>>;
+    int ChunkCount) : IRequest<OperationResult<bool>>;
 
 public class UploadFileCompletedCommandHandler
     : IRequestHandler<UploadFileCompletedCommand, OperationResult<bool>>
@@ -45,27 +45,15 @@ public class UploadFileCompletedCommandHandler
             return _result;
         }
 
-        if (trip.TripTempFiles.Count != request.ChunkLength)
-        {
-            _result.AddError(ErrorCode.ValidationError, "The file has not been fully uploaded yet");
-            return _result;
-        }
-
         var tempPath = _uploadFileService.GetTripTempFilePath(_uploadFileSettings.SaveTempTo,
                       trip.UserId, trip.Id,
                       request.TripFileType.ToString());
 
-        var type = trip.TripTempFiles.FirstOrDefault();
+        var type = trip.GetFileType();
 
-        if (type == null)
-        {
-            _result.AddError(ErrorCode.NotFound, "Temp files not found");
-            return _result;
-        }
+        var fileName = _uploadFileService.UploadCompleted(tempPath, trip.TempFileName, type);
 
-        var fileName = _uploadFileService.UploadCompleted(tempPath, trip.TempFileName, type.FileType);
-
-        var updatedModel = Trip.UploadFileCompleted(trip, request.TripFileType);
+        var updatedModel = trip.UploadFileCompleted(trip, request.TripFileType, request.ChunkCount);
 
         trip.RemoveAllTempFiles();
 

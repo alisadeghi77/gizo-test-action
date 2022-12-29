@@ -17,11 +17,11 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
 
     public string? LastName { get; private set; }
 
-    public DateTime CreateDate { get; set; }
+    public DateTime CreateDate { get; private set; }
 
-    public DateTime? ModifyDate { get; set; }
+    public DateTime? ModifyDate { get; private set; }
 
-    public long? ModifierId { get; set; }
+    public long? ModifierId { get; private set; }
 
     public IReadOnlyCollection<Trip> Trips { get; private set; }
 

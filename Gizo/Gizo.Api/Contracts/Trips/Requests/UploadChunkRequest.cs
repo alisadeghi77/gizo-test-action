@@ -1,6 +1,6 @@
 ﻿using Gizo.Domain.Contracts.Enums;
 
-namespace Gizo.Api.Contracts.Trips;
+namespace Gizo.Api.Contracts.Trips.Requests;
 
 public class UploadChunkRequest
 {

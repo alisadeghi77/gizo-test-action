@@ -18,9 +18,10 @@ public static class ApiRoutes
 
     public static class Trip
     {
-        public const string UploadStart = "UploadStart";
-        public const string UploadChunks = "UploadChunks";
-        public const string UploadComplete = "UploadComplete";
-        public const string FileChunkStatus = "FileChunkStatus";
+        public const string TripDetail = "{id}";
+        public const string UploadStart = "uploadStart";
+        public const string UploadChunks = "uploadChunks";
+        public const string UploadComplete = "uploadComplete";
+        public const string FileChunkStatus = "fileChunkStatus";
     }
 }

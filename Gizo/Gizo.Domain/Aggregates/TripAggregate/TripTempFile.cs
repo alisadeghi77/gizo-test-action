@@ -24,14 +24,14 @@ public class TripTempFile : BaseEntity<long>, ICreateDate
 
     public string FileName { get; private set; }
 
-    public string FileType { get; set; }
+    public string FileType { get; private set; }
 
     public string ChunkId { get; private set; }
 
-    public TripFileEnum TripFileType { get; set; }
+    public TripFileEnum TripFileType { get; private set; }
 
-    public DateTime CreateDate { get; set; }
+    public DateTime CreateDate { get; private set; }
 
-    public Trip Trip { get; set; }
+    public Trip Trip { get; private set; }
 
 }
