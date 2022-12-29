@@ -22,6 +22,24 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 
     public decimal Score { get; private set; }
 
+    public decimal HarshAccelerationScore { get; private set; }
+
+    public decimal HarshBrakingScore { get; private set; }
+
+    public decimal HarshCorneringScore { get; private set; }
+
+    public decimal SpeedingScore { get; private set; }
+
+    public decimal TailGatingScore { get; private set; }
+
+    public decimal RedLightCrossingScore { get; private set; }
+
+    public decimal StopSignCrossingScore { get; private set; }
+
+    public decimal RideDurationScore { get; private set; }
+
+    public decimal RideDistanceScore { get; private set; }
+
     public bool IsVideoUploaded { get; private set; }
 
     public bool IsImuUploaded { get; private set; }
@@ -39,6 +57,10 @@ public class Trip : ICreateDate, IOptionalModifiedDate
     public string? GpsFileName { get; private set; }
 
     public string? FilesPath { get; private set; }
+
+    public DateTime? StartDateTime { get; private set; }
+
+    public DateTime? EndDateTime { get; private set; }
 
     public DateTime CreateDate { get; set; }
 
