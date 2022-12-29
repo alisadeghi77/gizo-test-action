@@ -25,6 +25,9 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
 
     public IReadOnlyCollection<Trip> Trips { get; private set; }
 
+    private readonly List<UserVerificationCode> _userVerificationCodes = new();
+
+    public IReadOnlyCollection<UserVerificationCode> UserVerificationCodes => _userVerificationCodes;
 
     public IReadOnlyCollection<UserCarModel> UserCarModels => _userCarModels;
 
@@ -56,5 +59,47 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
     public UserCarModel? FindUserCarModel(long carModelId)
     {
         return UserCarModels.FirstOrDefault(_ => _.CarModelId == carModelId);
+    }
+
+    public bool ValidateCode(TimeSpan expirationDurationTime, string code, VerificationType verificationType)
+    {
+        var data = DateTime.UtcNow.Add(expirationDurationTime * -1);
+        var result = UserVerificationCodes
+            .Where(_ => _.CreateDate >= data)
+            .Where(_ => _.VerificationType == verificationType)
+            .Any(_ => _.Code == code);
+
+        if (result)
+            _userVerificationCodes.RemoveAll(_ => _.VerificationType == verificationType);
+
+        return result;
+    }
+
+    public UserVerificationCode? GetValidCode(TimeSpan expirationDurationTime, VerificationType verificationType)
+    {
+        var date = DateTime.UtcNow.Add(expirationDurationTime * -1);
+
+        var verifyCode = UserVerificationCodes
+            .Where(_ => _.CreateDate >= date)
+            .Where(_ => _.VerificationType == verificationType)
+            .MinBy(_ => _.CreateDate);
+
+        return verifyCode;
+    }
+
+    public UserVerificationCode CreateCode(bool useSampleCode, VerificationType verificationType)
+    {
+        var verifyCode = UserVerificationCode.Create(Id, useSampleCode, verificationType);
+        _userVerificationCodes.Add(verifyCode);
+        return verifyCode;
+    }
+
+    public static User CreateUserByPhoneNumber(string phoneNumber)
+    {
+        return new User()
+        {
+            PhoneNumber = phoneNumber,
+            UserName = phoneNumber
+        };
     }
 }
