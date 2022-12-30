@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Gizo.Application.Models;
 using Gizo.Application.Trips.Dtos;
 using Gizo.Infrastructure;
@@ -26,9 +27,10 @@ public class GetTripsQueryHandler : IRequestHandler<GetTripsQuery, OperationResu
         var result = new OperationResult<List<TripResponse>>();
         var trips = await _context.Trips
             .Where(_ => _.UserId == request.UserId)
+            .Where(_ => _.IsImuUploaded && _.IsGpsUploaded && _.IsVideoUploaded)
             .OrderByDescending(_ => _.CreateDate)
             .AsNoTracking()
-            .Select(_ => _mapper.Map<TripResponse>(_))
+            .ProjectTo<TripResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(token);
 
         result.Data = trips;
