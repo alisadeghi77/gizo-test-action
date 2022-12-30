@@ -6,6 +6,24 @@ public class TripDetailResponse
 
     public decimal Score { get; set; }
 
+    public decimal HarshAccelerationScore { get; set; }
+
+    public decimal HarshBrakingScore { get; set; }
+
+    public decimal HarshCorneringScore { get; set; }
+
+    public decimal SpeedingScore { get; set; }
+
+    public decimal TailGatingScore { get; set; }
+
+    public decimal RedLightCrossingScore { get; set; }
+
+    public decimal StopSignCrossingScore { get; set; }
+
+    public decimal RideDurationScore { get; set; }
+
+    public decimal RideDistanceScore { get; set; }
+
     public string? VideoFileName { get; set; }
 
     public string? ImuFileName { get; set; }
