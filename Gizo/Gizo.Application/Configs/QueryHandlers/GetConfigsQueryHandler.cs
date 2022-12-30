@@ -14,7 +14,8 @@ public class GetConfigsQueryHandler : IRequestHandler<GetConfigsQuery, Operation
         {
             Data = new GetConfigsResponse
             {
-                AspectRatio = "4:3"
+                AspectRatio = "4:3",
+                ChunkSize = 10485760
             }
         });
     }
