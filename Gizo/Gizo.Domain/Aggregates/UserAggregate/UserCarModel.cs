@@ -18,7 +18,7 @@ public class UserCarModel
 
     public long CarModelId { get; private set; }
 
-    public string License { get; set; }
+    public string License { get; private set; }
 
     public bool IsSelected { get; private set; }
 
@@ -27,4 +27,19 @@ public class UserCarModel
     public User User { get; private set; }
 
     public CarModel CarModel { get; private set; }
+
+    public void SelectCarModel()
+    {
+        IsSelected = true;
+    }
+
+    public void RemoveSelectCarModel()
+    {
+        IsSelected = false;
+    }
+
+    public void SetLicense(string license)
+    {
+        License = license;
+    }
 }

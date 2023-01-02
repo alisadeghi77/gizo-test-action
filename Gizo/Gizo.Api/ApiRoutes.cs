@@ -13,6 +13,7 @@ public static class ApiRoutes
         public const string Id = "{id}";
         public const string CurrentUser = "currentUser";
         public const string CarModels = "carModels";
+        public const string CarModelDetail = "carModels/{id}";
         public const string CarModel = "carModel";
     }
 

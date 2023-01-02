@@ -31,7 +31,7 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
 
     public IReadOnlyCollection<UserCarModel> UserCarModels => _userCarModels;
 
-    public void UpdateProfile(long userId,string firstName, string lastName, string email)
+    public void UpdateProfile(long userId, string firstName, string lastName, string email)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -49,11 +49,32 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
         return _userCarModels;
     }
 
-    public List<UserCarModel> RemoveCar(UserCarModel userCar)
+    public List<UserCarModel> RemoveCar(long userCarModelId)
     {
-        _userCarModels.Remove(userCar);
+        var userCarModel = _userCarModels.FirstOrDefault(_ => _.Id == userCarModelId);
+
+        if (userCarModel == null)
+        {
+            throw new Exception("Car model not found");
+        }
+
+        _userCarModels.Remove(userCarModel);
 
         return _userCarModels;
+    }
+
+    public User UpdateUserCarModel(User user, long userCarModelId, string license)
+    {
+        var userCarModel = _userCarModels.FirstOrDefault(_ => _.Id == userCarModelId);
+
+        if (userCarModel == null)
+        {
+            throw new Exception("User car model not found");
+        }
+
+        userCarModel.SetLicense(license);
+
+        return user;
     }
 
     public UserCarModel? FindUserCarModel(long carModelId)
@@ -101,5 +122,17 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
             PhoneNumber = phoneNumber,
             UserName = phoneNumber
         };
+    }
+
+    public User SelectCar(long userCarModelId)
+    {
+        var userCarModel = _userCarModels.FirstOrDefault(t => t.Id == userCarModelId);
+        if (userCarModel is null)
+            throw new Exception("User car model not found");
+
+        _userCarModels.ForEach(u => u.RemoveSelectCarModel());
+        userCarModel.SelectCarModel();
+
+        return this;
     }
 }

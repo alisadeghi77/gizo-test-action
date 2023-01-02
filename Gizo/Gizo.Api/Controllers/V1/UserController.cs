@@ -130,6 +130,21 @@ public class UserController : BaseController
         return Ok(result.Data);
     }
 
+    [HttpGet]
+    [Route(ApiRoutes.User.CarModelDetail)]
+    [Authorize]
+    public async Task<ActionResult<List<UserCarResponse>>> GetUserCarModelDetails(long id, CancellationToken token)
+    {
+        var query = new GetUserCarModelDetailsQuery(id, CurrentUserId);
+
+        var result = await _mediator.Send(query, token);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
+    }
+
     [HttpPost]
     [Route(ApiRoutes.User.CarModel)]
     [Authorize]
@@ -138,6 +153,49 @@ public class UserController : BaseController
         var command = new AddUserCarModelCommand(request.CarModelId, CurrentUserId, request.License);
 
         var result = await _mediator.Send(command, token);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
+    }
+
+    [HttpPut]
+    [Route(ApiRoutes.User.CarModel)]
+    [Authorize]
+    public async Task<ActionResult<bool>> EditUserCarModel(EditUserCarModelRequest request, CancellationToken cancellationToken = default)
+    {
+        var command = new EditUserCarModelCommand(request.Id, CurrentUserId, request.Licence);
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
+    }
+
+    [HttpDelete]
+    [Route(ApiRoutes.User.CarModel)]
+    [Authorize]
+    public async Task<ActionResult<bool>> DeleteUserCarModel(DeleteUserCarModelRequest request, CancellationToken cancellationToken = default)
+    {
+        var command = new DeleteUserCarModelCommand(request.Id, CurrentUserId);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
+    }
+
+    [HttpPatch]
+    [Route(ApiRoutes.User.CarModel)]
+    [Authorize]
+    public async Task<ActionResult<bool>> SelectUserCarModel(SelectUserCarModelRequest request, CancellationToken cancellationToken = default)
+    {
+        var command = new SelectUserCarModelCommand(request.Id, CurrentUserId);
+        var result = await _mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
