@@ -98,59 +98,49 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         return trip;
     }
 
-    public Trip UploadFileCompleted(Trip trip, TripFileEnum tripFile)
+    public void UploadFileCompleted(TripFileEnum tripFile)
     {
         IsValidChunkCount(tripFile);
 
-        trip.ModifyDate = DateTime.UtcNow;
-        ChangeStatus(trip, tripFile);
-
-        return trip;
+        ModifyDate = DateTime.UtcNow;
+        ChangeStatus(tripFile);
     }
 
-    public Trip SetTripFilesFormat(Trip trip, string filePath, DateTime tripStartDate)
+    public void SetTripFilesFormat(string filePath)
     {
-        trip.FilesPath = filePath;
-        trip.VideoFileName = $"{TripFileEnum.Video}-{tripStartDate.ToStandardDateTime()}.mp4";
-        trip.ImuFileName = $"{TripFileEnum.IMU}-{tripStartDate.ToStandardDateTime()}.csv";
-        trip.GpsFileName = $"{TripFileEnum.GPS}-{tripStartDate.ToStandardDateTime()}.csv";
-
-        return trip;
+        FilesPath = filePath;
+        VideoFileName = $"{TripFileEnum.Video}{GetTempFileType(TripFileEnum.Video)}";
+        ImuFileName = $"{TripFileEnum.IMU}{GetTempFileType(TripFileEnum.IMU)}";
+        GpsFileName = $"{TripFileEnum.GPS}{GetTempFileType(TripFileEnum.GPS)}";
     }
 
-    public Trip SetUploadCompleted(Trip trip)
+    public void SetUploadCompleted()
     {
-        trip.IsCompleted = true;
-
-        return trip;
+        IsCompleted = true;
     }
 
-    public Trip SetTripDate(Trip trip, DateTime tripStartDate, DateTime tripEndDate)
+    public void SetTripDate(DateTime tripStartDate, DateTime tripEndDate)
     {
-        trip.StartDateTime = tripStartDate;
-        trip.EndDateTime = tripEndDate;
-
-        return trip;
+        StartDateTime = tripStartDate;
+        EndDateTime = tripEndDate;
     }
 
-    public Trip SetFileChunkCount(Trip trip, TripFileEnum tripFileType, int chunkCount)
+    public void SetFileChunkCount(TripFileEnum tripFileType, int chunkCount)
     {
         switch (tripFileType)
         {
             case TripFileEnum.Video:
-                trip.VideoChunkCount = chunkCount;
+                VideoChunkCount = chunkCount;
                 break;
             case TripFileEnum.IMU:
-                trip.ImuChunkCount = chunkCount;
+                ImuChunkCount = chunkCount;
                 break;
             case TripFileEnum.GPS:
-                trip.GpsChunkCount = chunkCount;
+                GpsChunkCount = chunkCount;
                 break;
             default:
                 break;
         }
-
-        return trip;
     }
 
     public int GetFileChunkCount(TripFileEnum tripFileType)
@@ -185,13 +175,13 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         return tempFile;
     }
 
-    public bool IsCompletedUploadFile(Trip trip, TripFileEnum tripFile)
+    public bool IsCompletedUploadFile(TripFileEnum tripFile)
     {
         return tripFile switch
         {
-            TripFileEnum.Video => trip.TripTempFiles.Count == trip.VideoChunkCount,
-            TripFileEnum.IMU => trip.TripTempFiles.Count == trip.ImuChunkCount,
-            TripFileEnum.GPS => trip.TripTempFiles.Count == trip.GpsChunkCount,
+            TripFileEnum.Video => TripTempFiles.Count(_ => _.TripFileType == TripFileEnum.Video) == VideoChunkCount,
+            TripFileEnum.IMU => TripTempFiles.Count(_ => _.TripFileType == TripFileEnum.IMU)  == ImuChunkCount,
+            TripFileEnum.GPS => TripTempFiles.Count(_ => _.TripFileType == TripFileEnum.GPS)  == GpsChunkCount,
             _ => false,
         };
     }
@@ -201,18 +191,18 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         _tripTempFiles.Clear();
     }
 
-    private static void ChangeStatus(Trip trip, TripFileEnum tripFile)
+    private void ChangeStatus(TripFileEnum tripFile)
     {
         switch (tripFile)
         {
             case TripFileEnum.Video:
-                trip.IsVideoUploaded = true;
+                IsVideoUploaded = true;
                 break;
             case TripFileEnum.IMU:
-                trip.IsImuUploaded = true;
+                IsImuUploaded = true;
                 break;
             case TripFileEnum.GPS:
-                trip.IsGpsUploaded = true;
+                IsGpsUploaded = true;
                 break;
             default:
                 break;
@@ -223,9 +213,21 @@ public class Trip : ICreateDate, IOptionalModifiedDate
     {
         var getChunkCount = GetFileChunkCount(tripFileType);
 
-        if (TripTempFiles.Count != getChunkCount)
+        if (TripTempFiles.Count(_ => _.TripFileType == tripFileType) != getChunkCount)
         {
             throw new Exception("The file has not been fully uploaded yet");
         }
+    }
+
+    private string GetTempFileType(TripFileEnum tripFileType)
+    {
+        var tripFile = TripTempFiles.FirstOrDefault(_ => _.TripFileType == tripFileType);
+
+        if (tripFile == null)
+        {
+            throw new Exception("Trip temp files not found");
+        }
+
+        return tripFile.FileType.ToStandardType();
     }
 }

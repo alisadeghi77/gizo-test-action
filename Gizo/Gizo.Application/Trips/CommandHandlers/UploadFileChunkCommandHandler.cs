@@ -48,8 +48,7 @@ public class UploadFileChunkCommandHandler
         }
 
         var trip = await _context.Trips
-            .Include(_ => _.TripTempFiles
-                .Where(x => x.TripFileType == request.TripFileType))
+            .Include(_ => _.TripTempFiles)
             .Include(_ => _.UserCarModel.CarModel)
             .FirstOrDefaultAsync(_ => _.Id == request.TripId, token);
 
@@ -63,14 +62,14 @@ public class UploadFileChunkCommandHandler
         var tempFileName = await SaveChunkFile(trip, request, tempPath);
         var tempFile = trip.AddTempFiles(tempFileName, request.FileChunkId, request.Type, request.TripFileType);
 
-        if (trip.IsCompletedUploadFile(trip, request.TripFileType))
+        if (trip.IsCompletedUploadFile(request.TripFileType))
         {
             MergeChunkFiles(trip, request, tempPath);
         }
 
         if (trip.AreAllFilesUploaded())
         {
-            trip = CompleteUploadFiles(trip, request, tempPath);
+            trip = CompleteUploadFiles(trip);
         }
 
         _context.Trips.Update(trip);
@@ -97,7 +96,7 @@ public class UploadFileChunkCommandHandler
     {
         _uploadFileService.UploadCompleted(tempPath, trip.TempFileName, request.Type);
 
-        trip = trip.UploadFileCompleted(trip, request.TripFileType);
+        trip.UploadFileCompleted(request.TripFileType);
 
         return trip;
     }
@@ -116,7 +115,7 @@ public class UploadFileChunkCommandHandler
         return tempPath;
     }
 
-    private Trip CompleteUploadFiles(Trip trip, UploadFileChunkCommand request, string tempPath)
+    private Trip CompleteUploadFiles(Trip trip)
     {
         var imuTripDate = _uploadFileService.ImuStartAndEndDateTime(trip.UserId,
             trip.Id,
@@ -130,8 +129,8 @@ public class UploadFileChunkCommandHandler
                 trip.UserCarModel.License,
                 imuTripDate.TripStartDate);
 
-            trip = trip.SetTripDate(trip, imuTripDate.TripStartDate, imuTripDate.TripEndDate);
-            trip = trip.SetTripFilesFormat(trip, folderPath, imuTripDate.TripStartDate);
+            trip.SetTripDate(imuTripDate.TripStartDate, imuTripDate.TripEndDate);
+            trip.SetTripFilesFormat(folderPath);
 
             _uploadFileService.MoveFiles(GetTripTempFilePath(trip, TripFileEnum.Video),
                 folderPath,
@@ -148,7 +147,7 @@ public class UploadFileChunkCommandHandler
                 trip.GpsFileName,
                 TripFileEnum.GPS);
 
-            trip.SetUploadCompleted(trip);
+            trip.SetUploadCompleted();
             trip.RemoveAllTempFiles();
         }
 

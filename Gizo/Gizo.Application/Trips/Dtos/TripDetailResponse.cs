@@ -36,5 +36,11 @@ public class TripDetailResponse
 
     public bool IsGpsUploaded { get; set; }
 
+    public DateTime? StartDateTime { get; set; }
+
+    public DateTime? EndDateTime { get; set; }
+
+    public TimeSpan? TripTime => StartDateTime.HasValue && EndDateTime.HasValue ? EndDateTime - StartDateTime : null;
+
     public DateTime CreateDate { get; set; }
 }

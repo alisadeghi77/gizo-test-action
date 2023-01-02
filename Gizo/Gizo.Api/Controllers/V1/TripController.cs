@@ -70,7 +70,7 @@ public class TripController : BaseController
     [HttpPost]
     [ValidateModel]
     [Route(ApiRoutes.Trip.UploadStart)]
-    public async Task<ActionResult<CreatedTripResponse>> UploadStart([FromQuery] UploadStartRequest request,
+    public async Task<ActionResult<TripUploadStartResponse>> UploadStart([FromQuery] UploadStartRequest request,
         CancellationToken token)
     {
         var command = new UploadFileStartCommand(request.TripId,

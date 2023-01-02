@@ -2,13 +2,11 @@
 
 public class CreatedTripResponse
 {
-    public CreatedTripResponse(long tripId, int chunkSize)
+    public CreatedTripResponse(long tripId)
     {
         TripId = tripId;
-        ChunkSize = chunkSize;
     }
 
     public long TripId { get; set; }
 
-    public int ChunkSize { get; set; }
 }

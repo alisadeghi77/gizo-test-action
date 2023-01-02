@@ -184,7 +184,7 @@ public class UploadFileService
 
         var moveTo = Path.Combine(_uploadFileSetting.SaveTo,
             path,
-            tripFileType.ToString());
+            desFileName);
 
         File.Move(directory[0], moveTo);
 

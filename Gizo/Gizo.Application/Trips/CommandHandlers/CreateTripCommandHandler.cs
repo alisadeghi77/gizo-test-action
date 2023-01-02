@@ -52,7 +52,7 @@ public class CreateTripCommandHandler
         await _context.AddAsync(trip, token);
         await _context.SaveChangesAsync(token);
 
-        _result.Data = new CreatedTripResponse(trip.Id, chunkSize);
+        _result.Data = new CreatedTripResponse(trip.Id);
 
         return _result;
     }

@@ -37,7 +37,7 @@ public class UploadFileStartCommandHandler
             return result;
         }
 
-        trip.SetFileChunkCount(trip, request.TripFileType, request.ChunkCount);
+        trip.SetFileChunkCount(request.TripFileType, request.ChunkCount);
 
         _context.Trips.Update(trip);
         await _context.SaveChangesAsync(token);
