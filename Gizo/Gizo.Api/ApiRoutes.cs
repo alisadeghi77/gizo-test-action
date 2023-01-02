@@ -15,6 +15,7 @@ public static class ApiRoutes
         public const string CarModels = "carModels";
         public const string CarModelDetail = "carModels/{id}";
         public const string CarModel = "carModel";
+        public const string CarModelSelect = "carModel/select";
     }
 
     public static class Trip

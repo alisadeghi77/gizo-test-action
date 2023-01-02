@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Gizo.Application.CarBrands.Dtos;
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Infrastructure;
@@ -28,10 +29,22 @@ public class AddUserCarModelCommandHandler
             .Include(_ => _.UserCarModels)
             .FirstOrDefaultAsync(_ => _.Id == request.UserId, token);
 
-        if (user == null)
+        if (user is null)
         {
             result.AddError(ErrorCode.NotFound, "User not found");
 
+            return result;
+        }
+
+        var carBrand = await _context.Cars
+            .Include((_ => _.CarModels
+                .Where(_ => _.Id == request.CarModelId)))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(token);
+
+        if (carBrand is null || carBrand.CarModels.Count == 0)
+        {
+            result.AddError(ErrorCode.NotFound, "Car model not found");
             return result;
         }
 

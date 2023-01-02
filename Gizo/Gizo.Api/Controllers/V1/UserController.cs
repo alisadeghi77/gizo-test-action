@@ -163,7 +163,8 @@ public class UserController : BaseController
     [HttpPut]
     [Route(ApiRoutes.User.CarModel)]
     [Authorize]
-    public async Task<ActionResult<bool>> EditUserCarModel(EditUserCarModelRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<bool>> EditUserCarModel(EditUserCarModelRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var command = new EditUserCarModelCommand(request.Id, CurrentUserId, request.Licence);
 
@@ -178,7 +179,8 @@ public class UserController : BaseController
     [HttpDelete]
     [Route(ApiRoutes.User.CarModel)]
     [Authorize]
-    public async Task<ActionResult<bool>> DeleteUserCarModel(DeleteUserCarModelRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<bool>> DeleteUserCarModel(DeleteUserCarModelRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var command = new DeleteUserCarModelCommand(request.Id, CurrentUserId);
         var result = await _mediator.Send(command, cancellationToken);
@@ -190,9 +192,10 @@ public class UserController : BaseController
     }
 
     [HttpPatch]
-    [Route(ApiRoutes.User.CarModel)]
+    [Route(ApiRoutes.User.CarModelSelect)]
     [Authorize]
-    public async Task<ActionResult<bool>> SelectUserCarModel(SelectUserCarModelRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<bool>> SelectUserCarModel(SelectUserCarModelRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var command = new SelectUserCarModelCommand(request.Id, CurrentUserId);
         var result = await _mediator.Send(command, cancellationToken);

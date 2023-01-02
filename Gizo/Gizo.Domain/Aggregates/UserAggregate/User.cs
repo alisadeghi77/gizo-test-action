@@ -46,8 +46,11 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
 
     public List<UserCarModel> AddCar(long carModelId, string license)
     {
-        var cars = new UserCarModel(Id, carModelId, license);
-        _userCarModels.Add(cars);
+        var carModel = new UserCarModel(Id, carModelId, license);
+        _userCarModels.Add(carModel);
+
+        if (_userCarModels.Count == 1)
+            carModel.SelectCarModel();
 
         return _userCarModels;
     }
