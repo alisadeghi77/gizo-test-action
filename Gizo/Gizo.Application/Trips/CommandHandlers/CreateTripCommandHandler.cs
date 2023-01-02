@@ -4,11 +4,13 @@ using Gizo.Application.Options;
 using Gizo.Application.Services;
 using Gizo.Application.Trips.Dtos;
 using Gizo.Domain.Aggregates.TripAggregate;
+using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Domain.Contracts.Repository;
 using Gizo.Domain.Validators.TripValidators;
 using Gizo.Infrastructure;
 using Gizo.Utility;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Gizo.Application.Trips.CommandHandlers;
@@ -29,14 +31,14 @@ public class CreateTripCommandHandler
         _uploadFileSettings = uploadFileSettings.Value;
     }
 
-    public async Task<OperationResult<CreatedTripResponse>> Handle(
-        CreateTripCommand request,
+    public async Task<OperationResult<CreatedTripResponse>> Handle(CreateTripCommand request,
         CancellationToken token)
     {
         var validator = new TripValidator();
         var chunkSize = FileHelper.MBToByte(_uploadFileSettings.ChunkSize);
 
-        var trip = Trip.CreateTrip(request.UserId, chunkSize);
+        var userCarModel = await GetSelectedCarModel(request.UserId, token);
+        var trip = Trip.CreateTrip(request.UserId, chunkSize, userCarModel.Id);
 
         var validationResult = validator.Validate(trip);
         if (!validationResult.IsValid)
@@ -53,5 +55,24 @@ public class CreateTripCommandHandler
         _result.Data = new CreatedTripResponse(trip.Id, chunkSize);
 
         return _result;
+    }
+
+    private async Task<UserCarModel> GetSelectedCarModel(long userId, CancellationToken token)
+    {
+        var user = await _context.Users
+            .Include(_ => _.UserCarModels.Where(_ => _.IsSelected))
+            .FirstOrDefaultAsync(_ => _.Id == userId, token);
+
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        if (!user.UserCarModels.Any())
+        {
+            throw new Exception("User car is empty");
+        }
+
+        return user.UserCarModels.First();
     }
 }

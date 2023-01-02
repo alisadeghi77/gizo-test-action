@@ -1,6 +1,7 @@
 ﻿using Gizo.Domain.Aggregates.UserAggregate;
 using Gizo.Domain.Contracts.Base;
 using Gizo.Domain.Contracts.Enums;
+using Gizo.Utility;
 
 namespace Gizo.Domain.Aggregates.TripAggregate;
 
@@ -8,11 +9,17 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 {
     private readonly List<TripTempFile> _tripTempFiles = new();
 
-    private Trip(long userId, int chunkSize)
+    protected Trip()
+    {
+
+    }
+
+    private Trip(long userId, int chunkSize, long userCarModelId)
     {
         UserId = userId;
         ChunkSize = chunkSize;
         CreateDate = DateTime.UtcNow;
+        UserCarModelId = userCarModelId;
         TempFileName = Guid.NewGuid().ToString();
     }
 
@@ -50,7 +57,7 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 
     public int ChunkSize { get; private set; }
 
-    public string? TempFileName { get; private set; }
+    public string TempFileName { get; private set; }
 
     public string? VideoFileName { get; private set; }
 
@@ -71,7 +78,7 @@ public class Trip : ICreateDate, IOptionalModifiedDate
     public DateTime? StartDateTime { get; private set; }
 
     public DateTime? EndDateTime { get; private set; }
-    
+
     public DateTime CreateDate { get; private set; }
 
     public DateTime? ModifyDate { get; private set; }
@@ -83,16 +90,17 @@ public class Trip : ICreateDate, IOptionalModifiedDate
     public IReadOnlyCollection<TripTempFile> TripTempFiles => _tripTempFiles;
 
     public static Trip CreateTrip(long userId,
-        int chunkSize)
+        int chunkSize,
+        long userCarModelId)
     {
-        var trip = new Trip(userId, chunkSize);
+        var trip = new Trip(userId, chunkSize, userCarModelId);
 
         return trip;
     }
 
-    public Trip UploadFileCompleted(Trip trip, TripFileEnum tripFile, int chunkCount)
+    public Trip UploadFileCompleted(Trip trip, TripFileEnum tripFile)
     {
-        IsValidChunkCount(chunkCount);
+        IsValidChunkCount(tripFile);
 
         trip.ModifyDate = DateTime.UtcNow;
         ChangeStatus(trip, tripFile);
@@ -100,9 +108,72 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         return trip;
     }
 
+    public Trip SetTripFilesFormat(Trip trip, string filePath, DateTime tripStartDate)
+    {
+        trip.FilesPath = filePath;
+        trip.VideoFileName = $"{TripFileEnum.Video}-{tripStartDate.ToStandardDateTime()}.mp4";
+        trip.ImuFileName = $"{TripFileEnum.IMU}-{tripStartDate.ToStandardDateTime()}.csv";
+        trip.GpsFileName = $"{TripFileEnum.GPS}-{tripStartDate.ToStandardDateTime()}.csv";
+
+        return trip;
+    }
+
+    public Trip SetUploadCompleted(Trip trip)
+    {
+        trip.IsCompleted = true;
+
+        return trip;
+    }
+
+    public Trip SetTripDate(Trip trip, DateTime tripStartDate, DateTime tripEndDate)
+    {
+        trip.StartDateTime = tripStartDate;
+        trip.EndDateTime = tripEndDate;
+
+        return trip;
+    }
+
+    public Trip SetFileChunkCount(Trip trip, TripFileEnum tripFileType, int chunkCount)
+    {
+        switch (tripFileType)
+        {
+            case TripFileEnum.Video:
+                trip.VideoChunkCount = chunkCount;
+                break;
+            case TripFileEnum.IMU:
+                trip.ImuChunkCount = chunkCount;
+                break;
+            case TripFileEnum.GPS:
+                trip.GpsChunkCount = chunkCount;
+                break;
+            default:
+                break;
+        }
+
+        return trip;
+    }
+
+    public int GetFileChunkCount(TripFileEnum tripFileType)
+    {
+        return tripFileType switch
+        {
+            TripFileEnum.Video => VideoChunkCount,
+            TripFileEnum.IMU => ImuChunkCount,
+            TripFileEnum.GPS => GpsChunkCount,
+            _ => 0,
+        };
+    }
+
     public string GetFileType()
     {
         return TripTempFiles.FirstOrDefault()?.FileType;
+    }
+
+    public bool AreAllFilesUploaded()
+    {
+        return IsVideoUploaded &&
+            IsImuUploaded &&
+            IsGpsUploaded;
     }
 
     public TripTempFile AddTempFiles(string fileName, string chunkId, string fileType, TripFileEnum tripFile)
@@ -112,6 +183,17 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         _tripTempFiles.Add(tempFile);
 
         return tempFile;
+    }
+
+    public bool IsCompletedUploadFile(Trip trip, TripFileEnum tripFile)
+    {
+        return tripFile switch
+        {
+            TripFileEnum.Video => trip.TripTempFiles.Count == trip.VideoChunkCount,
+            TripFileEnum.IMU => trip.TripTempFiles.Count == trip.ImuChunkCount,
+            TripFileEnum.GPS => trip.TripTempFiles.Count == trip.GpsChunkCount,
+            _ => false,
+        };
     }
 
     public void RemoveAllTempFiles()
@@ -137,9 +219,11 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         }
     }
 
-    private void IsValidChunkCount(int chunkCount)
+    private void IsValidChunkCount(TripFileEnum tripFileType)
     {
-        if (TripTempFiles.Count != chunkCount)
+        var getChunkCount = GetFileChunkCount(tripFileType);
+
+        if (TripTempFiles.Count != getChunkCount)
         {
             throw new Exception("The file has not been fully uploaded yet");
         }

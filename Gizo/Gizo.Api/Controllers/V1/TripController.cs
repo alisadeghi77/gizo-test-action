@@ -11,8 +11,7 @@ public class TripController : BaseController
     [HttpGet]
     public async Task<ActionResult<List<TripResponse>>> GetAll(CancellationToken token)
     {
-        var userId = HttpContext.GetIdentityIdClaimValue();
-        var query = new GetTripsQuery(userId);
+        var query = new GetTripsQuery(CurrentUserId);
 
         var result = await _mediator.Send(query, token);
 
@@ -27,8 +26,7 @@ public class TripController : BaseController
     public async Task<ActionResult<List<TripDetailResponse>>> Get([FromRoute] long id,
         CancellationToken token)
     {
-        var userId = HttpContext.GetIdentityIdClaimValue();
-        var query = new GetTripQuery(id, userId);
+        var query = new GetTripQuery(id, CurrentUserId);
 
         var result = await _mediator.Send(query, token);
 
@@ -44,8 +42,7 @@ public class TripController : BaseController
         [FromQuery] FileChunkStatusRequest request,
         CancellationToken token)
     {
-        var userId = HttpContext.GetIdentityIdClaimValue();
-        var query = new GetFileChunkQuery(userId, request.TripId, request.TripFileType);
+        var query = new GetFileChunkQuery(CurrentUserId, request.TripId, request.TripFileType);
 
         var result = await _mediator.Send(query, token);
 
@@ -56,11 +53,30 @@ public class TripController : BaseController
     }
 
     [HttpPost]
-    [Route(ApiRoutes.Trip.UploadStart)]
-    public async Task<ActionResult<CreatedTripResponse>> UploadStart(CancellationToken token)
+    [Route(ApiRoutes.Trip.CreateTrip)]
+    public async Task<ActionResult<CreatedTripResponse>> CreateTrip(CancellationToken token)
     {
-        var userId = HttpContext.GetIdentityIdClaimValue();
-        var command = new CreateTripCommand(userId);
+        var command = new CreateTripCommand(CurrentUserId);
+
+        var result = await _mediator.Send(command, token);
+
+        if (result.IsError)
+            return HandleErrorResponse(result.Errors);
+
+        return Ok(result.Data);
+    }
+
+
+    [HttpPost]
+    [ValidateModel]
+    [Route(ApiRoutes.Trip.UploadStart)]
+    public async Task<ActionResult<CreatedTripResponse>> UploadStart([FromQuery] UploadStartRequest request,
+        CancellationToken token)
+    {
+        var command = new UploadFileStartCommand(request.TripId,
+            CurrentUserId,
+            request.ChunkCount,
+            request.TripFileType);
 
         var result = await _mediator.Send(command, token);
 
@@ -88,21 +104,5 @@ public class TripController : BaseController
             return HandleErrorResponse(uploadFileResult.Errors);
 
         return Ok(uploadFileResult.Data);
-    }
-
-    [HttpPost]
-    [ValidateModel]
-    [Route(ApiRoutes.Trip.UploadComplete)]
-    public async Task<ActionResult<bool>> UploadComplete([FromQuery] UploadCompletedRequest request,
-        CancellationToken token)
-    {
-        var command = new UploadFileCompletedCommand(request.TripId, request.TripFileType, request.ChunkLenght);
-
-        var result = await _mediator.Send(command, token);
-
-        if (result.IsError)
-            return HandleErrorResponse(result.Errors);
-
-        return Ok(result.Data);
     }
 }

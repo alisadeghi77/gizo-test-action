@@ -23,7 +23,6 @@ public static class ApiRoutes
         public const string CreateTrip = "createTrip";
         public const string UploadStart = "uploadStart";
         public const string UploadChunks = "uploadChunks";
-        public const string UploadComplete = "uploadComplete";
         public const string FileChunkStatus = "fileChunkStatus";
     }
 }
