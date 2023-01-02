@@ -58,6 +58,14 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 
     public string? GpsFileName { get; private set; }
 
+    public int VideoChunkCount { get; private set; }
+
+    public int ImuChunkCount { get; private set; }
+
+    public int GpsChunkCount { get; private set; }
+
+    public bool IsCompleted { get; private set; }
+
     public string? FilesPath { get; private set; }
 
     public DateTime? StartDateTime { get; private set; }
