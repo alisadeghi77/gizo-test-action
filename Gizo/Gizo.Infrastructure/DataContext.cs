@@ -19,6 +19,8 @@ public class DataContext : IdentityDbContext<User, Role, long>, IUnitOfWork
 
     public DbSet<CarBrand> Cars { get; set; }
 
+    public DbSet<UserLocation> UserLocations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyAllConfigurations();
