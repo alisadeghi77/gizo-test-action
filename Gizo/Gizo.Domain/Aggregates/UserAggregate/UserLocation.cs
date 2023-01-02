@@ -6,6 +6,8 @@ public class UserLocation : ICreateDate
 {
     public Guid Id { get; set; }
 
+    public long UserId { get; set; }
+
     public DateTime GpsDateTime { get; set; }
 
     public double Altitude { get; set; }
@@ -19,4 +21,6 @@ public class UserLocation : ICreateDate
     public double Climb { get; set; }
 
     public DateTime CreateDate { get; set; }
+
+    public User User { get; private set; }
 }

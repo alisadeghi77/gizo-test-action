@@ -11,6 +11,10 @@ public class UserLocationConfig : IEntityTypeConfiguration<UserLocation>
     {
         builder.HasKey(model => model.Id);
 
+        builder.HasOne(_ => _.User)
+               .WithMany(_ => _.UserLocations)
+               .HasForeignKey(_ => _.UserId);
+
         builder.ToTable("UserLocations", SchemaConfig.User);
     }
 }

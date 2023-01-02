@@ -7,6 +7,7 @@ namespace Gizo.Domain.Aggregates.UserAggregate;
 public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedDate<long>
 {
     private readonly List<UserCarModel> _userCarModels = new();
+    private readonly List<UserLocation> _userLocations = new();
 
     public User()
     {
@@ -30,6 +31,8 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
     public IReadOnlyCollection<UserVerificationCode> UserVerificationCodes => _userVerificationCodes;
 
     public IReadOnlyCollection<UserCarModel> UserCarModels => _userCarModels;
+
+    public IReadOnlyCollection<UserLocation> UserLocations => _userLocations;
 
     public void UpdateProfile(long userId, string firstName, string lastName, string email)
     {
