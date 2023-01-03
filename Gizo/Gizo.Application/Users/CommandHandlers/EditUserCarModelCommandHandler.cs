@@ -8,7 +8,7 @@ namespace Gizo.Application.Users.CommandHandlers;
 
 public sealed record EditUserCarModelCommand(long UserCarModelId,
     long UserId,
-    string? Licence) : IRequest<OperationResult<bool>>;
+    string? License) : IRequest<OperationResult<bool>>;
 
 public class EditUserCarModelCommandHandler : IRequestHandler<EditUserCarModelCommand, OperationResult<bool>>
 {
@@ -24,9 +24,9 @@ public class EditUserCarModelCommandHandler : IRequestHandler<EditUserCarModelCo
     {
         var result = new OperationResult<bool>();
 
-        if (string.IsNullOrWhiteSpace(request.Licence))
+        if (string.IsNullOrWhiteSpace(request.License))
         {
-            result.AddError(ErrorCode.ValidationError, "Licence is required");
+            result.AddError(ErrorCode.ValidationError, "License is required");
             return result;
         }
 
@@ -42,7 +42,7 @@ public class EditUserCarModelCommandHandler : IRequestHandler<EditUserCarModelCo
             return result;
         }
 
-        user.UpdateUserCarModel(user, request.UserCarModelId, request.Licence);
+        user.UpdateUserCarModel(user, request.UserCarModelId, request.License);
 
         _context.Users.Update(user);
         result.Data = await _context.SaveChangesAsync(cancellationToken) > 0;

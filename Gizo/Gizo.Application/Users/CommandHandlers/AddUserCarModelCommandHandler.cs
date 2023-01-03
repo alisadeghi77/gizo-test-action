@@ -34,13 +34,22 @@ public class AddUserCarModelCommandHandler
         }
 
         var carBrand = await _context.Cars
-            .Include(_ => _.CarModels.Where(_ => _.Id == request.CarModelId))
+            .Where(_ => _.CarModels
+                .Any(x => x.Id == request.CarModelId))
+            .Include(_ => _.CarModels
+                .Where(x => x.Id == request.CarModelId))
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
 
         if (carBrand is null || carBrand.CarModels.Count == 0)
         {
             result.AddError(ErrorCode.NotFound, "Car model not found");
+            return result;
+        }
+
+        if (user.IsUserCarModelDuplicate(request.CarModelId, request.License))
+        {
+            result.AddError(ErrorCode.ValidationError, "Car model with this license already existed");
             return result;
         }
 
