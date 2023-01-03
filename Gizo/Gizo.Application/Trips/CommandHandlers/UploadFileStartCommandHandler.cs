@@ -11,7 +11,7 @@ namespace Gizo.Application.Trips.CommandHandlers;
 public sealed record UploadFileStartCommand(long TripId,
     long UserId,
     int ChunkCount,
-    TripFileEnum TripFileType) : IRequest<OperationResult<TripUploadStartResponse>>;
+    TripFileType TripFileType) : IRequest<OperationResult<TripUploadStartResponse>>;
 
 public class UploadFileStartCommandHandler
     : IRequestHandler<UploadFileStartCommand, OperationResult<TripUploadStartResponse>>
@@ -24,11 +24,11 @@ public class UploadFileStartCommandHandler
     }
 
     public async Task<OperationResult<TripUploadStartResponse>> Handle(UploadFileStartCommand request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var result = new OperationResult<TripUploadStartResponse>();
         var trip = await _context.Trips.FirstOrDefaultAsync(_ => _.Id == request.TripId &&
-            _.UserId == request.UserId, token);
+            _.UserId == request.UserId, cancellationToken);
 
         if (trip == null)
         {
@@ -40,7 +40,7 @@ public class UploadFileStartCommandHandler
         trip.SetFileChunkCount(request.TripFileType, request.ChunkCount);
 
         _context.Trips.Update(trip);
-        await _context.SaveChangesAsync(token);
+        await _context.SaveChangesAsync(cancellationToken);
         result.Data = new TripUploadStartResponse(trip.Id);
 
         return result;

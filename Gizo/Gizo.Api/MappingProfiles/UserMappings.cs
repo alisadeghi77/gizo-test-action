@@ -1,5 +1,4 @@
-﻿using Gizo.Api.Contracts.UserProfile.Requests;
-using Gizo.Api.Contracts.Users;
+﻿using Gizo.Api.Contracts.Users;
 using Gizo.Api.Contracts.Users.Requests;
 using Gizo.Application.Users.CommandHandlers;
 using Gizo.Application.Users.Dtos;

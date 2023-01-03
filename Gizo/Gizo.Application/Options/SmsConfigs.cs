@@ -1,8 +1,8 @@
-namespace Gizo.Application.Options;
+﻿namespace Gizo.Application.Options;
 
 public class SmsConfigs
 {
-    public string AccountSid { get; set; }
-    public string AuthToken { get; set; }
-    public string SenderPhoneNumber { get; set; }
+    public string AccountSid { get; set; } = null!;
+    public string AuthToken { get; set; } = null!;
+    public string SenderPhoneNumber { get; set; } = null!;
 }

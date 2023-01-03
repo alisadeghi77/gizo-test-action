@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Gizo.Domain.Aggregates.UserAggregate;
-using Gizo.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

@@ -8,16 +8,16 @@ public class TripTempFileConfig : IEntityTypeConfiguration<TripTempFile>
 {
     public void Configure(EntityTypeBuilder<TripTempFile> builder)
     {
-        //Fields
+        // Fields
         builder.HasKey(x => x.Id);
 
-        //Relations
+        // Relations
         builder.HasOne(x => x.Trip)
                .WithMany(x => x.TripTempFiles)
                .HasForeignKey(x => x.TripId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        //Table
+        // Table
         builder.ToTable("TripTempFiles", SchemaConfig.Trip);
     }
 }

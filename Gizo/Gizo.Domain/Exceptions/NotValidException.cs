@@ -6,15 +6,15 @@ public class NotValidException : Exception
     {
         ValidationErrors = new List<string>();
     }
-    
+
     internal NotValidException(string message) : base(message)
     {
         ValidationErrors = new List<string>();
     }
-    
+
     internal NotValidException(string message, Exception inner) : base(message, inner)
     {
         ValidationErrors = new List<string>();
     }
-    public List<string> ValidationErrors { get;  }
+    public List<string> ValidationErrors { get; }
 }

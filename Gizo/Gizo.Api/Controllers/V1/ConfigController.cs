@@ -7,11 +7,11 @@ namespace Gizo.Api.Controllers.V1;
 public class ConfigController : BaseController
 {
     [HttpGet]
-    public async Task<ActionResult<GetConfigsResponse>> Get(CancellationToken token = default)
+    public async Task<ActionResult<GetConfigsResponse>> Get(CancellationToken cancellationToken = default)
     {
         var query = new GetConfigsQuery();
 
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, cancellationToken);
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
 

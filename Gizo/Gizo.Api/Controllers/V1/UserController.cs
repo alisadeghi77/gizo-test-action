@@ -13,10 +13,10 @@ public class UserController : BaseController
     [Route(ApiRoutes.User.CheckIdentity)]
     [ValidateModel]
     public async Task<ActionResult<bool>> CheckIdentity(CheckIdentityRequest checkIdentity,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<CheckClientIdentityCommand>(checkIdentity);
-        var result = await _mediator.Send(command, token);
+        var command = Mapper.Map<CheckClientIdentityCommand>(checkIdentity);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -28,10 +28,10 @@ public class UserController : BaseController
     [Route(ApiRoutes.User.Verify)]
     [ValidateModel]
     public async Task<ActionResult<UserVerifyResponse>> Verify(VerifyIdentityRequest login,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<VerifyCommand>(login);
-        var result = await _mediator.Send(command, token);
+        var command = Mapper.Map<VerifyCommand>(login);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -44,14 +44,14 @@ public class UserController : BaseController
     [ValidateModel]
     [Authorize]
     public async Task<ActionResult<UserProfileResponse>> UpdateProfile(UserProfileUpdateRequest request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var command = new UpdateUserProfileCommand(CurrentUserId,
             request.FirstName,
             request.LastName,
             request.Email);
 
-        var response = await _mediator.Send(command, token);
+        var response = await Mediator.Send(command, cancellationToken);
 
         if (response.IsError)
             return HandleErrorResponse(response.Errors);
@@ -62,10 +62,10 @@ public class UserController : BaseController
     [HttpPost]
     [Route(ApiRoutes.User.Registration)]
     [ValidateModel]
-    public async Task<IActionResult> Register(UserRegistrationRequest registration, CancellationToken token)
+    public async Task<IActionResult> Register(UserRegistrationRequest registration, CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<RegisterIdentityCommand>(registration);
-        var result = await _mediator.Send(command, token);
+        var command = Mapper.Map<RegisterIdentityCommand>(registration);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -76,10 +76,10 @@ public class UserController : BaseController
     [HttpPost]
     [Route(ApiRoutes.User.Login)]
     [ValidateModel]
-    public async Task<IActionResult> Login(LoginRequest login, CancellationToken token)
+    public async Task<IActionResult> Login(LoginRequest login, CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<LoginCommand>(login);
-        var result = await _mediator.Send(command, token);
+        var command = Mapper.Map<LoginCommand>(login);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -90,11 +90,11 @@ public class UserController : BaseController
     [HttpDelete]
     [Route(ApiRoutes.User.Id)]
     [Authorize]
-    public async Task<IActionResult> DeleteAccount(long id, CancellationToken token)
+    public async Task<IActionResult> DeleteAccount(long id, CancellationToken cancellationToken)
     {
         var command = new RemoveAccountCommand(id, HttpContext.GetIdentityIdClaimValue());
 
-        var result = await _mediator.Send(command, token);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError) return HandleErrorResponse(result.Errors);
 
@@ -104,10 +104,10 @@ public class UserController : BaseController
     [HttpGet]
     [Route(ApiRoutes.User.CurrentUser)]
     [Authorize]
-    public async Task<ActionResult<UserProfileResponse>> CurrentUser(CancellationToken token)
+    public async Task<ActionResult<UserProfileResponse>> CurrentUser(CancellationToken cancellationToken)
     {
         var query = new GetCurrentUserQuery(CurrentUserId, HttpContext.User);
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -118,11 +118,11 @@ public class UserController : BaseController
     [HttpGet]
     [Route(ApiRoutes.User.CarModels)]
     [Authorize]
-    public async Task<ActionResult<List<UserCarResponse>>> GetUserCarModels(CancellationToken token)
+    public async Task<ActionResult<List<UserCarResponse>>> GetUserCarModels(CancellationToken cancellationToken)
     {
         var query = new GetUserCarModelsQuery(CurrentUserId);
 
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -137,7 +137,7 @@ public class UserController : BaseController
     {
         var query = new GetUserCarModelDetailsQuery(id, CurrentUserId);
 
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, token);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -148,11 +148,12 @@ public class UserController : BaseController
     [HttpPost]
     [Route(ApiRoutes.User.CarModel)]
     [Authorize]
-    public async Task<ActionResult<bool>> AddUserCarModel(AddUserCarModelRequest request, CancellationToken token)
+    public async Task<ActionResult<bool>> AddUserCarModel(AddUserCarModelRequest request,
+        CancellationToken cancellationToken)
     {
         var command = new AddUserCarModelCommand(request.CarModelId, CurrentUserId, request.License);
 
-        var result = await _mediator.Send(command, token);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -163,12 +164,12 @@ public class UserController : BaseController
     [HttpPut]
     [Route(ApiRoutes.User.CarModel)]
     [Authorize]
-    public async Task<ActionResult<bool>> EditUserCarModel(EditUserCarModelRequest request, 
+    public async Task<ActionResult<bool>> EditUserCarModel(EditUserCarModelRequest request,
         CancellationToken cancellationToken = default)
     {
         var command = new EditUserCarModelCommand(request.Id, CurrentUserId, request.Licence);
 
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -179,11 +180,11 @@ public class UserController : BaseController
     [HttpDelete]
     [Route(ApiRoutes.User.CarModel)]
     [Authorize]
-    public async Task<ActionResult<bool>> DeleteUserCarModel(DeleteUserCarModelRequest request, 
+    public async Task<ActionResult<bool>> DeleteUserCarModel(DeleteUserCarModelRequest request,
         CancellationToken cancellationToken = default)
     {
         var command = new DeleteUserCarModelCommand(request.Id, CurrentUserId);
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -194,11 +195,11 @@ public class UserController : BaseController
     [HttpPatch]
     [Route(ApiRoutes.User.CarModelSelect)]
     [Authorize]
-    public async Task<ActionResult<bool>> SelectUserCarModel(SelectUserCarModelRequest request, 
+    public async Task<ActionResult<bool>> SelectUserCarModel(SelectUserCarModelRequest request,
         CancellationToken cancellationToken = default)
     {
         var command = new SelectUserCarModelCommand(request.Id, CurrentUserId);
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);

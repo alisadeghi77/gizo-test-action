@@ -1,4 +1,6 @@
-﻿global using AutoMapper;
+﻿global using System.ComponentModel.DataAnnotations;
+global using System.Text;
+global using AutoMapper;
 global using Gizo.Api.Contracts.Common;
 global using Gizo.Api.Extensions;
 global using Gizo.Api.Filters;
@@ -19,5 +21,3 @@ global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using Microsoft.OpenApi.Models;
 global using Swashbuckle.AspNetCore.SwaggerGen;
-global using System.ComponentModel.DataAnnotations;
-global using System.Text;

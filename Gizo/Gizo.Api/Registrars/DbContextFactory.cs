@@ -6,7 +6,6 @@ public class DbContextFactory : IDesignTimeDbContextFactory<DataContext>
 {
     public DataContext CreateDbContext(string[] args)
     {
-
         var connectionString = GetAppConfiguration().GetConnectionString("Default");
         var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
         optionsBuilder.UseSqlServer(connectionString);
@@ -14,20 +13,19 @@ public class DbContextFactory : IDesignTimeDbContextFactory<DataContext>
         return new DataContext(optionsBuilder.Options);
     }
 
-
-    IConfiguration GetAppConfiguration()
+    private static IConfiguration GetAppConfiguration()
     {
         var environmentName =
-                  Environment.GetEnvironmentVariable(
-                      "ASPNETCORE_ENVIRONMENT");
+            Environment.GetEnvironmentVariable(
+                "ASPNETCORE_ENVIRONMENT");
 
         var path = Directory.GetCurrentDirectory();
 
         var builder = new ConfigurationBuilder()
-                .SetBasePath(path)
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{environmentName}.json", true)
-                .AddEnvironmentVariables();
+            .SetBasePath(path)
+            .AddJsonFile("appsettings.json")
+            .AddJsonFile($"appsettings.{environmentName}.json", true)
+            .AddEnvironmentVariables();
 
         return builder.Build();
     }

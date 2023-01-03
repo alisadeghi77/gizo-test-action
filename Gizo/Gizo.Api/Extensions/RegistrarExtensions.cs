@@ -29,4 +29,3 @@ public static class RegistrarExtensions
             .Cast<T>();
     }
 }
-

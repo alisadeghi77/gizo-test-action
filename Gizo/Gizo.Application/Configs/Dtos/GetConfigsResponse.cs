@@ -2,7 +2,6 @@
 
 public class GetConfigsResponse
 {
-    public string AspectRatio { get; set; }
-
+    public string? AspectRatio { get; set; }
     public int ChunkSize { get; set; }
 }

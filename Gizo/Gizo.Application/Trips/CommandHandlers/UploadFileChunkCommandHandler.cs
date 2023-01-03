@@ -5,7 +5,7 @@ using Gizo.Application.Services;
 using Gizo.Application.Trips.Dtos;
 using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Contracts.Enums;
-using Gizo.Domain.Contracts.Repository;
+using Gizo.Domain.Exceptions;
 using Gizo.Infrastructure;
 using Gizo.Utility;
 using MediatR;
@@ -16,7 +16,7 @@ namespace Gizo.Application.Trips.CommandHandlers;
 
 public sealed record UploadFileChunkCommand(long TripId,
     string FileChunkId,
-    TripFileEnum TripFileType,
+    TripFileType TripFileType,
     string Type,
     Stream File) : IRequest<OperationResult<TripTempFileCreatedResponse>>;
 
@@ -39,7 +39,7 @@ public class UploadFileChunkCommandHandler
 
     public async Task<OperationResult<TripTempFileCreatedResponse>> Handle(
         UploadFileChunkCommand request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         if (!_uploadFileService.CheckVideoType(request.TripFileType, request.Type))
         {
@@ -50,7 +50,7 @@ public class UploadFileChunkCommandHandler
         var trip = await _context.Trips
             .Include(_ => _.TripTempFiles)
             .Include(_ => _.UserCarModel.CarModel)
-            .FirstOrDefaultAsync(_ => _.Id == request.TripId, token);
+            .FirstOrDefaultAsync(_ => _.Id == request.TripId, cancellationToken);
 
         if (trip == null)
         {
@@ -60,7 +60,7 @@ public class UploadFileChunkCommandHandler
 
         var tempPath = GetTripTempFilePath(trip, request.TripFileType);
         var tempFileName = await SaveChunkFile(trip, request, tempPath);
-        var tempFile = trip.AddTempFiles(tempFileName, request.FileChunkId, request.Type, request.TripFileType);
+        trip.AddTempFiles(tempFileName, request.FileChunkId, request.Type, request.TripFileType);
 
         if (trip.IsCompletedUploadFile(request.TripFileType))
         {
@@ -73,7 +73,7 @@ public class UploadFileChunkCommandHandler
         }
 
         _context.Trips.Update(trip);
-        await _context.SaveChangesAsync(token);
+        await _context.SaveChangesAsync(cancellationToken);
 
         _result.Data = new TripTempFileCreatedResponse()
         {
@@ -94,23 +94,25 @@ public class UploadFileChunkCommandHandler
 
     public Trip MergeChunkFiles(Trip trip, UploadFileChunkCommand request, string tempPath)
     {
-        _uploadFileService.UploadCompleted(tempPath, trip.TempFileName, request.Type);
+        if (string.IsNullOrEmpty(trip.TempFileName))
+            throw new FileUploadedException("Temp File Name is null");
 
+        _uploadFileService.UploadCompleted(tempPath, trip.TempFileName, request.Type);
         trip.UploadFileCompleted(request.TripFileType);
 
         return trip;
     }
 
-    private static string CreateFileChunkName(string fileName, string fileChunkId, string fileType)
+    private static string CreateFileChunkName(string? fileName, string fileChunkId, string fileType)
     {
         return fileName + fileType.ToStandardType() + fileChunkId;
     }
 
-    private string GetTripTempFilePath(Trip trip, TripFileEnum tripFileType)
+    private string GetTripTempFilePath(Trip trip, TripFileType tripFileType)
     {
         var tempPath = _uploadFileService.GetTripTempFilePath(_uploadFileSettings.SaveTempTo,
-           trip.UserId, trip.Id,
-           tripFileType.ToString());
+            trip.UserId, trip.Id,
+            tripFileType.ToString());
 
         return tempPath;
     }
@@ -132,20 +134,29 @@ public class UploadFileChunkCommandHandler
             trip.SetTripDate(imuTripDate.TripStartDate, imuTripDate.TripEndDate);
             trip.SetTripFilesFormat(folderPath);
 
-            _uploadFileService.MoveFiles(GetTripTempFilePath(trip, TripFileEnum.Video),
-                folderPath,
-                trip.VideoFileName,
-                TripFileEnum.Video);
+            if (!string.IsNullOrEmpty(trip.VideoFileName))
+            {
+                _uploadFileService.MoveFiles(GetTripTempFilePath(trip, TripFileType.Video),
+                    folderPath,
+                    trip.VideoFileName,
+                    TripFileType.Video);
+            }
 
-            _uploadFileService.MoveFiles(GetTripTempFilePath(trip, TripFileEnum.IMU),
-                folderPath,
-                trip.ImuFileName,
-                TripFileEnum.IMU);
+            if (!string.IsNullOrEmpty(trip.ImuFileName))
+            {
+                _uploadFileService.MoveFiles(GetTripTempFilePath(trip, TripFileType.IMU),
+                    folderPath,
+                    trip.ImuFileName,
+                    TripFileType.IMU);
+            }
 
-            _uploadFileService.MoveFiles(GetTripTempFilePath(trip, TripFileEnum.GPS),
-                folderPath,
-                trip.GpsFileName,
-                TripFileEnum.GPS);
+            if (!string.IsNullOrEmpty(trip.GpsFileName))
+            {
+                _uploadFileService.MoveFiles(GetTripTempFilePath(trip, TripFileType.GPS),
+                    folderPath,
+                    trip.GpsFileName,
+                    TripFileType.GPS);
+            }
 
             trip.SetUploadCompleted();
             trip.RemoveAllTempFiles();

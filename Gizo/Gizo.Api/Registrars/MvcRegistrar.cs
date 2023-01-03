@@ -8,7 +8,7 @@ public class MvcRegistrar : IWebApplicationBuilderRegistrar
     {
         builder.Services.AddControllers(config =>
         {
-            config.Filters.Add(typeof(ExceptionHandler));
+            config.Filters.Add(typeof(ExceptionHandlerAttribute));
         });
 
         builder.Services.AddApiVersioning(config =>

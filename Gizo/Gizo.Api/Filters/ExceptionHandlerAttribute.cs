@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Api.Filters;
 
-public class ExceptionHandler : ExceptionFilterAttribute
+public class ExceptionHandlerAttribute : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {
@@ -12,6 +12,6 @@ public class ExceptionHandler : ExceptionFilterAttribute
         };
         apiError.Errors.Add(context.Exception.Message);
 
-        context.Result = new JsonResult(apiError) { StatusCode = 500};
+        context.Result = new JsonResult(apiError) { StatusCode = 500 };
     }
 }

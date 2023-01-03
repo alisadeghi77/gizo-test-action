@@ -11,12 +11,12 @@ internal static class ModelBuilderExtensions
             .GetExecutingAssembly()
             .GetTypes()
             .Where(t => t.GetInterfaces()
-                       .Any(gi => gi.IsGenericType &&
-                                  gi.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))).ToList();
+                .Any(gi => gi.IsGenericType &&
+                           gi.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))).ToList();
 
         foreach (var type in typesToRegister)
         {
-            dynamic configurationInstance = Activator.CreateInstance(type);
+            dynamic? configurationInstance = Activator.CreateInstance(type);
             modelBuilder.ApplyConfiguration(configurationInstance);
         }
     }

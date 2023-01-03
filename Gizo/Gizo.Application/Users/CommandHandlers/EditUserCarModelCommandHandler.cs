@@ -19,7 +19,8 @@ public class EditUserCarModelCommandHandler : IRequestHandler<EditUserCarModelCo
         _context = context;
     }
 
-    public async Task<OperationResult<bool>> Handle(EditUserCarModelCommand request, CancellationToken token)
+    public async Task<OperationResult<bool>> Handle(EditUserCarModelCommand request,
+        CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();
 
@@ -32,7 +33,7 @@ public class EditUserCarModelCommandHandler : IRequestHandler<EditUserCarModelCo
         var user = await _context.Users
             .Include(_ => _.UserCarModels
                 .Where(x => x.Id == request.UserCarModelId))
-            .SingleOrDefaultAsync(_ => _.Id == request.UserId, token);
+            .SingleOrDefaultAsync(_ => _.Id == request.UserId, cancellationToken);
 
         if (user == null)
         {
@@ -44,7 +45,7 @@ public class EditUserCarModelCommandHandler : IRequestHandler<EditUserCarModelCo
         user.UpdateUserCarModel(user, request.UserCarModelId, request.Licence);
 
         _context.Users.Update(user);
-        result.Data = await _context.SaveChangesAsync(token) > 0;
+        result.Data = await _context.SaveChangesAsync(cancellationToken) > 0;
 
         return result;
     }

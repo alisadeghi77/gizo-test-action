@@ -5,9 +5,10 @@ using Gizo.Application.Options;
 using Gizo.Application.Services;
 using Gizo.Application.Users.Dtos;
 using Gizo.Domain.Aggregates.UserAggregate;
-using Gizo.Domain.Contracts.Repository;
+using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Gizo.Application.Users.CommandHandlers;
@@ -17,26 +18,27 @@ public sealed record VerifyCommand(string Username,
 
 public class VerifyCommandHandler : IRequestHandler<VerifyCommand, OperationResult<UserVerifyResponse>>
 {
-    private readonly IUnitOfWork _uow;
+    private readonly DbContext _context;
     private readonly UserManager<User> _userManager;
     private readonly IdentityConfigs _settings;
     private readonly IdentityService _identityService;
-    private OperationResult<UserVerifyResponse> _result = new();
+    private readonly OperationResult<UserVerifyResponse> _result;
 
     public VerifyCommandHandler(
-        IUnitOfWork uow,
+        DataContext context,
         UserManager<User> userManager,
         IOptions<IdentityConfigs> identityServerSettings,
         IdentityService identityService)
     {
-        _uow = uow;
+        _result = new();
+        _context = context;
         _userManager = userManager;
         _settings = identityServerSettings.Value;
         _identityService = identityService;
     }
 
     public async Task<OperationResult<UserVerifyResponse>> Handle(VerifyCommand request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -55,7 +57,7 @@ public class VerifyCommandHandler : IRequestHandler<VerifyCommand, OperationResu
                 return _result;
             }
 
-            await _uow.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(cancellationToken);
 
             _result.Data = new UserVerifyResponse(user.UserName, _identityService.GetJwtString(user));
         }

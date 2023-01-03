@@ -6,5 +6,5 @@ public class FileChunkStatusRequest
 {
     public long TripId { get; set; }
 
-    public TripFileEnum TripFileType { get; set; }
+    public TripFileType TripFileType { get; set; }
 }

@@ -1,10 +1,11 @@
-﻿using CsvHelper;
+﻿using System.Globalization;
+using CsvHelper;
 using Gizo.Application.Options;
 using Gizo.Application.Trips.Dtos;
 using Gizo.Domain.Contracts.Enums;
+using Gizo.Domain.Exceptions;
 using Gizo.Utility;
 using Microsoft.Extensions.Options;
-using System.Globalization;
 
 namespace Gizo.Application.Services;
 
@@ -17,13 +18,13 @@ public class UploadFileService
         _uploadFileSetting = uploadFileSettings.Value;
     }
 
-    public bool CheckVideoType(TripFileEnum tripFileType, string type)
+    public bool CheckVideoType(TripFileType tripFileType, string type)
     {
         return tripFileType switch
         {
-            TripFileEnum.Video => _uploadFileSetting.VideoAcceptTypes.Contains(type.ToLower()),
-            TripFileEnum.IMU => _uploadFileSetting.IMUAcceptTypes.Contains(type.ToLower()),
-            TripFileEnum.GPS => _uploadFileSetting.GPSAcceptTypes.Contains(type.ToLower()),
+            TripFileType.Video => _uploadFileSetting.VideoAcceptTypes.Contains(type.ToLower()),
+            TripFileType.IMU => _uploadFileSetting.IMUAcceptTypes.Contains(type.ToLower()),
+            TripFileType.GPS => _uploadFileSetting.GPSAcceptTypes.Contains(type.ToLower()),
             _ => false,
         };
     }
@@ -43,91 +44,71 @@ public class UploadFileService
 
     public async Task UploadChunk(string fileName, string filePath, Stream fileChunk, int chunkSize)
     {
-        try
+        CreateUserFile(filePath);
+
+        string newpath = Path.Combine(filePath + "/Chunk", fileName);
+
+        using FileStream fs = File.Create(newpath);
+        byte[] bytes = new byte[chunkSize];
+        int bytesRead = 0;
+
+        while ((bytesRead = await fileChunk.ReadAsync(bytes, 0, bytes.Length)) > 0)
         {
-            var filePathResult = CreateUserFile(filePath);
-
-            string newpath = Path.Combine(filePath + "/Chunk", fileName);
-
-            using FileStream fs = File.Create(newpath);
-            byte[] bytes = new byte[chunkSize];
-            int bytesRead = 0;
-
-            while ((bytesRead = await fileChunk.ReadAsync(bytes, 0, bytes.Length)) > 0)
-            {
-                fs.Write(bytes, 0, bytesRead);
-            }
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
+            fs.Write(bytes, 0, bytesRead);
         }
     }
 
     public string UploadCompleted(string filePath, string fileName, string type)
     {
-        try
+        var newFileName = fileName + type.ToStandardType();
+        string tempPath = Path.Combine(filePath, "Chunk");
+        string newPath = Path.Combine(tempPath, newFileName);
+
+        string[] filePaths = Directory.GetFiles(tempPath)
+            .Where(p => p.Contains(newFileName))
+            .OrderBy(p => p.Replace(newFileName, "$")
+                .Split('$')[1]).ToArray();
+
+        foreach (string fp in filePaths)
         {
-            var newFileName = fileName + type.ToStandardType();
-            string tempPath = Path.Combine(filePath, "Chunk");
-            string newPath = Path.Combine(tempPath, newFileName);
-
-            string[] filePaths = Directory.GetFiles(tempPath)
-                                    .Where(p => p.Contains(newFileName))
-                                    .OrderBy(p => p.Replace(newFileName, "$")
-                                    .Split('$')[1]).ToArray();
-
-            foreach (string fp in filePaths)
-            {
-                MergeChunks(newPath, fp);
-            }
-
-            File.Move(
-                Path.Combine(tempPath, newFileName),
-                Path.Combine(filePath, newFileName));
-
-            return fileName;
+            MergeChunks(newPath, fp);
         }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+
+        File.Move(
+            Path.Combine(tempPath, newFileName),
+            Path.Combine(filePath, newFileName));
+
+        return fileName;
     }
 
     public TripImuDateTimeDto? ImuStartAndEndDateTime(long userId, long tripId, string tempPath)
     {
-        try
+        var path = GetTripTempFilePath(tempPath,
+            userId, tripId, TripFileType.IMU.ToString());
+
+        var directory = Directory.GetFiles(path);
+        if (!directory.Any())
+            throw new FileUploadedException("Directory is Empty");
+
+        using var reader = new StreamReader(directory[0]);
+        using var csv = new CsvReader(reader, CultureInfo.CurrentCulture);
+        var imuRecords = csv.GetRecords<TripImuReadCsvDto>();
+
+        if (imuRecords == null)
         {
-            var path = GetTripTempFilePath(tempPath,
-                  userId, tripId, TripFileEnum.IMU.ToString());
-
-            var directory = Directory.GetFiles(path);
-            if (!directory.Any())
-            {
-                throw new Exception("Directory is Empty");
-            }
-
-            using var reader = new StreamReader(directory[0]);
-            using var csv = new CsvReader(reader, CultureInfo.CurrentCulture);
-            var imuRecords = csv.GetRecords<TripImuReadCsvDto>();
-
-            if (imuRecords == null)
-            {
-                return null;
-            }
-
-            var tripStartDateTime = imuRecords.FirstOrDefault().Time.ToUniversalTime();
-            var tripEndDateTime = imuRecords.LastOrDefault().Time.ToUniversalTime();
-
-            return new TripImuDateTimeDto(tripStartDateTime, tripEndDateTime);
+            return null;
         }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+
+        var tripStartDateTime = imuRecords.FirstOrDefault()?.Time.ToUniversalTime() ??
+                                throw new FileUploadedException("trip Start Date Time is null");
+
+        var tripEndDateTime = imuRecords.LastOrDefault()?.Time.ToUniversalTime() ??
+                              throw new FileUploadedException("trip end Date Time is null");
+
+        return new TripImuDateTimeDto(tripStartDateTime, tripEndDateTime);
     }
 
-    public static void MergeChunks(string finalPath, string chunkPath)
+    public void MergeChunks(string finalPath, string chunkPath)
     {
         FileStream? resultFs = null;
         FileStream? chunkFs = null;
@@ -139,8 +120,9 @@ public class UploadFileService
             chunkFs.Read(resultContent, 0, (int)chunkFs.Length);
             resultFs.Write(resultContent, 0, (int)chunkFs.Length);
         }
-        catch (Exception ex)
+        catch
         {
+            // LOG
         }
         finally
         {
@@ -173,21 +155,18 @@ public class UploadFileService
         return folder;
     }
 
-    public void MoveFiles(string tempPath, string path, string desFileName, TripFileEnum tripFileType)
+    public void MoveFiles(string tempPath, string path, string desFileName, TripFileType tripFileType)
     {
         var directory = Directory.GetFiles(tempPath);
 
         if (!directory.Any())
-        {
-            throw new Exception("Directory is Empty");
-        }
+            throw new FileUploadedException("Directory is Empty");
 
         var moveTo = Path.Combine(_uploadFileSetting.SaveTo,
             path,
             desFileName);
 
         File.Move(directory[0], moveTo);
-
     }
 
     public string GetTripTempFilePath(string tempPath, long userId, long tripId, string tripFileType)

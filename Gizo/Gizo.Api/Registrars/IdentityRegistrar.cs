@@ -1,7 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Identity;
-
-namespace Gizo.Api.Registrars;
+﻿namespace Gizo.Api.Registrars;
 
 public class IdentityRegistrar : IWebApplicationBuilderRegistrar
 {

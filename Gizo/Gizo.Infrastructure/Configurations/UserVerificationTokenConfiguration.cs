@@ -11,7 +11,7 @@ public class UserVerificationTokenConfiguration : IEntityTypeConfiguration<UserV
         builder.HasOne<User>()
             .WithMany(_ => _.UserVerificationCodes)
             .HasForeignKey(_ => _.UserId);
-        
+
         builder.Property(model => model.Code)
             .IsRequired();
 

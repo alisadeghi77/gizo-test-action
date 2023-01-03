@@ -5,12 +5,11 @@ namespace Gizo.Domain.Aggregates.TripAggregate;
 
 public class TripTempFile : BaseEntity<long>, ICreateDate
 {
-
     internal TripTempFile(long tripId,
         string fileName,
         string chunkId,
         string fileType,
-        TripFileEnum tripFileType)
+        TripFileType tripFileType)
     {
         TripId = tripId;
         FileName = fileName;
@@ -28,10 +27,9 @@ public class TripTempFile : BaseEntity<long>, ICreateDate
 
     public string ChunkId { get; private set; }
 
-    public TripFileEnum TripFileType { get; private set; }
+    public TripFileType TripFileType { get; private set; }
 
     public DateTime CreateDate { get; private set; }
 
-    public Trip Trip { get; private set; }
-
+    public Trip Trip { get; private set; } = null!;
 }

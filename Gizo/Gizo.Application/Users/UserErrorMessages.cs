@@ -1,6 +1,6 @@
 ﻿namespace Gizo.Application.Users;
 
-public class UserErrorMessages
+public static class UserErrorMessages
 {
     public const string NonExistentIdentityUser = "Unable to find a user with the specified username";
     public const string IncorrectPassword = "The provided password is incorrect";

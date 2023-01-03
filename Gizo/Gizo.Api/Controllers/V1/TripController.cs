@@ -9,11 +9,11 @@ namespace Gizo.Api.Controllers.V1;
 public class TripController : BaseController
 {
     [HttpGet]
-    public async Task<ActionResult<List<TripResponse>>> GetAll(CancellationToken token)
+    public async Task<ActionResult<List<TripResponse>>> GetAll(CancellationToken cancellationToken)
     {
         var query = new GetTripsQuery(CurrentUserId);
 
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -24,14 +24,16 @@ public class TripController : BaseController
     [HttpGet]
     [Route(ApiRoutes.Trip.TripDetail)]
     public async Task<ActionResult<List<TripDetailResponse>>> Get([FromRoute] long id,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var query = new GetTripQuery(id, CurrentUserId);
 
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, cancellationToken);
 
         if (result.IsError)
+        {
             return HandleErrorResponse(result.Errors);
+        }
 
         return Ok(result.Data);
     }
@@ -40,11 +42,11 @@ public class TripController : BaseController
     [Route(ApiRoutes.Trip.FileChunkStatus)]
     public async Task<ActionResult<FileChunkStatusResponse>> GetFileChunkStatus(
         [FromQuery] FileChunkStatusRequest request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var query = new GetFileChunkQuery(CurrentUserId, request.TripId, request.TripFileType);
 
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);
@@ -58,30 +60,33 @@ public class TripController : BaseController
     {
         var command = new CreateTripCommand(CurrentUserId);
 
-        var result = await _mediator.Send(command, token);
+        var result = await Mediator.Send(command, token);
 
         if (result.IsError)
+        {
             return HandleErrorResponse(result.Errors);
+        }
 
         return Ok(result.Data);
     }
-
 
     [HttpPost]
     [ValidateModel]
     [Route(ApiRoutes.Trip.UploadStart)]
     public async Task<ActionResult<TripUploadStartResponse>> UploadStart([FromQuery] UploadStartRequest request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var command = new UploadFileStartCommand(request.TripId,
             CurrentUserId,
             request.ChunkCount,
             request.TripFileType);
 
-        var result = await _mediator.Send(command, token);
+        var result = await Mediator.Send(command, cancellationToken);
 
         if (result.IsError)
+        {
             return HandleErrorResponse(result.Errors);
+        }
 
         return Ok(result.Data);
     }
@@ -90,7 +95,7 @@ public class TripController : BaseController
     [ValidateModel]
     [Route(ApiRoutes.Trip.UploadChunks)]
     public async Task<ActionResult<TripTempFileCreatedResponse>> UploadChunks([FromForm] UploadChunkRequest request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var command = new UploadFileChunkCommand(request.TripId,
             request.FileChunkId,
@@ -98,10 +103,12 @@ public class TripController : BaseController
             request.FileChunk.ContentType,
             request.FileChunk.OpenReadStream());
 
-        var uploadFileResult = await _mediator.Send(command, token);
+        var uploadFileResult = await Mediator.Send(command, cancellationToken);
 
         if (uploadFileResult.IsError)
+        {
             return HandleErrorResponse(uploadFileResult.Errors);
+        }
 
         return Ok(uploadFileResult.Data);
     }

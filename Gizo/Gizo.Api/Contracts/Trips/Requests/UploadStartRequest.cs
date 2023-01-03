@@ -6,5 +6,5 @@ public class UploadStartRequest
 {
     public long TripId { get; set; }
     public int ChunkCount { get; set; }
-    public TripFileEnum TripFileType { get; set; }
+    public TripFileType TripFileType { get; set; }
 }

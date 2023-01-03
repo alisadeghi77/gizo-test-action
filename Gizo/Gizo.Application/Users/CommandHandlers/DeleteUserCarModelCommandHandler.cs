@@ -18,13 +18,13 @@ public class DeleteUserCarModelCommandHandler : IRequestHandler<DeleteUserCarMod
         _context = context;
     }
 
-    public async Task<OperationResult<bool>> Handle(DeleteUserCarModelCommand request, CancellationToken token)
+    public async Task<OperationResult<bool>> Handle(DeleteUserCarModelCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();
 
         var user = await _context.Users
             .Include(_ => _.UserCarModels)
-            .SingleOrDefaultAsync(_ => _.Id == request.UserId, token);
+            .SingleOrDefaultAsync(_ => _.Id == request.UserId, cancellationToken);
 
         if (user == null)
         {
@@ -35,7 +35,7 @@ public class DeleteUserCarModelCommandHandler : IRequestHandler<DeleteUserCarMod
         user.RemoveCar(request.UserCarModelId);
         _context.Users.Update(user);
 
-        result.Data = await _context.SaveChangesAsync(token) > 0;
+        result.Data = await _context.SaveChangesAsync(cancellationToken) > 0;
         return result;
     }
 }

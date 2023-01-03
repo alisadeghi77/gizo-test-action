@@ -7,10 +7,10 @@ public class BaseController : ControllerBase
 {
     public long CurrentUserId => HttpContext.GetIdentityIdClaimValue();
 
-    private IMediator? _mediatorInstance;
-    private IMapper? _mapperInstance;
-    protected IMediator _mediator => _mediatorInstance ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
-    protected IMapper _mapper => _mapperInstance ??= HttpContext.RequestServices.GetRequiredService<IMapper>();
+    private IMediator _mediatorInstance;
+    private IMapper _mapperInstance;
+    protected IMediator Mediator => _mediatorInstance ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+    protected IMapper Mapper => _mapperInstance ??= HttpContext.RequestServices.GetRequiredService<IMapper>();
 
     protected ActionResult HandleErrorResponse(IReadOnlyCollection<Error> errors)
     {
@@ -23,7 +23,7 @@ public class BaseController : ControllerBase
             apiError.StatusCode = 404;
             apiError.StatusPhrase = "Not Found";
             apiError.Timestamp = DateTime.Now;
-            apiError.Errors.Add(error.Message);
+            apiError.Errors.Add(error?.Message);
 
             return NotFound(apiError);
         }

@@ -1,9 +1,7 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Trips.Dtos;
-using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Contracts.Enums;
-using Gizo.Domain.Contracts.Repository;
 using Gizo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +10,7 @@ namespace Gizo.Application.Trips.QueryHandlers;
 
 public sealed record GetFileChunkQuery(long UserId,
     long TripId,
-    TripFileEnum TripFileType) : IRequest<OperationResult<FileChunkStatusResponse>>;
+    TripFileType TripFileType) : IRequest<OperationResult<FileChunkStatusResponse>>;
 
 public class GetFileChunkQueryHandler
     : IRequestHandler<GetFileChunkQuery, OperationResult<FileChunkStatusResponse>>
@@ -26,17 +24,16 @@ public class GetFileChunkQueryHandler
     }
 
     public async Task<OperationResult<FileChunkStatusResponse>> Handle(GetFileChunkQuery request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var trip = await _context.Trips
             .Include(_ => _.TripTempFiles.Where(x => x.TripFileType == request.TripFileType))
             .AsNoTracking()
-            .FirstOrDefaultAsync(_ => _.UserId == request.UserId && _.Id == request.TripId, token);
+            .FirstOrDefaultAsync(_ => _.UserId == request.UserId && _.Id == request.TripId, cancellationToken);
 
         if (trip == null)
         {
             _result.AddError(ErrorCode.NotFound, "Trip not found");
-
             return _result;
         }
 

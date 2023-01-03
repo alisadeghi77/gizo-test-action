@@ -9,10 +9,10 @@ public class TripConfig : IEntityTypeConfiguration<Trip>
 {
     public void Configure(EntityTypeBuilder<Trip> builder)
     {
-        //Fields
+        // Fields
         builder.HasKey(x => x.Id);
 
-        //Relations
+        // Relations
         builder.HasOne(x => x.User)
                .WithMany(x => x.Trips)
                .HasForeignKey(x => x.UserId)
@@ -24,7 +24,7 @@ public class TripConfig : IEntityTypeConfiguration<Trip>
                .IsRequired(false)
                .OnDelete(DeleteBehavior.Restrict);
 
-        //Table
+        // Table
         builder.ToTable("Trips", SchemaConfig.Trip);
     }
 }

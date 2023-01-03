@@ -17,33 +17,33 @@ public class RemoveAccountHandler : IRequestHandler<RemoveAccountCommand, Operat
     {
         _ctx = ctx;
     }
-    public async Task<OperationResult<bool>> Handle(RemoveAccountCommand request, 
-        CancellationToken token)
+    public async Task<OperationResult<bool>> Handle(RemoveAccountCommand request,
+        CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();
 
         try
         {
-            var identityUser = await _ctx.Users.FirstOrDefaultAsync(iu 
-                => iu.Id == request.IdentityUserId, token);
+            var identityUser = await _ctx.Users
+                .FirstOrDefaultAsync(iu => iu.Id == request.IdentityUserId, cancellationToken);
 
             if (identityUser == null)
             {
-                result.AddError(ErrorCode.IdentityUserDoesNotExist, 
+                result.AddError(ErrorCode.IdentityUserDoesNotExist,
                     UserErrorMessages.NonExistentIdentityUser);
                 return result;
             }
 
             if (identityUser.Id != request.RequestorGuid)
             {
-                result.AddError(ErrorCode.UnauthorizedAccountRemoval, 
+                result.AddError(ErrorCode.UnauthorizedAccountRemoval,
                     UserErrorMessages.UnauthorizedAccountRemoval);
 
                 return result;
             }
 
             _ctx.Users.Remove(identityUser);
-            await _ctx.SaveChangesAsync(token);
+            await _ctx.SaveChangesAsync(cancellationToken);
 
             result.Data = true;
         }

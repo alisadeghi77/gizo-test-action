@@ -16,12 +16,11 @@ public class MvcWebAppRegistrar : IWebApplicationRegistrar
             }
         });
 
-        //app.UseHttpsRedirection(); // TODO
+        // app.UseHttpsRedirection();
         app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
-
     }
 }

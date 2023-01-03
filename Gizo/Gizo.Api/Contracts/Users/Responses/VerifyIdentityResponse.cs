@@ -6,4 +6,3 @@ public class VerifyIdentityResponse
 
     public string Token { get; set; }
 }
-

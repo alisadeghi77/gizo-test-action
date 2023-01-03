@@ -9,7 +9,7 @@ public class CarBrandConfig : IEntityTypeConfiguration<CarBrand>
 {
     public void Configure(EntityTypeBuilder<CarBrand> builder)
     {
-        //Fields
+        // Fields
         builder.HasKey(_ => _.Id);
         builder.Property(_ => _.Name)
             .HasMaxLength(500)
@@ -17,7 +17,7 @@ public class CarBrandConfig : IEntityTypeConfiguration<CarBrand>
         builder.Property(_ => _.IsAvailable)
             .HasDefaultValue(true);
 
-        //Table
+        // Table
         builder.ToTable("CarBrands", SchemaConfig.CarBrand);
     }
 }

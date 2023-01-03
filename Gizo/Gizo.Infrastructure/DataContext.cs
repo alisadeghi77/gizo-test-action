@@ -2,30 +2,23 @@
 using Gizo.Domain.Aggregates.RoleAggregate;
 using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Aggregates.UserAggregate;
-using Gizo.Domain.Contracts.Repository;
 using Gizo.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gizo.Infrastructure;
 
-public class DataContext : IdentityDbContext<User, Role, long>, IUnitOfWork
+public class DataContext : IdentityDbContext<User, Role, long>
 {
     public DataContext(DbContextOptions options) : base(options)
     {
     }
 
-    public DbSet<Trip> Trips { get; set; }
+    public DbSet<Trip> Trips { get; set; } = null!;
 
-    public DbSet<CarBrand> Cars { get; set; }
+    public DbSet<CarBrand> Cars { get; set; } = null!;
 
-    public DbSet<UserLocation> UserLocations { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyAllConfigurations();
-        base.OnModelCreating(modelBuilder);
-    }
+    public DbSet<UserLocation> UserLocations { get; set; } = null!;
 
     public override int SaveChanges()
     {
@@ -59,12 +52,14 @@ public class DataContext : IdentityDbContext<User, Role, long>, IUnitOfWork
         }
     }
 
-    public override void Dispose()
+    protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.ApplyAllConfigurations();
+        base.OnModelCreating(builder);
     }
 
     private void DetachAll()
     {
-        base.ChangeTracker.Clear();
+        ChangeTracker.Clear();
     }
 }

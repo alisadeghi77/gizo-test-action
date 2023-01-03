@@ -7,10 +7,10 @@ public class CarBrandController : BaseController
 {
     [HttpGet]
     [ValidateModel]
-    public async Task<ActionResult<List<CarBrandResponse>>> GetCarBrands(CancellationToken token)
+    public async Task<ActionResult<List<CarBrandResponse>>> GetCarBrands(CancellationToken cancellationToken)
     {
         var query = new GetCarBrandsQuery();
-        var result = await _mediator.Send(query, token);
+        var result = await Mediator.Send(query, cancellationToken);
 
         if (result.IsError)
             return HandleErrorResponse(result.Errors);

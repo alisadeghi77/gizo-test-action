@@ -12,9 +12,8 @@ public sealed record GetUserCarModelsQuery(long UserId)
     : IRequest<OperationResult<List<UserCarResponse>>>;
 
 public class GetUserCarModelsQueryHandler
-        : IRequestHandler<GetUserCarModelsQuery, OperationResult<List<UserCarResponse>>>
+    : IRequestHandler<GetUserCarModelsQuery, OperationResult<List<UserCarResponse>>>
 {
-
     private readonly DataContext _context;
     private readonly IMapper _mapper;
 
@@ -24,15 +23,16 @@ public class GetUserCarModelsQueryHandler
         _mapper = mapper;
     }
 
-    public async Task<OperationResult<List<UserCarResponse>>> Handle(GetUserCarModelsQuery request, CancellationToken token)
+    public async Task<OperationResult<List<UserCarResponse>>> Handle(GetUserCarModelsQuery request,
+        CancellationToken cancellationToken)
     {
         var result = new OperationResult<List<UserCarResponse>>();
 
         var user = await _context.Users
-                .Include(_ => _.UserCarModels.Where(x => x.UserId == request.UserId))
-                .ThenInclude(_ => _.CarModel.CarBrand)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(_ => _.Id == request.UserId, token);
+            .Include(_ => _.UserCarModels.Where(x => x.UserId == request.UserId))
+            .ThenInclude(_ => _.CarModel.CarBrand)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(_ => _.Id == request.UserId, cancellationToken);
 
         if (user == null)
         {

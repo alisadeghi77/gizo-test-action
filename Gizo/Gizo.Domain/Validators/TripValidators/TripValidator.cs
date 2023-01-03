@@ -12,6 +12,6 @@ public class TripValidator : AbstractValidator<Trip>
             .GreaterThan(3).WithMessage("Chunk size must be at least 3145728 byte long");
 
         RuleFor(p => p.Score)
-         .LessThan(10).WithMessage("Score must be Less Than 10 long");
+            .LessThan(10).WithMessage("Score must be Less Than 10 long");
     }
 }

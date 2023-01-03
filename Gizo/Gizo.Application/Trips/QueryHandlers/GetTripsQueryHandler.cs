@@ -22,7 +22,7 @@ public class GetTripsQueryHandler : IRequestHandler<GetTripsQuery, OperationResu
         _mapper = mapper;
     }
 
-    public async Task<OperationResult<List<TripResponse>>> Handle(GetTripsQuery request, CancellationToken token)
+    public async Task<OperationResult<List<TripResponse>>> Handle(GetTripsQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<List<TripResponse>>();
         var trips = await _context.Trips
@@ -31,7 +31,7 @@ public class GetTripsQueryHandler : IRequestHandler<GetTripsQuery, OperationResu
             .OrderByDescending(_ => _.CreateDate)
             .AsNoTracking()
             .ProjectTo<TripResponse>(_mapper.ConfigurationProvider)
-            .ToListAsync(token);
+            .ToListAsync(cancellationToken);
 
         result.Data = trips;
 

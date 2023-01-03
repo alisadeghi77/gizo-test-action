@@ -21,7 +21,6 @@ public class SmsService : ISmsService
         await MessageResource.CreateAsync(
             body: body,
             from: new PhoneNumber(_smsConfigs.SenderPhoneNumber),
-            to: new PhoneNumber(phoneNumber)
-        );
+            to: new PhoneNumber(phoneNumber));
     }
 }

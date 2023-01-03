@@ -17,14 +17,15 @@ public class SelectUserCarModelCommandHandler : IRequestHandler<SelectUserCarMod
         _context = context;
     }
 
-    public async Task<OperationResult<bool>> Handle(SelectUserCarModelCommand request, CancellationToken token)
+    public async Task<OperationResult<bool>> Handle(SelectUserCarModelCommand request,
+        CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();
 
         var user = await _context.Users
             .Include(_ => _.UserCarModels)
             .Where(_ => _.Id == request.UserId)
-            .FirstOrDefaultAsync(token);
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (user is null)
         {
@@ -35,7 +36,7 @@ public class SelectUserCarModelCommandHandler : IRequestHandler<SelectUserCarMod
         user.SelectCar(request.UserCarModelId);
 
         _context.Users.Update(user);
-        result.Data = await _context.SaveChangesAsync(token) > 0;
+        result.Data = await _context.SaveChangesAsync(cancellationToken) > 0;
 
         return result;
     }

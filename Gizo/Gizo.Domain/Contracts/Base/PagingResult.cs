@@ -2,6 +2,6 @@
 
 public class PagingResult<T>
 {
-    public IEnumerable<T> Data { get; set; }
+    public IEnumerable<T> Data { get; set; } = null!;
     public long Count { get; set; }
 }

@@ -23,13 +23,15 @@ public class GetCarBrandsQueryHandler
         _context = context;
     }
 
-    public async Task<OperationResult<List<CarBrandDto>>> Handle(GetCarBrandsQuery request, CancellationToken token)
+    public async Task<OperationResult<List<CarBrandDto>>> Handle(
+        GetCarBrandsQuery request,
+        CancellationToken cancellationToken)
     {
         var cars = await _context.Cars
             .AsNoTracking()
             .Include(_ => _.CarModels)
             .Select(_ => _mapper.Map<CarBrandDto>(_))
-            .ToListAsync(token);
+            .ToListAsync(cancellationToken);
 
         _result.Data = cars;
         return _result;

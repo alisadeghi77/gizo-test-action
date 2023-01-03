@@ -1,5 +1,6 @@
 ﻿using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Contracts.Base;
+using Gizo.Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Domain.Aggregates.UserAggregate;
@@ -24,7 +25,7 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
 
     public long? ModifierId { get; private set; }
 
-    public IReadOnlyCollection<Trip> Trips { get; private set; }
+    public IReadOnlyCollection<Trip> Trips { get; private set; } = null!;
 
     private readonly List<UserVerificationCode> _userVerificationCodes = new();
 
@@ -61,7 +62,7 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
 
         if (userCarModel == null)
         {
-            throw new Exception("Car model not found");
+            throw new NotFoundException("Car model");
         }
 
         _userCarModels.Remove(userCarModel);
@@ -75,7 +76,7 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
 
         if (userCarModel == null)
         {
-            throw new Exception("User car model not found");
+            throw new NotFoundException("User car model");
         }
 
         userCarModel.SetLicense(license);
@@ -97,7 +98,9 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
             .Any(_ => _.Code == code);
 
         if (result)
+        {
             _userVerificationCodes.RemoveAll(_ => _.VerificationType == verificationType);
+        }
 
         return result;
     }
@@ -120,7 +123,6 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
         _userVerificationCodes.Add(verifyCode);
         return verifyCode;
     }
-
     public static User CreateUserByPhoneNumber(string phoneNumber)
     {
         return new User()
@@ -134,7 +136,9 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
     {
         var userCarModel = _userCarModels.FirstOrDefault(t => t.Id == userCarModelId);
         if (userCarModel is null)
-            throw new Exception("User car model not found");
+        {
+            throw new NotFoundException("User car model");
+        }
 
         _userCarModels.ForEach(u => u.RemoveSelectCarModel());
         userCarModel.SelectCarModel();

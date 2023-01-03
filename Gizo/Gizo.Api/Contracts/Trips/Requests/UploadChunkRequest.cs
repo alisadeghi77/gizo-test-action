@@ -8,7 +8,7 @@ public class UploadChunkRequest
 
     public string FileChunkId { get; set; }
 
-    public TripFileEnum TripFileType { get; set; }
+    public TripFileType TripFileType { get; set; }
 
     public IFormFile FileChunk { get; set; }
 }

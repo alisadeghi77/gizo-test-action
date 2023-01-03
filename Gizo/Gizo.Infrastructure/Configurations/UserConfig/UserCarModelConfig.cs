@@ -9,10 +9,10 @@ public class TripTempFileConfig : IEntityTypeConfiguration<UserCarModel>
 {
     public void Configure(EntityTypeBuilder<UserCarModel> builder)
     {
-        //Fields
+        // Fields
         builder.HasKey(_ => _.Id);
 
-        //Relations
+        // Relations
         builder.HasOne(_ => _.User)
                .WithMany(_ => _.UserCarModels)
                .HasForeignKey(_ => _.UserId);
@@ -20,7 +20,7 @@ public class TripTempFileConfig : IEntityTypeConfiguration<UserCarModel>
                .WithMany(_ => _.UserCarModels)
                .HasForeignKey(_ => _.CarModelId);
 
-        //Table
+        // Table
         builder.ToTable("UserCarModels", SchemaConfig.User);
     }
 }

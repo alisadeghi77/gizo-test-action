@@ -1,5 +1,3 @@
-﻿using AutoMapper;
-using Gizo.Application.CarBrands.Dtos;
 using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Infrastructure;
@@ -22,25 +20,23 @@ public class AddUserCarModelCommandHandler
         _context = context;
     }
 
-    public async Task<OperationResult<bool>> Handle(AddUserCarModelCommand request, CancellationToken token)
+    public async Task<OperationResult<bool>> Handle(AddUserCarModelCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();
         var user = await _context.Users
             .Include(_ => _.UserCarModels)
-            .FirstOrDefaultAsync(_ => _.Id == request.UserId, token);
+            .FirstOrDefaultAsync(_ => _.Id == request.UserId, cancellationToken);
 
         if (user is null)
         {
             result.AddError(ErrorCode.NotFound, "User not found");
-
             return result;
         }
 
         var carBrand = await _context.Cars
-            .Include((_ => _.CarModels
-                .Where(_ => _.Id == request.CarModelId)))
+            .Include(_ => _.CarModels.Where(_ => _.Id == request.CarModelId))
             .AsNoTracking()
-            .FirstOrDefaultAsync(token);
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (carBrand is null || carBrand.CarModels.Count == 0)
         {
@@ -49,9 +45,8 @@ public class AddUserCarModelCommandHandler
         }
 
         user.AddCar(request.CarModelId, request.License);
-
         _context.Update(user);
-        result.Data = await _context.SaveChangesAsync(token) > 0;
+        result.Data = await _context.SaveChangesAsync(cancellationToken) > 0;
 
         return result;
     }

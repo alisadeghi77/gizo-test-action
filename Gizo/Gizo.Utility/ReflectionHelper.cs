@@ -4,9 +4,9 @@ namespace Gizo.Utility;
 
 public static class ReflectionHelper
 {
-    public static bool IsEnumerable(this Type Type)
+    public static bool IsEnumerable(this Type type)
     {
-        return Type != null && Type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(Type);
+        return type != null && type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type);
     }
 
     public static bool IsAssignableToGenericType(this Type givenType, Type genericType)
@@ -22,7 +22,7 @@ public static class ReflectionHelper
         if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
             return true;
 
-        Type baseType = givenType.BaseType;
+        Type? baseType = givenType.BaseType;
         if (baseType == null) return false;
 
         return IsAssignableToGenericType(baseType, genericType);

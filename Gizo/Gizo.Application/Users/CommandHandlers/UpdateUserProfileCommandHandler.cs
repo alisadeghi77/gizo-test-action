@@ -20,28 +20,31 @@ public class UpdateUserProfileCommandHandler
     private readonly DataContext _ctx;
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
-    private OperationResult<UserProfileResponse> _result = new();
+    private readonly OperationResult<UserProfileResponse> _result;
 
     public UpdateUserProfileCommandHandler(
         DataContext ctx,
         IMapper mapper,
         UserManager<User> userManager)
     {
+        _result = new();
         _ctx = ctx;
         _mapper = mapper;
         _userManager = userManager;
     }
 
-    public async Task<OperationResult<UserProfileResponse>> Handle(UpdateUserProfileCommand request, CancellationToken token)
+    public async Task<OperationResult<UserProfileResponse>> Handle(UpdateUserProfileCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var user = await UpdateUserProfile(request, token);
+            var user = await UpdateUserProfile(request, cancellationToken);
 
-            if (_result.IsError)
+            if (_result.IsError || user is null)
                 return _result;
 
             _result.Data = _mapper.Map<UserProfileResponse>(user);
+
             return _result;
         }
         catch (Exception e)
@@ -52,7 +55,7 @@ public class UpdateUserProfileCommandHandler
         return _result;
     }
 
-    private async Task<User> UpdateUserProfile(UpdateUserProfileCommand request, CancellationToken token)
+    private async Task<User?> UpdateUserProfile(UpdateUserProfileCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Id.ToString());
 
@@ -67,7 +70,7 @@ public class UpdateUserProfileCommandHandler
         user.UpdateProfile(request.Id, request.FirstName, request.LastName, request.Email);
 
         _ctx.Users.Update(user);
-        await _ctx.SaveChangesAsync(token);
+        await _ctx.SaveChangesAsync(cancellationToken);
 
         return user;
     }

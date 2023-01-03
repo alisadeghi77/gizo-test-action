@@ -1,5 +1,4 @@
-﻿
-namespace Gizo.Api.Options;
+﻿namespace Gizo.Api.Options;
 
 public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {
@@ -20,12 +19,12 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
         var scheme = GetJwtSecurityScheme();
         options.AddSecurityDefinition(scheme.Reference.Id, scheme);
         options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {scheme, new string[0]}
-            });
+        {
+            { scheme, new string[0] }
+        });
     }
 
-    private OpenApiInfo CreateVersionInfo(ApiVersionDescription description)
+    private static OpenApiInfo CreateVersionInfo(ApiVersionDescription description)
     {
         var info = new OpenApiInfo
         {
@@ -41,7 +40,7 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
         return info;
     }
 
-    private OpenApiSecurityScheme GetJwtSecurityScheme()
+    private static OpenApiSecurityScheme GetJwtSecurityScheme()
     {
         return new OpenApiSecurityScheme
         {

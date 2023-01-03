@@ -1,4 +1,4 @@
-namespace Gizo.Domain.Contracts.Base;
+﻿namespace Gizo.Domain.Contracts.Base;
 
 public interface ISoftDelete
 {

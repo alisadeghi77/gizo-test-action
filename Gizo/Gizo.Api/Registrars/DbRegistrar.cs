@@ -1,5 +1,4 @@
 ﻿using Gizo.Domain.Aggregates.UserAggregate;
-using Gizo.Domain.Contracts.Repository;
 using Microsoft.AspNetCore.Identity;
 
 namespace Gizo.Api.Registrars;
@@ -9,14 +8,7 @@ public class DbRegistrar : IWebApplicationBuilderRegistrar
     public void RegisterServices(WebApplicationBuilder builder)
     {
         var cs = builder.Configuration.GetConnectionString("Default");
-        builder.Services.AddDbContext<DataContext>(options =>
-        {
-            options.UseSqlServer(cs);
-        });
-
-        builder.Services.AddScoped<IUnitOfWork>(factory =>
-            factory.GetRequiredService<DataContext>()
-        );
+        builder.Services.AddDbContext<DataContext>(options => { options.UseSqlServer(cs); });
 
         builder.Services.AddIdentityCore<User>(options =>
             {

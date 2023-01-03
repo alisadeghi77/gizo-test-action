@@ -6,7 +6,7 @@ public class UploadCompletedRequest
 {
     public long TripId { get; set; }
 
-    public TripFileEnum TripFileType { get; set; }
+    public TripFileType TripFileType { get; set; }
 
     public int ChunkLenght { get; set; }
 }

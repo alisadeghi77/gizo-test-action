@@ -9,19 +9,19 @@ public class CarModelConfig : IEntityTypeConfiguration<CarModel>
 {
     public void Configure(EntityTypeBuilder<CarModel> builder)
     {
-        //Fields
+        // Fields
         builder.HasKey(_ => _.Id);
         builder.Property(_ => _.Name)
             .HasMaxLength(500)
             .IsRequired();
 
-        //Relations
+        // Relations
         builder.HasOne(_ => _.CarBrand)
                .WithMany(_ => _.CarModels)
                .HasForeignKey(_ => _.CarBrandId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        //Table
+        // Table
         builder.ToTable("CarModels", SchemaConfig.CarBrand);
     }
 }

@@ -5,7 +5,7 @@ namespace Gizo.Domain.Aggregates.UserAggregate;
 
 public class UserCarModel
 {
-    public UserCarModel(long userId, long carModelId , string license)
+    public UserCarModel(long userId, long carModelId, string license)
     {
         UserId = userId;
         CarModelId = carModelId;
@@ -22,11 +22,11 @@ public class UserCarModel
 
     public bool IsSelected { get; private set; }
 
-    public IReadOnlyCollection<Trip> Trips { get; private set; }
+    public IReadOnlyCollection<Trip> Trips { get; private set; } = null!;
 
-    public User User { get; private set; }
+    public User User { get; private set; } = null!;
 
-    public CarModel CarModel { get; private set; }
+    public CarModel CarModel { get; private set; } = null!;
 
     public void SelectCarModel()
     {

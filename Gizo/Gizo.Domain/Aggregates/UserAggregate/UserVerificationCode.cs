@@ -1,4 +1,4 @@
-using Gizo.Domain.Contracts.Base;
+﻿using Gizo.Domain.Contracts.Base;
 
 namespace Gizo.Domain.Aggregates.UserAggregate;
 

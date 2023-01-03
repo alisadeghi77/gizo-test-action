@@ -6,4 +6,3 @@ public class AddUserCarModelRequest
 
     public string License { get; set; }
 }
-

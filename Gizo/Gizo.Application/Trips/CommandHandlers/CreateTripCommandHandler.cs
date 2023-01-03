@@ -1,11 +1,10 @@
 ﻿using Gizo.Application.Enums;
 using Gizo.Application.Models;
 using Gizo.Application.Options;
-using Gizo.Application.Services;
 using Gizo.Application.Trips.Dtos;
 using Gizo.Domain.Aggregates.TripAggregate;
 using Gizo.Domain.Aggregates.UserAggregate;
-using Gizo.Domain.Contracts.Repository;
+using Gizo.Domain.Exceptions;
 using Gizo.Domain.Validators.TripValidators;
 using Gizo.Infrastructure;
 using Gizo.Utility;
@@ -32,12 +31,12 @@ public class CreateTripCommandHandler
     }
 
     public async Task<OperationResult<CreatedTripResponse>> Handle(CreateTripCommand request,
-        CancellationToken token)
+        CancellationToken cancellationToken)
     {
         var validator = new TripValidator();
         var chunkSize = FileHelper.MBToByte(_uploadFileSettings.ChunkSize);
 
-        var userCarModel = await GetSelectedCarModel(request.UserId, token);
+        var userCarModel = await GetSelectedCarModel(request.UserId, cancellationToken);
         var trip = Trip.CreateTrip(request.UserId, chunkSize, userCarModel.Id);
 
         var validationResult = validator.Validate(trip);
@@ -49,8 +48,8 @@ public class CreateTripCommandHandler
             }
         }
 
-        await _context.AddAsync(trip, token);
-        await _context.SaveChangesAsync(token);
+        await _context.AddAsync(trip, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         _result.Data = new CreatedTripResponse(trip.Id);
 
@@ -65,12 +64,12 @@ public class CreateTripCommandHandler
 
         if (user == null)
         {
-            throw new Exception("User not found");
+            throw new NotFoundException("User");
         }
 
         if (!user.UserCarModels.Any())
         {
-            throw new Exception("User car is empty");
+            throw new NotFoundException("User car");
         }
 
         return user.UserCarModels.First();

@@ -23,13 +23,13 @@ public class GetTripQueryHandler : IRequestHandler<GetTripQuery, OperationResult
         _mapper = mapper;
     }
 
-    public async Task<OperationResult<TripDetailResponse>> Handle(GetTripQuery request, CancellationToken token)
+    public async Task<OperationResult<TripDetailResponse>> Handle(GetTripQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<TripDetailResponse>();
         var trip = await _context.Trips
             .AsNoTracking()
             .FirstOrDefaultAsync(_ => _.Id == request.TripId &&
-                _.UserId == request.UserId, token);
+                _.UserId == request.UserId, cancellationToken);
 
         if (trip == null)
         {

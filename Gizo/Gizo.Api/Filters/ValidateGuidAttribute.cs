@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace Gizo.Api.Filters;
+﻿namespace Gizo.Api.Filters;
 
 public class ValidateGuidAttribute : ActionFilterAttribute
 {

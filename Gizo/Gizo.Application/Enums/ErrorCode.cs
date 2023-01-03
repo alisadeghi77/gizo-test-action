@@ -4,14 +4,14 @@ public enum ErrorCode
 {
     NotFound = 404,
     ServerError = 500,
-    
-    //Validation errors should be in the range 100 - 199
+
+    // Validation errors should be in the range 100 - 199
     ValidationError = 101,
-    
-    //Infrastructure errors should be in the range 200-299
+
+    // Infrastructure errors should be in the range 200-299
     IdentityCreationFailed = 202,
 
-    //Application errors should be in the range 300 - 399
+    // Application errors should be in the range 300 - 399
     PostUpdateNotPossible = 300,
     PostDeleteNotPossible = 301,
     InteractionRemovalNotAuthorized = 302,
@@ -20,9 +20,5 @@ public enum ErrorCode
     IncorrectPassword = 305,
     UnauthorizedAccountRemoval = 306,
     CommentRemovalNotAuthorized = 307,
-    
-
     UnknownError = 999
-    
-    
 }

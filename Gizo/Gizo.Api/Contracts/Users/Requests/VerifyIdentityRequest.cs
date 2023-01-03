@@ -8,4 +8,3 @@ public class VerifyIdentityRequest
     [Required]
     public string VerifyCode { get; set; }
 }
-

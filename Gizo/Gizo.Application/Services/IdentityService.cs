@@ -16,9 +16,10 @@ public class IdentityService
     {
         _jwtSettings = jwtOptions.Value;
         _key = Encoding.ASCII.GetBytes(_jwtSettings.SigningKey);
+        TokenHandler = new JwtSecurityTokenHandler();
     }
 
-    public JwtSecurityTokenHandler TokenHandler = new JwtSecurityTokenHandler();
+    public readonly JwtSecurityTokenHandler TokenHandler;
 
     public SecurityToken CreateSecurityToken(ClaimsIdentity identity)
     {
@@ -36,9 +37,9 @@ public class IdentityService
     {
         var claimsIdentity = new ClaimsIdentity(new Claim[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, identity.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("IdentityId", identity.Id.ToString()),
+            new(JwtRegisteredClaimNames.Sub, identity.UserName),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new("IdentityId", identity.Id.ToString()),
         });
 
         var token = CreateSecurityToken(claimsIdentity);
