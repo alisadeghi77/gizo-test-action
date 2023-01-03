@@ -58,6 +58,8 @@ public class UploadFileChunkCommandHandler
             return _result;
         }
 
+        trip.IsChunkFileUploaded(request.FileChunkId, request.TripFileType);
+
         var tempPath = GetTripTempFilePath(trip, request.TripFileType);
         var tempFileName = await SaveChunkFile(trip, request, tempPath);
         trip.AddTempFiles(tempFileName, request.FileChunkId, request.Type, request.TripFileType);

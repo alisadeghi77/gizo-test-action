@@ -175,6 +175,17 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         return tempFile;
     }
 
+    public void IsChunkFileUploaded(string chunkId, TripFileType tripFileType)
+    {
+        var tempFile = _tripTempFiles
+            .Any(_ => _.ChunkId == chunkId && _.TripFileType == tripFileType);
+
+        if (tempFile)
+        {
+            throw new FileUploadedException("This file already uploaded");
+        }
+    }
+
     public bool IsCompletedUploadFile(TripFileType tripFile)
     {
         return tripFile switch
