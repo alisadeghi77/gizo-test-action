@@ -83,6 +83,10 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 
     public DateTime? ModifyDate { get; private set; }
 
+    public string? GPSJsonData { get; private set; }
+
+    public string? IMUJsonData { get; private set; }
+
     public User User { get; private set; } = null!;
 
     public UserCarModel UserCarModel { get; private set; } = null!;
