@@ -1,5 +1,5 @@
-name: dotnet package
-run-name: GitHub Actions 🧨
+name: Build on Push
+run-name: ${{ github.actor }} pushed, Build Test 🧨
 on: 
    [push, pull_request]
 
