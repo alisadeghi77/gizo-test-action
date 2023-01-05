@@ -14,7 +14,7 @@ public class BaseController : ControllerBase
 
     protected ActionResult HandleErrorResponse(IReadOnlyCollection<Error> errors)
     {
-        var apiError = new ErrorResponse();
+        // var apiError = new ErrorResponse();
 
         if (errors.Any(e => e.Code == ErrorCode.NotFound))
         {
