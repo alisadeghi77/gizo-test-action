@@ -89,6 +89,11 @@ public class User : IdentityUser<long>, IEntity, ICreateDate, IOptionalModifiedD
         return UserCarModels.FirstOrDefault(_ => _.CarModelId == carModelId);
     }
 
+    public bool IsUserCarModelDuplicate(long carModelId, string license)
+    {
+        return _userCarModels.Any(_ => _.IsDuplicate(Id, carModelId, license));
+    }
+
     public bool ValidateCode(TimeSpan expirationDurationTime, string code, VerificationType verificationType)
     {
         var data = DateTime.UtcNow.Add(expirationDurationTime * -1);

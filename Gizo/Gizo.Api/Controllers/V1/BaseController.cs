@@ -5,7 +5,7 @@
 [ApiController]
 public class BaseController : ControllerBase
 {
-    public long CurrentUserId => HttpContext.GetIdentityIdClaimValue();
+    protected long CurrentUserId => HttpContext.GetIdentityIdClaimValue();
 
     private IMediator _mediatorInstance;
     private IMapper _mapperInstance;

@@ -74,6 +74,13 @@ public class UploadFileService
             MergeChunks(newPath, fp);
         }
 
+        var checkPath = Directory.GetFiles(filePath);
+
+        if (checkPath.Any())
+        {
+            File.Delete(checkPath[0]);
+        }
+
         File.Move(
             Path.Combine(tempPath, newFileName),
             Path.Combine(filePath, newFileName));
@@ -115,7 +122,7 @@ public class UploadFileService
         try
         {
             resultFs = File.Open(finalPath, FileMode.Append);
-            chunkFs = File.Open(chunkPath, FileMode.Open);
+            chunkFs = File.Open(chunkPath, FileMode.Open, FileAccess.Read);
             byte[] resultContent = new byte[chunkFs.Length];
             chunkFs.Read(resultContent, 0, (int)chunkFs.Length);
             resultFs.Write(resultContent, 0, (int)chunkFs.Length);
@@ -126,8 +133,10 @@ public class UploadFileService
         }
         finally
         {
-            if (resultFs != null) resultFs.Close();
-            if (chunkFs != null) chunkFs.Close();
+            if (resultFs != null)
+                resultFs.Close();
+            if (chunkFs != null)
+                chunkFs.Close();
             File.Delete(chunkPath);
         }
     }

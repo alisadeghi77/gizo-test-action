@@ -27,7 +27,10 @@ public class UploadFileStartCommandHandler
         CancellationToken cancellationToken)
     {
         var result = new OperationResult<TripUploadStartResponse>();
-        var trip = await _context.Trips.FirstOrDefaultAsync(_ => _.Id == request.TripId &&
+        var trip = await _context.Trips
+            .Include(_ => _.TripTempFiles
+                .Where(_ => _.TripFileType == request.TripFileType))
+            .FirstOrDefaultAsync(_ => _.Id == request.TripId &&
             _.UserId == request.UserId, cancellationToken);
 
         if (trip == null)
@@ -38,6 +41,7 @@ public class UploadFileStartCommandHandler
         }
 
         trip.SetFileChunkCount(request.TripFileType, request.ChunkCount);
+        trip.RemoveAllTempFiles();
 
         _context.Trips.Update(trip);
         await _context.SaveChangesAsync(cancellationToken);

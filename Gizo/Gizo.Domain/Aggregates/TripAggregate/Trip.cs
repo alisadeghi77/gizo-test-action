@@ -83,6 +83,10 @@ public class Trip : ICreateDate, IOptionalModifiedDate
 
     public DateTime? ModifyDate { get; private set; }
 
+    public string? GPSJsonData { get; private set; }
+
+    public string? IMUJsonData { get; private set; }
+
     public User User { get; private set; } = null!;
 
     public UserCarModel UserCarModel { get; private set; } = null!;
@@ -173,6 +177,17 @@ public class Trip : ICreateDate, IOptionalModifiedDate
         _tripTempFiles.Add(tempFile);
 
         return tempFile;
+    }
+
+    public void IsChunkFileUploaded(string chunkId, TripFileType tripFileType)
+    {
+        var tempFile = _tripTempFiles
+            .Any(_ => _.ChunkId == chunkId && _.TripFileType == tripFileType);
+
+        if (tempFile)
+        {
+            throw new FileUploadedException("This file already uploaded");
+        }
     }
 
     public bool IsCompletedUploadFile(TripFileType tripFile)
