@@ -20,6 +20,8 @@ public class BaseController : ControllerBase
         {
             var error = errors.FirstOrDefault(e => e.Code == ErrorCode.NotFound);
 
+
+
             apiError.StatusCode = 404;
             apiError.StatusPhrase = "Not Found";
             apiError.Timestamp = DateTime.Now;
