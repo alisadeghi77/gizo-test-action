@@ -16,7 +16,7 @@ public class BaseController : ControllerBase
     {
         var apiError = new ErrorResponse();
 
-        if (errors.Any(e => e.Code == ErrorCode.NotFound))
+        if (errors.Any(e => e.Code != ErrorCode.NotFound))
         {
             var error = errors.FirstOrDefault(e => e.Code == ErrorCode.NotFound);
 
