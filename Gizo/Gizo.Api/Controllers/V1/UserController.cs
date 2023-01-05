@@ -167,7 +167,7 @@ public class UserController : BaseController
     public async Task<ActionResult<bool>> EditUserCarModel(EditUserCarModelRequest request,
         CancellationToken cancellationToken = default)
     {
-        var command = new EditUserCarModelCommand(request.Id, CurrentUserId, request.Licence);
+        var command = new EditUserCarModelCommand(request.Id, CurrentUserId, request.License);
 
         var result = await Mediator.Send(command, cancellationToken);
 

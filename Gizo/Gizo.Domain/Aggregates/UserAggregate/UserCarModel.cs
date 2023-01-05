@@ -42,4 +42,9 @@ public class UserCarModel
     {
         License = license;
     }
+
+    public bool IsDuplicate(long userId, long carModelId, string license)
+    {
+        return UserId == userId && CarModelId == carModelId && License == license;
+    }
 }
