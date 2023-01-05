@@ -21,4 +21,4 @@ jobs:
       - name: Install dependencies
         run: dotnet restore ./Gizo/Gizo.sln
       - name: Build
-        run: dotnet build --configuration Release --no-restore --source ./Gizo
+        run: dotnet build --configuration Release --no-restore ./Gizo
